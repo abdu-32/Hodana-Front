@@ -1,0 +1,39 @@
+# Frontend team's local dev stack. This runs entirely on its own —
+# `mock-api` serves fake-but-schema-valid responses generated from
+# contracts/openapi.yaml. Nothing here requires Python, Postgres, or the
+# backend repo to be checked out or running.
+#
+# Usage:
+#   docker compose up --build
+#
+# When the real backend is available (staging, or a teammate's local
+# instance), point NEXT_PUBLIC_API_URL at it directly instead — mock-api
+# is a development convenience, not a requirement.
+
+services:
+  web:
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - ./.env.local
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4010
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mock-api
+
+  # Stoplight Prism: reads contracts/openapi.yaml and serves realistic,
+  # schema-valid mock responses on port 4010. Regenerate via
+  # scripts/sync-contract.sh whenever the backend contract changes.
+  mock-api:
+    image: stoplight/prism:5
+    command: mock -h 0.0.0.0 /contracts/openapi.yaml
+    volumes:
+      - ./contracts:/contracts
+    ports:
+      - "4010:4010"

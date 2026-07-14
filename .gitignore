@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+
+.env
+.env.local
+!.env.example
+
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# contracts/openapi.yaml and src/lib/api-types.ts are synced/generated
+# but ARE committed, so the whole team builds against the same contract
+# without everyone needing to run the sync/generate scripts. Do not ignore.
