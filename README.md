@@ -29,7 +29,7 @@ When the backend team tells you the contract changed (a PR merged to
 `contracts/openapi.yaml` in their repo):
 
 ```bash
-export BACKEND_CONTRACT_URL=https://raw.githubusercontent.com/<org>/innovation-hub-backend/main/contracts/openapi.yaml
+export BACKEND_CONTRACT_URL=https://raw.githubusercontent.com/CheCheAbel/innovation-hub-for-ethiopia-back/main/contracts/openapi.yaml
 npm run sync-contract
 ```
 
