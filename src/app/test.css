@@ -1,0 +1,56 @@
+/* Innovation Hub Design Tokens */
+
+/* Primary Brand */
+.primary {
+  color: #0284C7;
+}
+
+/* Primary Hover */
+.primary-hover {
+  color: #0369A1;
+}
+
+/* Accent */
+.accent {
+  color: #06B6D4;
+}
+
+/* Success */
+.success {
+  color: #16A34A;
+}
+
+/* Warning */
+.warning {
+  color: #D97706;
+}
+
+/* Danger */
+.danger {
+  color: #DC2626;
+}
+
+/* Surface */
+.surface {
+  background: #FFFFFF;
+}
+
+/* Surface Alt */
+.surface-alt {
+  background: #F8FAFC;
+}
+
+/* Primary Text */
+.text {
+  color: #0F172A;
+}
+
+/* Secondary Text */
+.text-muted {
+  color: #64748B;
+}
+
+/* Focus Ring */
+.focus {
+  border: 2px solid #2563EB;
+}

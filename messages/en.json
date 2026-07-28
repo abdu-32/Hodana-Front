@@ -1,0 +1,21 @@
+{
+  "Metadata": {
+    "title": "Ethiopia Innovation Hub",
+    "description": "Hackathon and innovation-challenge platform for Ethiopian universities, companies, NGOs, and government agencies."
+  },
+  "Home": {
+    "heading": "Ethiopia Innovation Hub"
+  },
+  "Nav": {
+    "hackathons": "Hackathons",
+    "myTeams": "My Teams",
+    "submissions": "Submissions",
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out"
+  },
+  "LanguageToggle": {
+    "en": "English",
+    "am": "Amharic"
+  }
+}

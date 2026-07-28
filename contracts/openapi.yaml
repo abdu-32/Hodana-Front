@@ -1,1099 +1,2473 @@
 openapi: 3.0.3
 info:
   title: Ethiopia Innovation Hub API
-  version: 0.1.0
-  description: API contract for the Ethiopia Innovation Hub hackathon platform (discover, register, form teams, submit, judge, and showcase).
-servers:
-- url: https://api.hub.et.example/api/v1
-tags:
-- name: Health
-  description: Service health and readiness checks.
-- name: Auth
-  description: Signup, login, and token refresh flows.
-- name: Users
-  description: User account and public profile management.
-- name: Hackathons
-  description: Hackathon creation, discovery, and registration.
-- name: Tracks
-  description: Sponsor challenge tracks within a hackathon.
-- name: Teams
-  description: Team formation and membership.
-- name: Submissions
-  description: Project submissions, eligibility, and track assignment.
-- name: Judging
-  description: Judging rounds, criteria, invitations, and scores.
-- name: Analytics
-  description: Organizer analytics and reporting.
-- name: Notifications
-  description: Announcements and reminders.
-- name: Search
-  description: Search for users and mentors.
-- name: Payments
-  description: Prize disbursement via local payment gateways.
-security:
-- bearerAuth: []
+  version: 1.0.0
+  description: Hackathon and innovation-challenge platform API.
 paths:
-  /health:
-    get:
-      tags:
-      - Health
-      security: []
-      operationId: getHealth
-      summary: Health check
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /auth/signup:
+  /api/v1/admin/hackathons/{id}/reactivate:
     post:
-      tags:
-      - Auth
-      security: []
-      operationId: signup
-      summary: Create a new user (email/password or OAuth)
-      requestBody:
+      operationId: v1_admin_hackathons_reactivate_create
+      description: |-
+        POST /admin/hackathons/{id}/reactivate. Not called for by an
+        explicit FR-ADMIN-001 acceptance criterion -- see
+        services.reactivate_hackathon's docstring for why it exists anyway.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
         required: true
+      tags:
+      - v1
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignupRequest'
+              $ref: '#/components/schemas/ModerationAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminHackathon'
+          description: ''
+  /api/v1/admin/hackathons/{id}/suspend:
+    post:
+      operationId: v1_admin_hackathons_suspend_create
+      description: POST /admin/hackathons/{id}/suspend -- FR-ADMIN-001.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminHackathon'
+          description: ''
+  /api/v1/admin/organizations/{id}/reactivate:
+    post:
+      operationId: v1_admin_organizations_reactivate_create
+      description: POST /admin/organizations/{id}/reactivate.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrganization'
+          description: ''
+  /api/v1/admin/organizations/{id}/suspend:
+    post:
+      operationId: v1_admin_organizations_suspend_create
+      description: POST /admin/organizations/{id}/suspend -- FR-ADMIN-001.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrganization'
+          description: ''
+  /api/v1/admin/organizations/pending:
+    get:
+      operationId: v1_admin_organizations_pending_list
+      description: |-
+        GET /admin/organizations/pending -- FR-ADMIN-001's "dashboard to
+        review pending organization verifications". The decision action
+        itself is organizations.OrganizationVerificationReviewView (POST
+        /organizations/{id}/verification-review) -- see that view's and
+        services.list_pending_organizations's docstrings for why it lives
+        there and not here.
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminOrganization'
+          description: ''
+  /api/v1/admin/search:
+    get:
+      operationId: v1_admin_search_retrieve
+      description: GET /admin/search?q=... -- FR-ADMIN-002.
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Matched against user name/email, organization name, and hackathon
+          title.
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformSearchResult'
+          description: ''
+  /api/v1/admin/users/{id}/reactivate:
+    post:
+      operationId: v1_admin_users_reactivate_create
+      description: POST /admin/users/{id}/reactivate.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAccount'
+          description: ''
+  /api/v1/admin/users/{id}/suspend:
+    post:
+      operationId: v1_admin_users_suspend_create
+      description: POST /admin/users/{id}/suspend -- FR-ADMIN-001.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModerationAction'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAccount'
+          description: ''
+  /api/v1/analytics/hackathons/{hackathon_id}/dashboard:
+    get:
+      operationId: v1_analytics_hackathons_dashboard_retrieve
+      description: |-
+        GET /analytics/hackathons/{hackathon_id}/dashboard -- FR-ANALYTICS-001.
+        Registration count over time, team formation rate, and submission
+        conversion rate for one hackathon; restricted to that hackathon's
+        Organizer and to Platform Admins (services.get_registration_dashboard).
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationDashboard'
+          description: ''
+  /api/v1/analytics/hackathons/{hackathon_id}/demographics:
+    get:
+      operationId: v1_analytics_hackathons_demographics_retrieve
+      description: |-
+        GET /analytics/hackathons/{hackathon_id}/demographics -- FR-ANALYTICS-002.
+        Aggregated, anonymized breakdown of registrants by university and
+        self-reported skill category; restricted the same way as the
+        dashboard above. Returns `available: false` with a placeholder,
+        rather than a 4xx, when the hackathon hasn't cleared BR-011's
+        10-registration cohort floor (services.get_demographic_breakdown).
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemographicBreakdown'
+          description: ''
+  /api/v1/auth/login:
+    post:
+      operationId: v1_auth_login_create
+      description: POST /auth/login -- FR-AUTH-002.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/auth/password-reset:
+    post:
+      operationId: v1_auth_password_reset_create
+      description: POST /auth/password-reset -- FR-AUTH-004. Not yet in Doc 04; add
+        it.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetRequestResponse'
+          description: ''
+  /api/v1/auth/password-reset/confirm:
+    post:
+      operationId: v1_auth_password_reset_confirm_create
+      description: |-
+        POST /auth/password-reset/confirm -- FR-AUTH-004. Not yet in Doc 04;
+        add it.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/refresh:
+    post:
+      operationId: v1_auth_refresh_create
+      description: |-
+        POST /auth/refresh -- FR-AUTH-002. Replaces SimpleJWT's stock
+        TokenRefreshView: that view neither matches the contract's response
+        shape nor checks token_version on the refresh token itself (see
+        services.refresh_access_token's docstring).
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Refresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Refresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Refresh'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/auth/signup:
+    post:
+      operationId: v1_auth_signup_create
+      description: POST /auth/signup -- FR-AUTH-001.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /auth/login:
-    post:
-      tags:
-      - Auth
-      security: []
-      operationId: login
-      summary: Login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /auth/refresh:
-    post:
-      tags:
-      - Auth
-      operationId: refreshToken
-      summary: Refresh access token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /users/me:
-    get:
-      tags:
-      - Users
-      operationId: getCurrentUser
-      summary: View current user's own profile
-      responses:
-        '200':
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserProfile'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    put:
+          description: ''
+  /api/v1/auth/verify-email:
+    post:
+      operationId: v1_auth_verify_email_create
+      description: POST /auth/verify-email -- FR-AUTH-003. Not yet in Doc 04; add
+        it.
       tags:
-      - Users
-      operationId: updateCurrentUser
-      summary: Update current user's own profile
+      - v1
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdateRequest'
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserProfile'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /users/{id}:
-    get:
+          description: ''
+  /api/v1/auth/verify-email/resend:
+    post:
+      operationId: v1_auth_verify_email_resend_create
+      description: |-
+        POST /auth/verify-email/resend -- FR-AUTH-003 (1 request / 5 min).
+        Not yet in Doc 04; add it.
       tags:
-      - Users
-      operationId: getUserById
-      summary: View another user's public profile
-      parameters:
-      - $ref: '#/components/parameters/UserId'
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendVerification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendVerification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendVerification'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '202':
+          description: No response body
+  /api/v1/hackathons/:
+    get:
+      operationId: v1_hackathons_retrieve
+      description: |-
+        GET /hackathons -- FR-DISC-001/002 (public). POST /hackathons --
+        FR-HACK-001 (organizer only; enforced in services.py since the target
+        organization is in the request body, not the URL -- HasScopedRole
+        needs a URL kwarg to resolve scope_id from, same reasoning as
+        organizations.OrganizationListCreateView's POST).
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PublicProfile'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /hackathons:
-    get:
-      tags:
-      - Hackathons
-      security: []
-      operationId: listHackathons
-      summary: List hackathons (filterable by keyword, date range, tags)
-      parameters:
-      - $ref: '#/components/parameters/Limit'
-      - $ref: '#/components/parameters/Offset'
-      - name: keyword
-        in: query
-        schema:
-          type: string
-      - name: tag
-        in: query
-        schema:
-          type: string
-      - name: mode
-        in: query
-        schema:
-          type: string
-          enum:
-          - online
-          - in_person
-          - hybrid
-      - name: status
-        in: query
-        schema:
-          type: string
-          enum:
-          - draft
-          - published
-      responses:
-        '200':
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedHackathons'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+          description: ''
     post:
+      operationId: v1_hackathons_create
+      description: |-
+        GET /hackathons -- FR-DISC-001/002 (public). POST /hackathons --
+        FR-HACK-001 (organizer only; enforced in services.py since the target
+        organization is in the request body, not the URL -- HasScopedRole
+        needs a URL kwarg to resolve scope_id from, same reasoning as
+        organizations.OrganizationListCreateView's POST).
       tags:
-      - Hackathons
-      operationId: createHackathon
-      summary: Create a hackathon (organizer only)
+      - v1
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HackathonCreateRequest'
+              $ref: '#/components/schemas/HackathonCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HackathonCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HackathonCreate'
+        required: true
+      security:
+      - jwtAuth: []
       responses:
         '201':
-          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Hackathon'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /hackathons/{id}:
+          description: ''
+  /api/v1/hackathons/{id}:
     get:
-      tags:
-      - Hackathons
-      security: []
-      operationId: getHackathonById
-      summary: Get a hackathon
+      operationId: v1_hackathons_retrieve_2
+      description: GET (public for published hackathons) / PUT / DELETE /hackathons/{id}.
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Hackathon'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+          description: ''
     put:
-      tags:
-      - Hackathons
-      operationId: updateHackathon
-      summary: Update a hackathon (organizer only)
+      operationId: v1_hackathons_update
+      description: GET (public for published hackathons) / PUT / DELETE /hackathons/{id}.
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      requestBody:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
         required: true
+      tags:
+      - v1
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HackathonUpdateRequest'
+              $ref: '#/components/schemas/HackathonUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HackathonUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HackathonUpdate'
+      security:
+      - jwtAuth: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Hackathon'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+          description: ''
     delete:
-      tags:
-      - Hackathons
-      operationId: deleteHackathon
-      summary: Delete a hackathon (organizer only)
+      operationId: v1_hackathons_destroy
+      description: GET (public for published hackathons) / PUT / DELETE /hackathons/{id}.
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
       responses:
         '204':
-          description: Deleted
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /hackathons/{id}/register:
-    post:
-      tags:
-      - Hackathons
-      operationId: registerForHackathon
-      summary: Register current user for a hackathon
+          description: No response body
+  /api/v1/hackathons/{id}/submissions:
+    get:
+      operationId: v1_hackathons_submissions_retrieve
+      description: |-
+        GET /hackathons/{id}/submissions -- FR-ELIG-002 bulk screening
+        view. Organizer-only (enforced in services.py, default
+        IsAuthenticated permission class here, same pattern as this app's
+        other organizer-gated endpoints); one-click eligible/disqualify
+        actions per row are PUT /submissions/{id}/eligibility, owned by
+        apps.submissions per its own URL prefix -- see that app's views.py.
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegistrationCreateRequest'
+      - in: query
+        name: eligibilityStatus
+        schema:
+          type: string
+        description: 'Filter by current screening status. One of: pending, eligible,
+          disqualified.'
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Page size, 1-100. Default 20.
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: Pagination offset. Default 0.
+      - in: query
+        name: trackId
+        schema:
+          type: string
+        description: Filter to submissions opted into this ChallengeTrack. Must belong
+          to the same hackathon.
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
       responses:
-        '201':
-          description: Registered
+        '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Registration'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /hackathons/{id}/tracks:
+                $ref: '#/components/schemas/PaginatedScreeningSubmissions'
+          description: ''
+  /api/v1/hackathons/{id}/tracks:
     get:
-      tags:
-      - Tracks
-      security: []
-      operationId: listChallengeTracks
-      summary: List challenge tracks for a hackathon
+      operationId: v1_hackathons_tracks_retrieve
+      description: GET (public) / POST /hackathons/{id}/tracks -- FR-TRACK-001.
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedChallengeTracks'
-        '404':
-          $ref: '#/components/responses/NotFound'
+          description: ''
     post:
-      tags:
-      - Tracks
-      operationId: createChallengeTrack
-      summary: Create a sponsor challenge track (organizer/sponsor)
+      operationId: v1_hackathons_tracks_create
+      description: GET (public) / POST /hackathons/{id}/tracks -- FR-TRACK-001.
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      requestBody:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
         required: true
+      tags:
+      - v1
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChallengeTrackCreateRequest'
+              $ref: '#/components/schemas/ChallengeTrackCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChallengeTrackCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChallengeTrackCreate'
+        required: true
+      security:
+      - jwtAuth: []
       responses:
         '201':
-          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ChallengeTrack'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /hackathons/{id}/teams:
-    get:
-      tags:
-      - Teams
-      operationId: listTeams
-      summary: List teams for a hackathon
-      parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      - $ref: '#/components/parameters/Limit'
-      - $ref: '#/components/parameters/Offset'
-      - name: openToMembers
-        in: query
-        schema:
-          type: boolean
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedTeams'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    post:
-      tags:
-      - Teams
-      operationId: createTeam
-      summary: Create a new team
-      parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamCreateRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /teams/{id}:
-    get:
-      tags:
-      - Teams
-      operationId: getTeamById
-      summary: Get a team
-      parameters:
-      - $ref: '#/components/parameters/TeamId'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags:
-      - Teams
-      operationId: updateTeam
-      summary: Update a team (leader only)
-      parameters:
-      - $ref: '#/components/parameters/TeamId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamUpdateRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Team'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+          description: ''
+  /api/v1/judging/assignments/{assignment_id}:
     delete:
-      tags:
-      - Teams
-      operationId: disbandTeam
-      summary: Disband a team (leader only)
+      operationId: v1_judging_assignments_destroy
+      description: |-
+        DELETE /judging/assignments/{assignment_id} -- FR-JUDGE-001. Organizer
+        only, and only before the round opens. If the judge already scored the
+        submission, the caller must resend with confirmScoreDiscard to also
+        delete those scores (services.remove_assignment).
       parameters:
-      - $ref: '#/components/parameters/TeamId'
+      - in: path
+        name: assignment_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
       responses:
         '204':
-          description: Disbanded
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /teams/{id}/members:
+          description: No response body
+  /api/v1/judging/assignments/{assignment_id}/reassign:
     post:
-      tags:
-      - Teams
-      operationId: inviteOrJoinTeam
-      summary: Invite a member, or request to join an open team
+      operationId: v1_judging_assignments_reassign_create
+      description: |-
+        POST /judging/assignments/{assignment_id}/reassign -- FR-JUDGE-001.
+        Swaps the assigned judge for one who has already accepted an invitation
+        to the round; Organizer only, and only before the round opens. Requires
+        confirmScoreDiscard if the outgoing judge already scored the submission
+        (services.reassign_judge).
       parameters:
-      - $ref: '#/components/parameters/TeamId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamMemberRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TeamMember'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /hackathons/{id}/submissions:
-    get:
-      tags:
-      - Submissions
-      operationId: listSubmissions
-      summary: List submissions for a hackathon
-      parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      - $ref: '#/components/parameters/Limit'
-      - $ref: '#/components/parameters/Offset'
-      - name: trackId
-        in: query
+      - in: path
+        name: assignment_id
         schema:
           type: string
           format: uuid
-      - name: eligibilityStatus
-        in: query
-        schema:
-          type: string
-          enum:
-          - pending
-          - eligible
-          - disqualified
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedSubmissions'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    post:
-      tags:
-      - Submissions
-      operationId: createSubmission
-      summary: Create a project submission
-      parameters:
-      - $ref: '#/components/parameters/HackathonId'
-      requestBody:
         required: true
+      tags:
+      - v1
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmissionCreateRequest'
+              $ref: '#/components/schemas/AssignmentReassign'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignmentReassign'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignmentReassign'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/judging/judge/invitations:
+    post:
+      operationId: v1_judging_judge_invitations_create
+      description: |-
+        POST /judging/judge/invitations -- FR-JUDGE-001. Invites an email
+        address to judge a round; restricted to that round's manager, and only
+        while the round is not_started (services.invite_judge).
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JudgeInvitationCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JudgeInvitationCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JudgeInvitationCreate'
+        required: true
+      security:
+      - jwtAuth: []
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Submission'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /submissions/{id}:
-    get:
-      tags:
-      - Submissions
-      operationId: getSubmissionById
-      summary: Get a submission
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Submission'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags:
-      - Submissions
-      operationId: updateSubmission
-      summary: Edit a submission (before deadline)
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SubmissionUpdateRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Submission'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /submissions/{id}/eligibility:
-    put:
-      tags:
-      - Submissions
-      operationId: setSubmissionEligibility
-      summary: Mark a submission eligible or disqualified (organizer only)
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EligibilityUpdateRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Submission'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /submissions/{id}/tracks:
-    post:
-      tags:
-      - Submissions
-      operationId: assignSubmissionTrack
-      summary: Assign a submission to a challenge track
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SubmissionTrackRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SubmissionTrack'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    delete:
-      tags:
-      - Submissions
-      operationId: removeSubmissionTrack
-      summary: Remove a submission's challenge track assignment
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SubmissionTrackRequest'
-      responses:
-        '204':
-          description: Removed
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /rounds:
-    get:
-      tags:
-      - Judging
-      operationId: listJudgingRounds
-      summary: List judging rounds (Overall or per-track)
-      parameters:
-      - name: hackathonId
-        in: query
-        required: true
-        schema:
-          type: string
-          format: uuid
-      - name: trackId
-        in: query
-        schema:
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedJudgingRounds'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags:
-      - Judging
-      operationId: createJudgingRound
-      summary: Create a judging round (organizer/sponsor)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JudgingRoundCreateRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JudgingRound'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /rounds/{id}/criteria:
-    get:
-      tags:
-      - Judging
-      operationId: listJudgingCriteria
-      summary: Get the scoring rubric for a round
-      parameters:
-      - $ref: '#/components/parameters/RoundId'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedJudgingCriteria'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    post:
-      tags:
-      - Judging
-      operationId: createJudgingCriterion
-      summary: Define a scoring criterion for a round (organizer/sponsor)
-      parameters:
-      - $ref: '#/components/parameters/RoundId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JudgingCriterionCreateRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JudgingCriterion'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /submissions/{id}/scores:
-    get:
-      tags:
-      - Judging
-      operationId: listSubmissionScores
-      summary: Get all judges' scores for a submission
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedScores'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /submissions/{id}/score:
-    post:
-      tags:
-      - Judging
-      operationId: submitScore
-      summary: Submit a judge's score for a criterion
-      parameters:
-      - $ref: '#/components/parameters/SubmissionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ScoreCreateRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Score'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /judge/invitations:
-    post:
-      tags:
-      - Judging
-      operationId: inviteJudge
-      summary: Invite a judge by email (organizer/sponsor)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JudgeInvitationCreateRequest'
-      responses:
-        '201':
-          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JudgeInvitation'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /hackathons/{id}/analytics:
-    get:
-      tags:
-      - Analytics
-      operationId: getHackathonAnalytics
-      summary: Registration trend, conversion rate, and demographics (organizer only)
+          description: ''
+  /api/v1/judging/judge/invitations/{invitation_id}/accept:
+    post:
+      operationId: v1_judging_judge_invitations_accept_create
+      description: |-
+        POST /judging/judge/invitations/{invitation_id}/accept -- FR-JUDGE-001.
+        Accepted only by the invited email's own account; grants that account
+        a judge RoleAssignment on the hackathon (services.accept_invitation).
       parameters:
-      - $ref: '#/components/parameters/HackathonId'
+      - in: path
+        name: invitation_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AnalyticsResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /notifications:
-    post:
+                $ref: '#/components/schemas/JudgeInvitation'
+          description: ''
+  /api/v1/judging/rounds:
+    get:
+      operationId: v1_judging_rounds_list
+      description: |-
+        GET /judging/rounds -- FR-JUDGE-004. Lists the judging rounds for a
+        hackathon (optionally scoped to a track), visible to the hackathon's
+        Organizer and, for track-scoped rounds, that track's Sponsor
+        (services.list_rounds). POST creates a round: track=None creates the
+        Overall round (Organizer only); a trackId creates that track's round
+        (Organizer or the track's Sponsor).
       tags:
-      - Notifications
-      operationId: createNotification
-      summary: Post an announcement
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JudgingRound'
+          description: ''
+    post:
+      operationId: v1_judging_rounds_create
+      description: |-
+        GET /judging/rounds -- FR-JUDGE-004. Lists the judging rounds for a
+        hackathon (optionally scoped to a track), visible to the hackathon's
+        Organizer and, for track-scoped rounds, that track's Sponsor
+        (services.list_rounds). POST creates a round: track=None creates the
+        Overall round (Organizer only); a trackId creates that track's round
+        (Organizer or the track's Sponsor).
+      tags:
+      - v1
       requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JudgingRoundCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JudgingRoundCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JudgingRoundCreate'
         required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgingRound'
+          description: ''
+  /api/v1/judging/rounds/{round_id}/assignments:
+    get:
+      operationId: v1_judging_rounds_assignments_list
+      description: |-
+        GET/POST /judging/rounds/{round_id}/assignments -- FR-JUDGE-001. GET
+        is available to the round's manager for any judge, and to a judge for
+        their own assignments only (pass judgeUserId equal to your own id --
+        services.list_assignments). POST manually assigns one submission to one
+        judge; Organizer only, and only before the round opens.
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assignment'
+          description: ''
+    post:
+      operationId: v1_judging_rounds_assignments_create
+      description: |-
+        GET/POST /judging/rounds/{round_id}/assignments -- FR-JUDGE-001. GET
+        is available to the round's manager for any judge, and to a judge for
+        their own assignments only (pass judgeUserId equal to your own id --
+        services.list_assignments). POST manually assigns one submission to one
+        judge; Organizer only, and only before the round opens.
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/judging/rounds/{round_id}/assignments/auto:
+    post:
+      operationId: v1_judging_rounds_assignments_auto_create
+      description: |-
+        POST /judging/rounds/{round_id}/assignments/auto -- FR-JUDGE-001.
+        Round-robin assigns every eligible submission in the round's scope
+        across the given judges (each of whom must already have accepted an
+        invitation to the round); Organizer only, and only before the round
+        opens (services.auto_distribute).
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoDistribution'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AutoDistribution'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AutoDistribution'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/judging/rounds/{round_id}/close:
+    post:
+      operationId: v1_judging_rounds_close_create
+      description: |-
+        POST /judging/rounds/{round_id}/close -- FR-JUDGE-004. Moves an open
+        round to closed and materializes its RoundResult rows; restricted to
+        that round's manager (services.close_round -> services.calculate_round_results).
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgingRound'
+          description: ''
+  /api/v1/judging/rounds/{round_id}/criteria:
+    get:
+      operationId: v1_judging_rounds_criteria_list
+      description: |-
+        GET/POST /judging/rounds/{round_id}/criteria -- FR-HACK-004 / BR-005.
+        Rubric management for a round; restricted to that round's manager
+        (Organizer, or the track's Sponsor for a track-scoped round). Criteria
+        cannot be added once the round has opened (services.create_criterion).
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JudgingCriterion'
+          description: ''
+    post:
+      operationId: v1_judging_rounds_criteria_create
+      description: |-
+        GET/POST /judging/rounds/{round_id}/criteria -- FR-HACK-004 / BR-005.
+        Rubric management for a round; restricted to that round's manager
+        (Organizer, or the track's Sponsor for a track-scoped round). Criteria
+        cannot be added once the round has opened (services.create_criterion).
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JudgingCriterionCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JudgingCriterionCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JudgingCriterionCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgingCriterion'
+          description: ''
+  /api/v1/judging/rounds/{round_id}/open:
+    post:
+      operationId: v1_judging_rounds_open_create
+      description: |-
+        POST /judging/rounds/{round_id}/open -- FR-JUDGE-004. Moves a
+        not_started round to open, after validating the rubric's criterion
+        weights sum to 100; restricted to that round's manager
+        (services.open_round).
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgingRound'
+          description: ''
+  /api/v1/judging/rounds/{round_id}/results:
+    get:
+      operationId: v1_judging_rounds_results_list
+      description: |-
+        GET /judging/rounds/{round_id}/results -- FR-JUDGE-003. The
+        materialized, rank-ordered aggregate scores for a closed round;
+        restricted to that round's manager.
+      parameters:
+      - in: path
+        name: round_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoundResult'
+          description: ''
+  /api/v1/judging/scores/{score_id}/reopen:
+    post:
+      operationId: v1_judging_scores_reopen_create
+      description: |-
+        POST /judging/scores/{score_id}/reopen -- FR-JUDGE-002. Reverts a
+        final score back to draft so the judge can revise it, recording an
+        audit log entry; Organizer only, and requires a reason of at least 10
+        characters (services.reopen_score).
+      parameters:
+      - in: path
+        name: score_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoreReopen'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScoreReopen'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScoreReopen'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Score'
+          description: ''
+  /api/v1/judging/submissions/{submission_id}/score:
+    post:
+      operationId: v1_judging_submissions_score_create
+      description: |-
+        POST /judging/submissions/{submission_id}/score -- FR-JUDGE-002.
+        Saves or updates the caller's own score for one criterion on a
+        submission they are assigned to judge. Scores can be saved as draft or
+        final while the round is open; a final score becomes immutable to the
+        judge once saved (services.submit_score).
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoreCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScoreCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScoreCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Score'
+          description: ''
+  /api/v1/judging/submissions/{submission_id}/scores:
+    get:
+      operationId: v1_judging_submissions_scores_list
+      description: |-
+        GET /judging/submissions/{submission_id}/scores -- FR-JUDGE-002.
+        Every judge's per-criterion scores for a submission; restricted to the
+        hackathon's Organizer (services.list_submission_scores).
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Score'
+          description: ''
+  /api/v1/notifications/:
+    post:
+      operationId: v1_notifications_create
+      description: |-
+        POST /notifications -- Doc 04 `createNotification`. Organizer-only
+        (enforced in services.create_announcement, since the target
+        hackathon is in the request body, not a URL kwarg -- HasScopedRole
+        needs a URL kwarg to resolve scope_id from, same reasoning as
+        apps.hackathons.views.HackathonListCreateView's POST).
+      tags:
+      - v1
+      requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/NotificationCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
       responses:
         '201':
-          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Notification'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /search/users:
+          description: ''
+  /api/v1/notifications/me:
     get:
+      operationId: v1_notifications_me_list
+      description: |-
+        GET /notifications/me -- FR-NOTIFY-001's notification center. Not
+        yet in Doc 04; add it (same "Not yet in Doc 04" precedent as
+        apps/registrations/views.py). Strictly scoped to the requester
+        (services.list_my_notifications filters by actor).
       tags:
-      - Search
-      operationId: searchUsers
-      summary: Search users for team invites
-      parameters:
-      - name: query
-        in: query
-        required: true
-        schema:
-          type: string
-      - $ref: '#/components/parameters/Limit'
-      - $ref: '#/components/parameters/Offset'
+      - v1
+      security:
+      - jwtAuth: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPublicProfiles'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /search/mentors:
-    get:
-      tags:
-      - Search
-      operationId: searchMentors
-      summary: List mentors by skill (future)
-      parameters:
-      - name: skill
-        in: query
-        schema:
-          type: string
-      - $ref: '#/components/parameters/Limit'
-      - $ref: '#/components/parameters/Offset'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedMentors'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /payments/:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationDelivery'
+          description: ''
+  /api/v1/notifications/me/{delivery_id}/read:
     post:
-      tags:
-      - Payments
-      operationId: triggerPrizePayment
-      summary: Trigger prize payment via a local gateway (Telebirr/CBE Birr/Chapa) (future)
-      requestBody:
+      operationId: v1_notifications_me_read_create
+      description: |-
+        POST /notifications/me/{delivery_id}/read -- FR-NOTIFY-001: "the
+        in-app notification is marked unread until the user views the
+        notification center." Not yet in Doc 04; add it.
+      parameters:
+      - in: path
+        name: delivery_id
+        schema:
+          type: string
+          format: uuid
         required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDelivery'
+          description: ''
+  /api/v1/organizations/:
+    post:
+      operationId: v1_organizations_create
+      description: |-
+        POST /organizations -- FR-ORG-001. Not yet in Doc 04; add it.
+        No GET/list here -- there's no FR calling for a public org directory,
+        only lookup-by-id (below) for badge display on pages that reference one.
+      tags:
+      - v1
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentCreateRequest'
+              $ref: '#/components/schemas/RegisterOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterOrganization'
+        required: true
+      security:
+      - jwtAuth: []
       responses:
         '201':
-          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentTransaction'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/Organization'
+          description: ''
+  /api/v1/organizations/{id}:
+    get:
+      operationId: v1_organizations_retrieve
+      description: |-
+        GET /organizations/{id} -- not tied to a single FR by number, but
+        required for the "Verified badge on every public page referencing
+        them" acceptance criterion in FR-ORG-002. Not yet in Doc 04; add it.
+        Public (AllowAny): the badge is meant to be visible to anonymous
+        visitors browsing hackathons/orgs, same reasoning as
+        accounts.UserPublicProfileView.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+  /api/v1/organizations/{id}/verification-documents:
+    post:
+      operationId: v1_organizations_verification_documents_create
+      description: |-
+        POST /organizations/{id}/verification-documents -- FR-ORG-003.
+        Not yet in Doc 04; add it. Restricted to an Organizer scoped to this
+        org (HasScopedRole checks apps.accounts.RoleAssignment, never a token
+        claim, per Design Spec Sec 4.3); services.py re-checks the same thing
+        for defense-in-depth, matching the pattern already used for
+        is_platform_admin checks elsewhere in this codebase.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitVerificationDocuments'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubmitVerificationDocuments'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubmitVerificationDocuments'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrgVerificationDocument'
+          description: ''
+  /api/v1/organizations/{id}/verification-review:
+    post:
+      operationId: v1_organizations_verification_review_create
+      description: |-
+        POST /organizations/{id}/verification-review -- FR-ORG-003. Not yet
+        in Doc 04; add it. This is the FR-ADMIN-001 dashboard's decision
+        action; it lives here (not in platform_admin) because the service
+        function it drives, services.review_organization_verification, is
+        itself owned by this app, same reasoning as accounts owning both the
+        Auth and Users tags.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewOrganizationVerification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewOrganizationVerification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewOrganizationVerification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgVerificationReview'
+          description: ''
+  /api/v1/registrations/hackathons/{hackathon_id}:
+    post:
+      operationId: v1_registrations_hackathons_create
+      description: |-
+        POST /registrations/hackathons/{hackathon_id} -- FR-REG-001.
+        Not yet in Doc 04 (which only sketches /hackathons/{id}/register under
+        the Hackathons tag) -- this app owns its own url prefix per
+        config/urls.py, so the real path lives here; add it to Doc 04/
+        contracts/openapi.yaml once regenerated.
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterForHackathon'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterForHackathon'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterForHackathon'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+          description: ''
+  /api/v1/registrations/hackathons/{hackathon_id}/withdraw:
+    post:
+      operationId: v1_registrations_hackathons_withdraw_create
+      description: POST /registrations/hackathons/{hackathon_id}/withdraw -- FR-REG-002.
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+          description: ''
+  /api/v1/registrations/me:
+    get:
+      operationId: v1_registrations_me_list
+      description: |-
+        GET /registrations/me -- FR-REG-003. Strictly scoped to the
+        requester (services.list_my_registrations filters by actor).
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Registration'
+          description: ''
+  /api/v1/showcase/gallery:
+    get:
+      operationId: v1_showcase_gallery_retrieve
+      description: |-
+        GET /showcase/gallery -- FR-SHOWCASE-002 (public). A cross-hackathon,
+        searchable gallery of every showcased project, filterable by
+        hackathon, host institution, and technology tag
+        (services.list_gallery).
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGallery'
+          description: ''
+  /api/v1/showcase/hackathons/{hackathon_id}:
+    get:
+      operationId: v1_showcase_hackathons_retrieve
+      description: |-
+        GET /showcase/hackathons/{hackathon_id} -- FR-SHOWCASE-001 (public).
+        The rank-ordered Overall and Challenge Track results for a hackathon
+        whose showcase has been published; 404 while unpublished
+        (services.get_hackathon_showcase).
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HackathonShowcase'
+          description: ''
+  /api/v1/showcase/hackathons/{hackathon_id}/publish:
+    post:
+      operationId: v1_showcase_hackathons_publish_create
+      description: |-
+        POST /showcase/hackathons/{hackathon_id}/publish -- FR-SHOWCASE-001.
+        Makes a completed hackathon's judging results public; Organizer only,
+        and only once every judging round has closed
+        (services.publish_showcase).
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/showcase/hackathons/{hackathon_id}/unpublish:
+    post:
+      operationId: v1_showcase_hackathons_unpublish_create
+      description: |-
+        POST /showcase/hackathons/{hackathon_id}/unpublish -- FR-SHOWCASE-001
+        /FR-SHOWCASE-002. Revokes public visibility of a hackathon's showcase
+        page and immediately drops its projects from the cross-hackathon
+        gallery; Organizer only (services.unpublish_showcase).
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/showcase/submissions/{submission_id}/visibility:
+    put:
+      operationId: v1_showcase_submissions_visibility_update
+      description: |-
+        PUT/DELETE /showcase/submissions/{submission_id}/visibility --
+        FR-SHOWCASE-001's per-submission override. PUT shows or hides one
+        submission with a logged reason, overriding the eligibility-derived
+        default; DELETE reverts to that default. Organizer only
+        (services.set_submission_visibility / clear_submission_visibility_override).
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionVisibility'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubmissionVisibility'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubmissionVisibility'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShowcaseOverride'
+          description: ''
+    delete:
+      operationId: v1_showcase_submissions_visibility_destroy
+      description: |-
+        PUT/DELETE /showcase/submissions/{submission_id}/visibility --
+        FR-SHOWCASE-001's per-submission override. PUT shows or hides one
+        submission with a logged reason, overriding the eligibility-derived
+        default; DELETE reverts to that default. Organizer only
+        (services.set_submission_visibility / clear_submission_visibility_override).
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/submissions/{submission_id}:
+    get:
+      operationId: v1_submissions_retrieve
+      description: |-
+        GET /submissions/{submission_id} -- visible to team members and
+        the hackathon's Organizer only (services._require_team_member_or_organizer).
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/submissions/{submission_id}/eligibility:
+    put:
+      operationId: v1_submissions_eligibility_update
+      description: |-
+        PUT /submissions/{submission_id}/eligibility -- FR-ELIG-001.
+        Routing only: this endpoint lives under apps.submissions' URL prefix
+        (matching Doc 04's /submissions/{id}/eligibility path exactly, since
+        the resource being addressed is a submission), but the screening
+        business logic -- organizer permission, locked precondition, the
+        10-character disqualification-reason rule, and the audit log entry --
+        lives in apps.hackathons per Design Spec Sec 3.2's ELIG module
+        ownership. See apps.hackathons.services.screen_submission.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EligibilityUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EligibilityUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EligibilityUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/submissions/{submission_id}/finalize:
+    post:
+      operationId: v1_submissions_finalize_create
+      description: POST /submissions/{submission_id}/finalize -- FR-SUB-003.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/submissions/{submission_id}/history:
+    get:
+      operationId: v1_submissions_history_retrieve
+      description: |-
+        GET /submissions/{submission_id}/history -- FR-SUB-004, team
+        members and the Organizer only.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionHistory'
+          description: ''
+  /api/v1/submissions/{submission_id}/media:
+    post:
+      operationId: v1_submissions_media_create
+      description: POST /submissions/{submission_id}/media -- FR-SUB-002.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachMedia'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttachMedia'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttachMedia'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/submissions/{submission_id}/tracks:
+    post:
+      operationId: v1_submissions_tracks_create
+      description: |-
+        POST:
+            Opt a submission into a challenge track.
+
+        DELETE:
+            Remove a submission from a challenge track.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionTrackOptIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubmissionTrackOptIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubmissionTrackOptIn'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionTrack'
+          description: ''
+    delete:
+      operationId: v1_submissions_tracks_destroy
+      description: |-
+        POST:
+            Opt a submission into a challenge track.
+
+        DELETE:
+            Remove a submission from a challenge track.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/submissions/hackathons/{hackathon_id}:
+    post:
+      operationId: v1_submissions_hackathons_create
+      description: |-
+        POST /submissions/hackathons/{hackathon_id} -- FR-SUB-001. Creates
+        the caller's team's submission, or updates it if one already exists.
+        Not yet in Doc 04/contracts/openapi.yaml -- this app owns its own url
+        prefix per config/urls.py, same deviation pattern as
+        apps.teams.views.TeamCreateView.
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertSubmission'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpsertSubmission'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpsertSubmission'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/submissions/hackathons/{hackathon_id}/me:
+    get:
+      operationId: v1_submissions_hackathons_me_retrieve
+      description: |-
+        GET /submissions/hackathons/{hackathon_id}/me -- lets the caller's
+        team check whether a draft already exists before posting to
+        SubmissionUpsertView.
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/teams/{team_id}:
+    get:
+      operationId: v1_teams_retrieve
+      description: |-
+        GET /teams/{team_id} -- FR-TEAM-005. Roster visible only to team
+        members and the hackathon's Organizer; anyone else gets 403.
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamRoster'
+          description: ''
+  /api/v1/teams/{team_id}/invitations:
+    get:
+      operationId: v1_teams_invitations_list
+      description: |-
+        POST /teams/{team_id}/invitations -- FR-TEAM-002.
+        GET  /teams/{team_id}/invitations -- pending invitations, owner-only.
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+          description: ''
+    post:
+      operationId: v1_teams_invitations_create
+      description: |-
+        POST /teams/{team_id}/invitations -- FR-TEAM-002.
+        GET  /teams/{team_id}/invitations -- pending invitations, owner-only.
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteMember'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InviteMember'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InviteMember'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+          description: ''
+  /api/v1/teams/{team_id}/leave:
+    post:
+      operationId: v1_teams_leave_create
+      description: POST /teams/{team_id}/leave -- FR-TEAM-004.
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/teams/{team_id}/members/{user_id}:
+    delete:
+      operationId: v1_teams_members_destroy
+      description: DELETE /teams/{team_id}/members/{user_id} -- FR-TEAM-004, owner-only.
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/teams/hackathons/{hackathon_id}:
+    post:
+      operationId: v1_teams_hackathons_create
+      description: |-
+        POST /teams/hackathons/{hackathon_id} -- FR-TEAM-001.
+        Not yet in Doc 04/contracts/openapi.yaml -- this app owns its own url
+        prefix per config/urls.py, same deviation pattern as
+        apps.registrations.views.HackathonRegistrationView.
+      parameters:
+      - in: path
+        name: hackathon_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeam'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateTeam'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateTeam'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+  /api/v1/teams/invitations/{invitation_id}/accept:
+    post:
+      operationId: v1_teams_invitations_accept_create
+      description: POST /teams/invitations/{invitation_id}/accept -- FR-TEAM-003.
+      parameters:
+      - in: path
+        name: invitation_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+          description: ''
+  /api/v1/teams/invitations/{invitation_id}/decline:
+    post:
+      operationId: v1_teams_invitations_decline_create
+      description: POST /teams/invitations/{invitation_id}/decline -- FR-TEAM-003.
+      parameters:
+      - in: path
+        name: invitation_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+          description: ''
+  /api/v1/teams/invitations/me:
+    get:
+      operationId: v1_teams_invitations_me_list
+      description: |-
+        GET /teams/invitations/me -- pending invitations addressed to the
+        caller, across all hackathons. Strictly scoped to the requester, same
+        pattern as apps.registrations.views.MyRegistrationsView.
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+          description: ''
+  /api/v1/users/{id}:
+    get:
+      operationId: v1_users_retrieve
+      description: |-
+        GET /users/{id} -- FR-PROFILE-002: "reachable without
+        authentication". Doc 04 doesn't mark this operation `security: []`
+        the way it does for /auth/* -- treating the FR as authoritative and
+        flagging the contract as needing that override added.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicProfile'
+          description: ''
+  /api/v1/users/me:
+    get:
+      operationId: v1_users_me_retrieve
+      description: |-
+        GET/PUT /users/me -- FR-PROFILE-001. No explicit permission_classes:
+        the project default (IsAuthenticated) already gives an unauthenticated
+        request a 401 with no extra code needed here.
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    put:
+      operationId: v1_users_me_update
+      description: |-
+        GET/PUT /users/me -- FR-PROFILE-001. No explicit permission_classes:
+        the project default (IsAuthenticated) already gives an unauthenticated
+        request a 401 with no extra code needed here.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
 components:
-  parameters:
-    UserId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    HackathonId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    TeamId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    SubmissionId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    RoundId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    Limit:
-      name: limit
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 20
-        minimum: 1
-        maximum: 100
-    Offset:
-      name: offset
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-  responses:
-    BadRequest:
-      description: Bad request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    NotFound:
-      description: Not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Conflict:
-      description: Conflict
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
   schemas:
-    HealthResponse:
+    AdminAccount:
       type: object
       properties:
-        status:
+        id:
           type: string
-          example: ok
-        timestamp:
-          type: string
-          format: date-time
-    ErrorResponse:
-      type: object
-      properties:
-        code:
-          type: string
-          example: VALIDATION_ERROR
-        message:
-          type: string
-        details:
-          type: object
-          additionalProperties: true
-    PaginationMeta:
-      type: object
-      properties:
-        limit:
-          type: integer
-        offset:
-          type: integer
-        total:
-          type: integer
-    SignupRequest:
-      type: object
-      required:
-      - email
-      - password
-      properties:
+          format: uuid
+          readOnly: true
         email:
           type: string
           format: email
-        password:
-          type: string
-          format: password
+          maxLength: 254
         fullName:
           type: string
-        oauthProvider:
+          readOnly: true
+        isSuspended:
+          type: boolean
+          readOnly: true
+        isPlatformAdmin:
+          type: boolean
+          readOnly: true
+        createdAt:
           type: string
-          enum:
-          - github
-        oauthToken:
-          type: string
-    LoginRequest:
-      type: object
+          format: date-time
+          readOnly: true
       required:
+      - createdAt
       - email
-      - password
+      - fullName
+      - id
+      - isPlatformAdmin
+      - isSuspended
+    AdminHackathon:
+      type: object
       properties:
-        email:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        hostOrgId:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusDaeEnum'
+        isSuspended:
+          type: boolean
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - createdAt
+      - hostOrgId
+      - id
+      - isSuspended
+      - slug
+      - title
+    AdminOrganization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        type:
+          $ref: '#/components/schemas/TypeF58Enum'
+        contactEmail:
           type: string
           format: email
-        password:
+          readOnly: true
+        verificationStatus:
           type: string
-          format: password
-    RefreshRequest:
-      type: object
+          readOnly: true
+        isSuspended:
+          type: boolean
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
       required:
-      - refreshToken
+      - contactEmail
+      - createdAt
+      - id
+      - isSuspended
+      - name
+      - type
+      - verificationStatus
+    Assignment:
+      type: object
       properties:
-        refreshToken:
+        id:
           type: string
+          format: uuid
+          readOnly: true
+        roundId:
+          type: string
+          format: uuid
+          readOnly: true
+        submissionId:
+          type: string
+          format: uuid
+          readOnly: true
+        judgeUserId:
+          type: string
+          format: uuid
+          readOnly: true
+        assignedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        reassignedFromUserId:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+      required:
+      - assignedAt
+      - id
+      - judgeUserId
+      - reassignedFromUserId
+      - roundId
+      - submissionId
+    AssignmentCreate:
+      type: object
+      properties:
+        submissionId:
+          type: string
+          format: uuid
+        judgeUserId:
+          type: string
+          format: uuid
+      required:
+      - judgeUserId
+      - submissionId
+    AssignmentReassign:
+      type: object
+      properties:
+        confirmScoreDiscard:
+          type: boolean
+          default: false
+        newJudgeUserId:
+          type: string
+          format: uuid
+      required:
+      - newJudgeUserId
+    AttachMedia:
+      type: object
+      description: |-
+        POST /submissions/{submissionId}/media -- FR-SUB-002. Replaces the
+        full attachment set (the client is expected to send the complete
+        desired list, same as `technologies` above), since neither FR-SUB-002
+        nor Doc 04 defines an incremental add/remove contract.
+      properties:
+        attachmentUrls:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 5
+      required:
+      - attachmentUrls
     AuthResponse:
       type: object
+      description: |-
+        Output-only wrapper for signup/login/refresh -- Doc 04 AuthResponse.
+        `instance` is expected to be a plain dict: {"access", "refresh", "user"}.
       properties:
         accessToken:
           type: string
@@ -1101,350 +2475,866 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/UserProfile'
-    UserProfile:
+      required:
+      - accessToken
+      - refreshToken
+      - user
+    AutoDistribution:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        email:
-          type: string
-          format: email
-        fullName:
-          type: string
-        bio:
-          type: string
-        university:
-          type: string
-        skills:
+        judgeUserIds:
           type: array
           items:
             type: string
-        avatarUrl:
-          type: string
-        portfolioUrl:
-          type: string
-        roles:
-          type: array
-          items:
-            type: string
-            enum:
-            - participant
-            - organizer
-            - judge
-            - mentor
-            - sponsor
-            - admin
-        verificationStatus:
-          type: string
-          enum:
-          - unverified
-          - pending
-          - verified
-        createdAt:
-          type: string
-          format: date-time
-    UserUpdateRequest:
-      type: object
-      properties:
-        fullName:
-          type: string
-        bio:
-          type: string
-        university:
-          type: string
-        skills:
-          type: array
-          items:
-            type: string
-        avatarUrl:
-          type: string
-        contactEmail:
-          type: string
-          format: email
-    PublicProfile:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        fullName:
-          type: string
-        bio:
-          type: string
-        university:
-          type: string
-        skills:
-          type: array
-          items:
-            type: string
-        avatarUrl:
-          type: string
-        portfolioUrl:
-          type: string
-        badges:
-          type: array
-          items:
-            $ref: '#/components/schemas/Badge'
-    PaginatedPublicProfiles:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicProfile'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
+            format: uuid
+      required:
+      - judgeUserIds
     Badge:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         userId:
           type: string
           format: uuid
+          readOnly: true
         type:
-          type: string
-          enum:
-          - verified_student
-          - hackathon_veteran
+          $ref: '#/components/schemas/BadgeTypeEnum'
         awardedAt:
           type: string
           format: date-time
-    Organization:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-          - university
-          - company
-          - ngo
-          - government
-        contactEmail:
-          type: string
-          format: email
-    Hackathon:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        title:
-          type: string
-        description:
-          type: string
-        hostOrgId:
-          type: string
-          format: uuid
-        slug:
-          type: string
-        bannerUrl:
-          type: string
-        registrationOpensAt:
-          type: string
-          format: date-time
-        registrationClosesAt:
-          type: string
-          format: date-time
-        submissionOpensAt:
-          type: string
-          format: date-time
-        submissionClosesAt:
-          type: string
-          format: date-time
-        rules:
-          type: string
-        prizeInfo:
-          type: string
-        locationMode:
-          type: string
-          enum:
-          - online
-          - in_person
-          - hybrid
-        eligibilityRules:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        status:
-          type: string
-          enum:
-          - draft
-          - published
-        createdAt:
-          type: string
-          format: date-time
-    HackathonCreateRequest:
-      type: object
+          readOnly: true
       required:
-      - title
-      - hostOrgId
-      - registrationOpensAt
-      - registrationClosesAt
-      - submissionOpensAt
-      - submissionClosesAt
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        hostOrgId:
-          type: string
-          format: uuid
-        slug:
-          type: string
-        bannerUrl:
-          type: string
-        registrationOpensAt:
-          type: string
-          format: date-time
-        registrationClosesAt:
-          type: string
-          format: date-time
-        submissionOpensAt:
-          type: string
-          format: date-time
-        submissionClosesAt:
-          type: string
-          format: date-time
-        rules:
-          type: string
-        prizeInfo:
-          type: string
-        locationMode:
-          type: string
-          enum:
-          - online
-          - in_person
-          - hybrid
-        eligibilityRules:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-    HackathonUpdateRequest:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        bannerUrl:
-          type: string
-        registrationOpensAt:
-          type: string
-          format: date-time
-        registrationClosesAt:
-          type: string
-          format: date-time
-        submissionOpensAt:
-          type: string
-          format: date-time
-        submissionClosesAt:
-          type: string
-          format: date-time
-        rules:
-          type: string
-        prizeInfo:
-          type: string
-        eligibilityRules:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        status:
-          type: string
-          enum:
-          - draft
-          - published
-    PaginatedHackathons:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hackathon'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
-    RegistrationCreateRequest:
-      type: object
-      properties:
-        eligibilityConfirmed:
-          type: boolean
-        customAnswers:
-          type: object
-          additionalProperties: true
-    Registration:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        hackathonId:
-          type: string
-          format: uuid
-        userId:
-          type: string
-          format: uuid
-        eligibilityConfirmed:
-          type: boolean
-        verificationStatus:
-          type: string
-          enum:
-          - unverified
-          - pending
-          - verified
-        registeredAt:
-          type: string
-          format: date-time
+      - awardedAt
+      - id
+      - type
+      - userId
+    BadgeTypeEnum:
+      enum:
+      - verified_student
+      - hackathon_veteran
+      type: string
+      description: |-
+        * `verified_student` - Verified Student
+        * `hackathon_veteran` - Hackathon Veteran
     ChallengeTrack:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         hackathonId:
           type: string
           format: uuid
+          readOnly: true
         sponsorOrgId:
           type: string
           format: uuid
+          readOnly: true
         name:
           type: string
+          maxLength: 255
         description:
           type: string
         prize:
           type: string
         rubricReference:
           type: string
-    ChallengeTrackCreateRequest:
-      type: object
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
       required:
-      - sponsorOrgId
+      - createdAt
+      - hackathonId
+      - id
       - name
+      - rubricReference
+      - sponsorOrgId
+    ChallengeTrackCreate:
+      type: object
       properties:
         sponsorOrgId:
           type: string
           format: uuid
         name:
           type: string
+          maxLength: 255
         description:
           type: string
+          default: ''
         prize:
           type: string
+          default: ''
         rubricReference:
           type: string
+          default: ''
+      required:
+      - name
+      - sponsorOrgId
+    Channel55aEnum:
+      enum:
+      - email
+      - in_portal
+      - sms
+      type: string
+      description: |-
+        * `email` - Email
+        * `in_portal` - In-Portal
+        * `sms` - SMS
+    CreateTeam:
+      type: object
+      description: POST /teams/hackathons/{hackathonId} -- FR-TEAM-001.
+      properties:
+        teamName:
+          type: string
+          maxLength: 60
+          minLength: 3
+      required:
+      - teamName
+    DemographicBreakdown:
+      type: object
+      description: |-
+        Implements FR-ANALYTICS-002. `available=False` (with empty
+        breakdown lists) is the BR-011 placeholder for a hackathon that
+        hasn't yet cleared the minimum cohort size, not an error response.
+      properties:
+        hackathonId:
+          type: string
+          format: uuid
+        available:
+          type: boolean
+        minimumCohortSize:
+          type: integer
+        currentCount:
+          type: integer
+        byUniversity:
+          type: array
+          items:
+            $ref: '#/components/schemas/DemographicBucket'
+        bySkill:
+          type: array
+          items:
+            $ref: '#/components/schemas/DemographicBucket'
+      required:
+      - available
+      - bySkill
+      - byUniversity
+      - currentCount
+      - hackathonId
+      - minimumCohortSize
+    DemographicBucket:
+      type: object
+      description: |-
+        One aggregated cohort in a FR-ANALYTICS-002 breakdown -- never
+        smaller than BR-011's minimum cohort size (see
+        services._bucket_with_privacy_floor).
+      properties:
+        label:
+          type: string
+        count:
+          type: integer
+      required:
+      - count
+      - label
+    EligibilityStatusEnum:
+      enum:
+      - eligible
+      - disqualified
+      type: string
+      description: |-
+        * `eligible` - eligible
+        * `disqualified` - disqualified
+    EligibilityUpdate:
+      type: object
+      description: |-
+        PUT /submissions/{submissionId}/eligibility -- FR-ELIG-001. Request
+        shape only; the actual screening rules (locked precondition, reason
+        length, permissions, audit logging) live in
+        apps.hackathons.services.screen_submission -- see that app's ELIG
+        section for why ELIG logic lives there despite this being a
+        submissions-prefixed endpoint.
+      properties:
+        eligibilityStatus:
+          $ref: '#/components/schemas/EligibilityStatusEnum'
+        reason:
+          type: string
+          default: ''
+      required:
+      - eligibilityStatus
+    Hackathon:
+      type: object
+      description: |-
+        Doc 04's `Hackathon` schema declares `eligibilityRules` as a plain
+        string (it's actually JSONB per DB Design) and omits
+        `showcasePublishedAt`/`updatedAt`, both load-bearing here (BR-004's
+        publish gate, FR-SHOWCASE-001's visibility gate). Same "flag the
+        contract gap, don't under-serialize" call as
+        organizations.OrganizationSerializer.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        hostOrgId:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        bannerUrl:
+          type: string
+          readOnly: true
+        registrationOpensAt:
+          type: string
+          format: date-time
+          readOnly: true
+        registrationClosesAt:
+          type: string
+          format: date-time
+          readOnly: true
+        submissionOpensAt:
+          type: string
+          format: date-time
+          readOnly: true
+        submissionClosesAt:
+          type: string
+          format: date-time
+          readOnly: true
+        rules:
+          type: string
+        prizeInfo:
+          type: string
+          readOnly: true
+        locationMode:
+          type: string
+          readOnly: true
+        eligibilityRules:
+          readOnly: true
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/StatusDaeEnum'
+        showcasePublishedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        createdByUserId:
+          type: string
+          format: uuid
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        isSuspended:
+          type: boolean
+          readOnly: true
+      required:
+      - bannerUrl
+      - createdAt
+      - createdByUserId
+      - eligibilityRules
+      - hostOrgId
+      - id
+      - isSuspended
+      - locationMode
+      - prizeInfo
+      - registrationClosesAt
+      - registrationOpensAt
+      - showcasePublishedAt
+      - slug
+      - submissionClosesAt
+      - submissionOpensAt
+      - title
+      - updatedAt
+    HackathonCreate:
+      type: object
+      description: |-
+        POST /hackathons -- FR-HACK-001. Only the contract's required set
+        (title, hostOrgId, the four timeline fields) is enforced here; the
+        fuller "complete hackathon" checklist (eligibility rules, rubric) is
+        FR-HACK-005's publish-time gate, enforced in services.py -- see
+        create_hackathon's docstring.
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          default: ''
+        hostOrgId:
+          type: string
+          format: uuid
+        slug:
+          nullable: true
+          oneOf:
+          - type: string
+            maxLength: 255
+            pattern: ^[-a-zA-Z0-9_]+$
+          - type: string
+            maxLength: 0
+        bannerUrl:
+          type: string
+          default: ''
+        registrationOpensAt:
+          type: string
+          format: date-time
+        registrationClosesAt:
+          type: string
+          format: date-time
+        submissionOpensAt:
+          type: string
+          format: date-time
+        submissionClosesAt:
+          type: string
+          format: date-time
+        rules:
+          type: string
+          default: ''
+        prizeInfo:
+          type: string
+          default: ''
+        locationMode:
+          allOf:
+          - $ref: '#/components/schemas/LocationModeEnum'
+          default: online
+        eligibilityRules:
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+      required:
+      - hostOrgId
+      - registrationClosesAt
+      - registrationOpensAt
+      - submissionClosesAt
+      - submissionOpensAt
+      - title
+    HackathonShowcase:
+      type: object
+      description: GET /showcase/hackathons/{id} response body.
+      properties:
+        hackathonId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        overallResults:
+          type: string
+          readOnly: true
+        trackResults:
+          type: string
+          readOnly: true
+      required:
+      - hackathonId
+      - overallResults
+      - publishedAt
+      - slug
+      - title
+      - trackResults
+    HackathonUpdate:
+      type: object
+      description: |-
+        PUT /hackathons/{id} -- FR-HACK-002/003/005. All fields optional
+        (partial update); `status` is how FR-HACK-005 publish/unpublish/archive
+        transitions are driven, since Doc 04 has no dedicated /publish
+        endpoint -- see update_hackathon's docstring.
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        bannerUrl:
+          type: string
+        registrationOpensAt:
+          type: string
+          format: date-time
+        registrationClosesAt:
+          type: string
+          format: date-time
+        submissionOpensAt:
+          type: string
+          format: date-time
+        submissionClosesAt:
+          type: string
+          format: date-time
+        rules:
+          type: string
+        prizeInfo:
+          type: string
+        eligibilityRules:
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/HackathonUpdateStatusEnum'
+    HackathonUpdateStatusEnum:
+      enum:
+      - draft
+      - published
+      - archived
+      type: string
+      description: |-
+        * `draft` - draft
+        * `published` - published
+        * `archived` - archived
+    InviteMember:
+      type: object
+      description: |-
+        POST /teams/{teamId}/invitations -- FR-TEAM-002. Invites by email
+        (Account has no username field, only email -- see services.py).
+      properties:
+        inviteeEmail:
+          type: string
+          format: email
+      required:
+      - inviteeEmail
+    JudgeInvitation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        roundId:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/JudgeInvitationStatusEnum'
+        invitedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        respondedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - email
+      - id
+      - invitedAt
+      - respondedAt
+      - roundId
+    JudgeInvitationCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        roundId:
+          type: string
+          format: uuid
+      required:
+      - email
+      - roundId
+    JudgeInvitationStatusEnum:
+      enum:
+      - sent
+      - accepted
+      - expired
+      type: string
+      description: |-
+        * `sent` - Sent
+        * `accepted` - Accepted
+        * `expired` - Expired
+    JudgingCriterion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        roundId:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        minScore:
+          type: integer
+          readOnly: true
+        maxScore:
+          type: integer
+          readOnly: true
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+      required:
+      - id
+      - maxScore
+      - minScore
+      - name
+      - roundId
+      - weight
+    JudgingCriterionCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        minScore:
+          type: integer
+          default: 0
+        maxScore:
+          type: integer
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+      required:
+      - maxScore
+      - name
+      - weight
+    JudgingRound:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        hackathonId:
+          type: string
+          format: uuid
+          readOnly: true
+        trackId:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/JudgingRoundStatusEnum'
+        openedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        closedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - closedAt
+      - hackathonId
+      - id
+      - openedAt
+      - trackId
+    JudgingRoundCreate:
+      type: object
+      properties:
+        hackathonId:
+          type: string
+          format: uuid
+        trackId:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - hackathonId
+    JudgingRoundStatusEnum:
+      enum:
+      - not_started
+      - open
+      - closed
+      type: string
+      description: |-
+        * `not_started` - Not Started
+        * `open` - Open
+        * `closed` - Closed
+    LocationModeEnum:
+      enum:
+      - online
+      - in_person
+      - hybrid
+      type: string
+      description: |-
+        * `online` - online
+        * `in_person` - in_person
+        * `hybrid` - hybrid
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    ModerationAction:
+      type: object
+      description: |-
+        Request body shared by every suspend/reactivate endpoint in this
+        module -- FR-ADMIN-001 requires a reason on every moderation action,
+        not only on rejection (contrast with
+        organizations.ReviewOrganizationVerificationSerializer, where the
+        reason is conditional on the decision).
+      properties:
+        reason:
+          type: string
+          maxLength: 2000
+      required:
+      - reason
+    Notification:
+      type: object
+      description: |-
+        Doc 04 `Notification` schema -- the single broadcast resource
+        returned by POST /notifications.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        hackathonId:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        message:
+          type: string
+        channel:
+          $ref: '#/components/schemas/Channel55aEnum'
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - channel
+      - createdAt
+      - hackathonId
+      - id
+      - message
+    NotificationCreateRequest:
+      type: object
+      description: POST /notifications -- Doc 04 `NotificationCreateRequest`.
+      properties:
+        hackathonId:
+          type: string
+          format: uuid
+        message:
+          type: string
+        channel:
+          allOf:
+          - $ref: '#/components/schemas/NotificationCreateRequestChannelEnum'
+          default: email
+      required:
+      - hackathonId
+      - message
+    NotificationCreateRequestChannelEnum:
+      enum:
+      - email
+      - in_portal
+      type: string
+      description: |-
+        * `email` - email
+        * `in_portal` - in_portal
+    NotificationDelivery:
+      type: object
+      description: |-
+        A single row of a user's own notification center (FR-NOTIFY-001).
+        Not yet in Doc 04 -- see the "Not yet in Doc 04; add it" precedent in
+        apps/registrations/views.py; add it here too once regenerated.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        notificationId:
+          type: string
+          format: uuid
+          readOnly: true
+        hackathonId:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        message:
+          type: string
+          readOnly: true
+        channel:
+          $ref: '#/components/schemas/Channel55aEnum'
+        status:
+          type: string
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        readAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - channel
+      - createdAt
+      - hackathonId
+      - id
+      - message
+      - notificationId
+      - readAt
+      - status
+    NullEnum:
+      enum:
+      - null
+    OauthProviderEnum:
+      enum:
+      - github
+      type: string
+      description: '* `github` - github'
+    OrgVerificationDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        organizationId:
+          type: string
+          format: uuid
+          readOnly: true
+        fileUrl:
+          type: string
+          readOnly: true
+        uploadedByUserId:
+          type: string
+          format: uuid
+          readOnly: true
+        uploadedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - fileUrl
+      - id
+      - organizationId
+      - uploadedAt
+      - uploadedByUserId
+    OrgVerificationReview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        organizationId:
+          type: string
+          format: uuid
+          readOnly: true
+        reviewedByUserId:
+          type: string
+          format: uuid
+          readOnly: true
+        decision:
+          $ref: '#/components/schemas/OrgVerificationReviewDecisionEnum'
+        rejectionReason:
+          type: string
+          readOnly: true
+        reviewedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - decision
+      - id
+      - organizationId
+      - rejectionReason
+      - reviewedAt
+      - reviewedByUserId
+    OrgVerificationReviewDecisionEnum:
+      enum:
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `approved` - Approved
+        * `rejected` - Rejected
+    Organization:
+      type: object
+      description: |-
+        Doc 04's `Organization` schema only declares id/name/type/contactEmail
+        -- missing primaryEmailDomain, verificationStatus, and verifiedAt, all of
+        which are load-bearing here (FR-ORG-002's "Verified badge on every public
+        page" is meaningless without exposing verification_status). Flagging as
+        a contract gap to add to Doc 04/contracts/openapi.yaml rather than
+        silently under-serializing to match the stale contract.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        type:
+          $ref: '#/components/schemas/TypeF58Enum'
+        contactEmail:
+          type: string
+          format: email
+          readOnly: true
+        primaryEmailDomain:
+          type: string
+          readOnly: true
+          nullable: true
+        verificationStatus:
+          type: string
+          readOnly: true
+        verifiedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - contactEmail
+      - createdAt
+      - id
+      - name
+      - primaryEmailDomain
+      - type
+      - verificationStatus
+      - verifiedAt
     PaginatedChallengeTracks:
       type: object
       properties:
@@ -1454,293 +3344,394 @@ components:
             $ref: '#/components/schemas/ChallengeTrack'
         meta:
           $ref: '#/components/schemas/PaginationMeta'
-    Team:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        hackathonId:
-          type: string
-          format: uuid
-        teamName:
-          type: string
-        leaderUserId:
-          type: string
-          format: uuid
-        openToMembers:
-          type: boolean
-        maxSize:
-          type: integer
-        createdAt:
-          type: string
-          format: date-time
-    TeamCreateRequest:
-      type: object
       required:
-      - teamName
-      properties:
-        teamName:
-          type: string
-        openToMembers:
-          type: boolean
-    TeamUpdateRequest:
+      - data
+      - meta
+    PaginatedGallery:
       type: object
       properties:
-        teamName:
-          type: string
-        openToMembers:
-          type: boolean
-    PaginatedTeams:
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+      - meta
+    PaginatedHackathons:
+      type: object
+      description: |-
+        {data, meta} envelope per Doc 04. Built manually in the view rather
+        than via DRF's PageNumberPagination, since that class's
+        {count,next,previous,results} shape doesn't match this contract --
+        first list endpoint in the codebase, so no existing pagination
+        precedent to follow instead.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hackathon'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+      - data
+      - meta
+    PaginatedScreeningSubmissions:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Team'
+            $ref: '#/components/schemas/ScreeningSubmission'
         meta:
           $ref: '#/components/schemas/PaginationMeta'
-    TeamMemberRequest:
+      required:
+      - data
+      - meta
+    PaginationMeta:
       type: object
       properties:
-        userId:
+        limit:
+          type: integer
+        offset:
+          type: integer
+        total:
+          type: integer
+      required:
+      - limit
+      - offset
+      - total
+    PasswordResetConfirm:
+      type: object
+      properties:
+        token:
           type: string
-          format: uuid
-        inviteeEmail:
+        newPassword:
+          type: string
+          writeOnly: true
+      required:
+      - newPassword
+      - token
+    PasswordResetRequest:
+      type: object
+      description: |-
+        Not yet in Doc 04 -- FR-AUTH-004 needs an endpoint; add
+        POST /auth/password-reset to the contract to match.
+      properties:
+        email:
           type: string
           format: email
-    TeamMember:
+      required:
+      - email
+    PasswordResetRequestResponse:
       type: object
       properties:
-        teamId:
+        message:
+          type: string
+      required:
+      - message
+    PlatformSearchResult:
+      type: object
+      description: Response body for GET /admin/search -- FR-ADMIN-002.
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminAccount'
+          readOnly: true
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminOrganization'
+          readOnly: true
+        hackathons:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminHackathon'
+          readOnly: true
+      required:
+      - hackathons
+      - organizations
+      - users
+    PublicProfile:
+      type: object
+      description: |-
+        Doc 04 PublicProfile -- FR-PROFILE-002. Deliberately excludes email
+        and phone (never rendered publicly, per the FR's acceptance criteria).
+      properties:
+        id:
           type: string
           format: uuid
+          readOnly: true
+        fullName:
+          type: string
+          readOnly: true
+        bio:
+          type: string
+          readOnly: true
+        university:
+          type: string
+          readOnly: true
+        skills:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        avatarUrl:
+          type: string
+          readOnly: true
+        portfolioUrl:
+          type: string
+          readOnly: true
+        badges:
+          type: array
+          items:
+            $ref: '#/components/schemas/Badge'
+          readOnly: true
+      required:
+      - avatarUrl
+      - badges
+      - bio
+      - fullName
+      - id
+      - portfolioUrl
+      - skills
+      - university
+    Refresh:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+      - refreshToken
+    RegisterForHackathon:
+      type: object
+      description: POST /registrations/hackathons/{hackathonId} -- FR-REG-001.
+      properties:
+        eligibilityConfirmed:
+          type: boolean
+          default: false
+        customAnswers:
+          nullable: true
+    RegisterOrganization:
+      type: object
+      description: POST /organizations request body -- FR-ORG-001.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        type:
+          $ref: '#/components/schemas/RegisterOrganizationTypeEnum'
+        contactEmail:
+          type: string
+          format: email
+        primaryEmailDomain:
+          type: string
+          nullable: true
+      required:
+      - contactEmail
+      - name
+      - type
+    RegisterOrganizationTypeEnum:
+      enum:
+      - university
+      - company
+      - ngo
+      - government
+      type: string
+      description: |-
+        * `university` - university
+        * `company` - company
+        * `ngo` - ngo
+        * `government` - government
+    Registration:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        hackathonId:
+          type: string
+          format: uuid
+          readOnly: true
         userId:
           type: string
           format: uuid
-        joinStatus:
+          readOnly: true
+        eligibilityConfirmed:
+          type: boolean
+          readOnly: true
+        customAnswers:
+          readOnly: true
+        verificationStatus:
           type: string
-          enum:
-          - pending
-          - accepted
-          - declined
-    Submission:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        hackathonId:
-          type: string
-          format: uuid
-        teamId:
-          type: string
-          format: uuid
-        title:
-          type: string
-        tagline:
-          type: string
-        description:
-          type: string
-        technologies:
-          type: array
-          items:
-            type: string
-        repoLink:
-          type: string
-        demoVideoUrl:
-          type: string
-        attachmentUrls:
-          type: array
-          items:
-            type: string
-        eligibilityStatus:
-          type: string
-          enum:
-          - pending
-          - eligible
-          - disqualified
-        eligibilityReason:
-          type: string
-        submittedAt:
+          readOnly: true
+        registeredAt:
           type: string
           format: date-time
-    SubmissionCreateRequest:
-      type: object
-      required:
-      - teamId
-      - title
-      - repoLink
-      properties:
-        teamId:
+          readOnly: true
+        withdrawnAt:
           type: string
-          format: uuid
-        title:
-          type: string
-        tagline:
-          type: string
-        description:
-          type: string
-        technologies:
-          type: array
-          items:
-            type: string
-        repoLink:
-          type: string
-        demoVideoUrl:
-          type: string
-        attachmentUrls:
-          type: array
-          items:
-            type: string
-        trackIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-    SubmissionUpdateRequest:
-      type: object
-      properties:
-        title:
-          type: string
-        tagline:
-          type: string
-        description:
-          type: string
-        technologies:
-          type: array
-          items:
-            type: string
-        repoLink:
-          type: string
-        demoVideoUrl:
-          type: string
-        attachmentUrls:
-          type: array
-          items:
-            type: string
-    EligibilityUpdateRequest:
-      type: object
-      required:
-      - eligibilityStatus
-      properties:
-        eligibilityStatus:
-          type: string
-          enum:
-          - eligible
-          - disqualified
-        reason:
-          type: string
-    PaginatedSubmissions:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Submission'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
-    SubmissionTrackRequest:
-      type: object
-      required:
-      - trackId
-      properties:
-        trackId:
-          type: string
-          format: uuid
-    SubmissionTrack:
-      type: object
-      properties:
-        submissionId:
-          type: string
-          format: uuid
-        trackId:
-          type: string
-          format: uuid
-    JudgingRound:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        hackathonId:
-          type: string
-          format: uuid
-        trackId:
-          type: string
-          format: uuid
+          format: date-time
+          readOnly: true
           nullable: true
         status:
           type: string
-          enum:
-          - not_started
-          - open
-          - closed
-    JudgingRoundCreateRequest:
-      type: object
+          readOnly: true
       required:
+      - customAnswers
+      - eligibilityConfirmed
       - hackathonId
+      - id
+      - registeredAt
+      - status
+      - userId
+      - verificationStatus
+      - withdrawnAt
+    RegistrationBucket:
+      type: object
+      description: One day's bucket in the FR-ANALYTICS-001 registration-over-time
+        chart.
+      properties:
+        date:
+          type: string
+          format: date
+        count:
+          type: integer
+      required:
+      - count
+      - date
+    RegistrationDashboard:
+      type: object
+      description: Implements FR-ANALYTICS-001's registration and conversion dashboard.
       properties:
         hackathonId:
           type: string
           format: uuid
-        trackId:
-          type: string
-          format: uuid
-          nullable: true
-    PaginatedJudgingRounds:
-      type: object
-      properties:
-        data:
+        registrationCount:
+          type: integer
+        registrationsOverTime:
           type: array
           items:
-            $ref: '#/components/schemas/JudgingRound'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
-    JudgingCriterion:
+            $ref: '#/components/schemas/RegistrationBucket'
+        teamFormationRate:
+          type: number
+          format: double
+        submissionConversionRate:
+          type: number
+          format: double
+      required:
+      - hackathonId
+      - registrationCount
+      - registrationsOverTime
+      - submissionConversionRate
+      - teamFormationRate
+    ResendVerification:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    ReviewOrganizationVerification:
+      type: object
+      description: |-
+        POST /organizations/{id}/verification-review -- FR-ORG-003.
+        Not yet in Doc 04; add it there.
+      properties:
+        decision:
+          $ref: '#/components/schemas/ReviewOrganizationVerificationDecisionEnum'
+        rejectionReason:
+          type: string
+          nullable: true
+      required:
+      - decision
+    ReviewOrganizationVerificationDecisionEnum:
+      enum:
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `approved` - approved
+        * `rejected` - rejected
+    RoundResult:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         roundId:
           type: string
           format: uuid
-        name:
+          readOnly: true
+        submissionId:
           type: string
-        maxScore:
+          format: uuid
+          readOnly: true
+        aggregateScore:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+          readOnly: true
+        rank:
           type: integer
-    JudgingCriterionCreateRequest:
-      type: object
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        calculatedAt:
+          type: string
+          format: date-time
+          readOnly: true
       required:
-      - name
-      - maxScore
-      properties:
-        name:
-          type: string
-        maxScore:
-          type: integer
-    PaginatedJudgingCriteria:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/JudgingCriterion'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
+      - aggregateScore
+      - calculatedAt
+      - id
+      - roundId
+      - submissionId
     Score:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         submissionId:
           type: string
           format: uuid
+          readOnly: true
         judgeUserId:
           type: string
           format: uuid
+          readOnly: true
+        criterionId:
+          type: string
+          format: uuid
+          readOnly: true
+        scoreValue:
+          type: integer
+          readOnly: true
+        comment:
+          type: string
+        status:
+          $ref: '#/components/schemas/ScoreStatusEnum'
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - createdAt
+      - criterionId
+      - id
+      - judgeUserId
+      - scoreValue
+      - submissionId
+      - updatedAt
+    ScoreCreate:
+      type: object
+      properties:
         criterionId:
           type: string
           format: uuid
@@ -1748,210 +3739,584 @@ components:
           type: integer
         comment:
           type: string
-        createdAt:
-          type: string
-          format: date-time
-    ScoreCreateRequest:
-      type: object
+          default: ''
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ScoreCreateStatusEnum'
+          default: final
       required:
       - criterionId
       - scoreValue
-      properties:
-        criterionId:
-          type: string
-          format: uuid
-        scoreValue:
-          type: integer
-        comment:
-          type: string
-    PaginatedScores:
+    ScoreCreateStatusEnum:
+      enum:
+      - draft
+      - final
+      type: string
+      description: |-
+        * `draft` - draft
+        * `final` - final
+    ScoreReopen:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Score'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
-    JudgeInvitationCreateRequest:
-      type: object
+        reason:
+          type: string
+          maxLength: 1000
+          minLength: 1
       required:
-      - email
-      - roundId
-      properties:
-        email:
-          type: string
-          format: email
-        roundId:
-          type: string
-          format: uuid
-    JudgeInvitation:
+      - reason
+    ScoreStatusEnum:
+      enum:
+      - draft
+      - final
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `final` - Final
+    ScreeningSubmission:
       type: object
+      description: |-
+        Row shape for the FR-ELIG-002 bulk screening view (GET
+        /hackathons/{id}/submissions). Deliberately a plain Serializer, not a
+        ModelSerializer against apps.submissions.Submission -- this module
+        never imports apps.submissions at module level (see services.py's
+        ELIG section docstring on the import-cycle risk), so it can't
+        reference the model class here either; field access instead relies
+        on DRF resolving `source` against whatever submission-like object is
+        passed in.
       properties:
         id:
           type: string
           format: uuid
-        email:
-          type: string
-          format: email
-        roundId:
+          readOnly: true
+        teamId:
           type: string
           format: uuid
-        status:
+          readOnly: true
+        title:
           type: string
-          enum:
-          - sent
-          - accepted
-          - expired
-        invitedAt:
+          readOnly: true
+        eligibilityStatus:
+          type: string
+          readOnly: true
+        eligibilityReason:
+          type: string
+          readOnly: true
+        submittedAt:
           type: string
           format: date-time
-    AnalyticsResponse:
-      type: object
-      properties:
-        hackathonId:
+          readOnly: true
+          nullable: true
+        lockedAt:
           type: string
-          format: uuid
-        registrationTrend:
-          type: array
-          items:
-            type: object
-            properties:
-              date:
-                type: string
-                format: date
-              count:
-                type: integer
-        registrationToSubmissionConversionRate:
-          type: number
-        demographics:
-          type: object
-          properties:
-            byUniversity:
-              type: object
-              additionalProperties:
-                type: integer
-            byRegion:
-              type: object
-              additionalProperties:
-                type: integer
-        teamSizeDistribution:
-          type: object
-          additionalProperties:
-            type: integer
-    NotificationCreateRequest:
-      type: object
+          format: date-time
+          readOnly: true
+          nullable: true
       required:
-      - hackathonId
-      - message
-      properties:
-        hackathonId:
-          type: string
-          format: uuid
-        message:
-          type: string
-        channel:
-          type: string
-          enum:
-          - email
-          - in_portal
-    Notification:
+      - eligibilityReason
+      - eligibilityStatus
+      - id
+      - lockedAt
+      - submittedAt
+      - teamId
+      - title
+    ShowcaseOverride:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
+        submissionId:
+          type: string
+          format: uuid
+          readOnly: true
         hackathonId:
           type: string
           format: uuid
-        message:
+          readOnly: true
+        isVisible:
+          type: boolean
+          readOnly: true
+        reason:
           type: string
-        channel:
+        createdByUserId:
           type: string
-          enum:
-          - email
-          - in_portal
+          format: uuid
+          readOnly: true
         createdAt:
           type: string
           format: date-time
-    Mentor:
+          readOnly: true
+      required:
+      - createdAt
+      - createdByUserId
+      - hackathonId
+      - id
+      - isVisible
+      - reason
+      - submissionId
+    Signup:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+        fullName:
+          type: string
+          default: ''
+          maxLength: 255
+        oauthProvider:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/OauthProviderEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        oauthToken:
+          type: string
+      required:
+      - email
+      - password
+    StatusDaeEnum:
+      enum:
+      - draft
+      - published
+      - archived
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `published` - Published
+        * `archived` - Archived
+    Submission:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
+        hackathonId:
+          type: string
+          format: uuid
+          readOnly: true
+        teamId:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        tagline:
+          type: string
+          readOnly: true
+        description:
+          type: string
+        technologies:
+          type: array
+          items: {}
+          readOnly: true
+        repoLink:
+          type: string
+          readOnly: true
+        demoVideoUrl:
+          type: string
+          readOnly: true
+        attachmentUrls:
+          type: array
+          items: {}
+          readOnly: true
+        eligibilityStatus:
+          type: string
+          readOnly: true
+        eligibilityReason:
+          type: string
+          readOnly: true
+        isFinalized:
+          type: boolean
+          readOnly: true
+        submittedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        lockedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachmentUrls
+      - createdAt
+      - demoVideoUrl
+      - eligibilityReason
+      - eligibilityStatus
+      - hackathonId
+      - id
+      - isFinalized
+      - lockedAt
+      - repoLink
+      - submittedAt
+      - tagline
+      - teamId
+      - technologies
+      - updatedAt
+    SubmissionHistory:
+      type: object
+      description: GET /submissions/{submissionId}/history response envelope -- FR-SUB-004.
+      properties:
+        submission:
+          $ref: '#/components/schemas/Submission'
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubmissionVersion'
+      required:
+      - submission
+      - versions
+    SubmissionTrack:
+      type: object
+      properties:
+        track_id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - track_id
+    SubmissionTrackOptIn:
+      type: object
+      properties:
+        track_id:
+          type: string
+          format: uuid
+      required:
+      - track_id
+    SubmissionVersion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        editedByUserId:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - createdAt
+      - editedByUserId
+      - id
+    SubmissionVisibility:
+      type: object
+      properties:
+        isVisible:
+          type: boolean
+        reason:
+          type: string
+          maxLength: 2000
+          minLength: 10
+      required:
+      - isVisible
+      - reason
+    SubmitVerificationDocuments:
+      type: object
+      description: |-
+        POST /organizations/{id}/verification-documents -- FR-ORG-003.
+        Not yet in Doc 04; add it there. `fileUrls` are object-storage pointers
+        already uploaded direct-to-storage (Design Spec Sec 6.3/ADR-005), not
+        raw file bytes -- this endpoint just records them.
+      properties:
+        fileUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 3
+          minItems: 1
+      required:
+      - fileUrls
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        hackathonId:
+          type: string
+          format: uuid
+          readOnly: true
+        teamName:
+          type: string
+          readOnly: true
+        leaderUserId:
+          type: string
+          format: uuid
+          readOnly: true
+        openToMembers:
+          type: boolean
+          readOnly: true
+        maxSize:
+          type: integer
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        memberCount:
+          type: string
+          readOnly: true
+      required:
+      - createdAt
+      - hackathonId
+      - id
+      - leaderUserId
+      - maxSize
+      - memberCount
+      - openToMembers
+      - teamName
+    TeamMember:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        teamId:
+          type: string
+          format: uuid
+          readOnly: true
         userId:
           type: string
           format: uuid
+          readOnly: true
+          nullable: true
+        inviteeEmail:
+          type: string
+          format: email
+          readOnly: true
+        joinStatus:
+          type: string
+          readOnly: true
+        invitedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        expiresAt:
+          type: string
+          format: date-time
+          readOnly: true
+        respondedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        role:
+          type: string
+          readOnly: true
+          nullable: true
+      required:
+      - expiresAt
+      - id
+      - invitedAt
+      - inviteeEmail
+      - joinStatus
+      - respondedAt
+      - role
+      - teamId
+      - userId
+    TeamRoster:
+      type: object
+      description: GET /teams/{teamId} response envelope -- FR-TEAM-005.
+      properties:
+        team:
+          $ref: '#/components/schemas/Team'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamMember'
+      required:
+      - members
+      - team
+    TypeF58Enum:
+      enum:
+      - university
+      - company
+      - ngo
+      - government
+      type: string
+      description: |-
+        * `university` - University
+        * `company` - Company
+        * `ngo` - NGO
+        * `government` - Government
+    UpsertSubmission:
+      type: object
+      description: |-
+        POST /submissions/hackathons/{hackathonId} -- FR-SUB-001.
+
+        Only `title` is required here: a draft may be saved incomplete.
+        FR-SUB-003's precondition ("has all required fields (FR-SUB-001)") is
+        what actually gates the full title+description+at-least-one-of
+        {repo,demo,media} requirement, enforced in services.finalize_submission
+        -- see models.py's module docstring for the full reasoning.
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        tagline:
+          type: string
+          default: ''
+          maxLength: 255
+        description:
+          type: string
+          default: ''
+          maxLength: 3000
+        technologies:
+          type: array
+          items:
+            type: string
+            maxLength: 100
+        repoLink:
+          oneOf:
+          - type: string
+            format: uri
+            default: ''
+          - type: string
+            maxLength: 0
+        demoVideoUrl:
+          oneOf:
+          - type: string
+            format: uri
+            default: ''
+          - type: string
+            maxLength: 0
+      required:
+      - title
+    UserProfile:
+      type: object
+      description: |-
+        Maps to Doc 04's UserProfile -- used for /users/me and nested in
+        AuthResponse. Read-only: writes go through UserUpdateSerializer.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        fullName:
+          type: string
+          readOnly: true
+        bio:
+          type: string
+          readOnly: true
+        university:
+          type: string
+          readOnly: true
         skills:
           type: array
           items:
             type: string
-        availability:
+          readOnly: true
+        avatarUrl:
           type: string
-    PaginatedMentors:
-      type: object
-      properties:
-        data:
+          readOnly: true
+        portfolioUrl:
+          type: string
+          readOnly: true
+        roles:
           type: array
           items:
-            $ref: '#/components/schemas/Mentor'
-        meta:
-          $ref: '#/components/schemas/PaginationMeta'
-    PaymentCreateRequest:
-      type: object
-      required:
-      - hackathonId
-      - recipientUserId
-      - amount
-      - currency
-      - gateway
-      properties:
-        hackathonId:
+            type: string
+          readOnly: true
+        verificationStatus:
           type: string
-          format: uuid
-        recipientUserId:
-          type: string
-          format: uuid
-        amount:
-          type: number
-        currency:
-          type: string
-          example: ETB
-        gateway:
-          type: string
-          enum:
-          - telebirr
-          - cbe_birr
-          - chapa
-    PaymentTransaction:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        hackathonId:
-          type: string
-          format: uuid
-        recipientUserId:
-          type: string
-          format: uuid
-        amount:
-          type: number
-        currency:
-          type: string
-        gateway:
-          type: string
-          enum:
-          - telebirr
-          - cbe_birr
-          - chapa
-        status:
-          type: string
-          enum:
-          - pending
-          - completed
-          - failed
+          readOnly: true
         createdAt:
           type: string
           format: date-time
+          readOnly: true
+      required:
+      - avatarUrl
+      - bio
+      - createdAt
+      - email
+      - fullName
+      - id
+      - portfolioUrl
+      - roles
+      - skills
+      - university
+      - verificationStatus
+    UserUpdate:
+      type: object
+      description: |-
+        Doc 04 UserUpdateRequest, plus portfolioUrl (see module docstring).
+        `validated_data` comes out snake_case, matching
+        services.PROFILE_UPDATE_FIELDS exactly, so a view can pass it straight
+        through to services.update_profile(account=..., data=serializer.validated_data).
+      properties:
+        fullName:
+          type: string
+          maxLength: 255
+        bio:
+          type: string
+          maxLength: 500
+        university:
+          type: string
+          maxLength: 255
+        skills:
+          type: array
+          items:
+            type: string
+            maxLength: 100
+        avatarUrl:
+          type: string
+        portfolioUrl:
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+        contactEmail:
+          type: string
+          format: email
+          nullable: true
+    VerifyEmail:
+      type: object
+      description: |-
+        Not yet in Doc 04 -- FR-AUTH-003 needs an endpoint; add
+        POST /auth/verify-email to the contract to match.
+      properties:
+        token:
+          type: string
+      required:
+      - token
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

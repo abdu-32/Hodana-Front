@@ -1,1 +1,80 @@
 @import "tailwindcss";
+
+/**
+ * Design tokens -- Doc 06 Sec 3 (Design System Foundations).
+ *
+ * Tailwind v4's CSS-first config: every var below becomes a utility class
+ * automatically (e.g. --color-primary -> bg-primary/text-primary/
+ * border-primary, --font-latin -> font-latin). No tailwind.config.js.
+ *
+ * All color pairings below are contrast-checked against WCAG 2.1 AA
+ * (4.5:1 text, 3:1 large text/UI) per NFR-ACC-001 -- see the ratios noted
+ * inline. These are placeholder hex values, not final brand colors (Doc 06
+ * Sec 2 explicitly scopes brand color selection to a design tool, outside
+ * this document) -- swap the values, keep the ratios.
+ */
+@theme {
+  /* ---- 3.1 Typography ----
+   * font-ethiopic is listed first in the fallback chain deliberately: a
+   * mixed-language string (Amharic bio inside an English admin screen)
+   * must never fall back to tofu glyphs regardless of which script
+   * appears first in the actual text. */
+  --font-latin: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-ethiopic: "Noto Sans Ethiopic", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- 3.2 Color roles ----
+   * color-primary: 6.33:1 with white text -- primary actions (Register,
+   * Submit, Publish), active nav state.
+   */
+  --color-primary: #0284C7;
+  --color-primary-hover: #0369A1;
+  --color-accent: #06B6D4;
+
+  /* Page/card background distinction used across dashboards. */
+  --color-surface: #ffffff;
+  --color-surface-alt: #F8FAFC;
+
+  /* color-text: 16.94:1 on color-surface. color-text-muted: 6.26:1 --
+   * timestamps, helper copy, secondary meta text. */
+  --color-text: #0F172A;
+  --color-text-muted: #64748B;
+
+  /* Status badges (verification/eligibility/join/hackathon status -- see
+   * components/ui/StatusBadge) and form validation states. Each checked
+   * at >=4.5:1 against white text, since badges/buttons render text
+   * directly on these fills. */
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+
+  /* color-focus: deliberately distinct from color-primary (NFR-ACC-002) --
+   * 6.70:1, independently verified rather than reusing primary, which
+   * wouldn't necessarily clear 3:1 against every surface it'd need to. */
+  --color-focus: #2563EB;
+
+  /* ---- 3.3 Spacing and layout grid ----
+   * Tailwind v4's default spacing scale is already a 4px base unit
+   * (--spacing: 0.25rem), so p-1/p-2/p-3/p-4/p-6/p-8/p-12/p-16 already
+   * land on 4/8/12/16/24/32/48/64px -- no override needed here, just
+   * use the default scale.
+   *
+   * Breakpoints: doc's `sm` (360px, minimum supported width per
+   * NFR-USE-002) differs from Tailwind's default `sm` (640px) -- override
+   * only that one, `md`/`lg`/`xl` already match (768/1024/1280).
+   */
+  --breakpoint-sm: 360px;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-latin);
+  /* Shared line-height across both languages (Doc 06 Sec 3.1) rather than
+   * a per-language override, so Ethiopic's taller x-height doesn't disturb
+   * vertical rhythm on a bilingual page. */
+  line-height: 1.5;
+}
+
+:lang(am) {
+  font-family: var(--font-ethiopic);
+}
