@@ -54,3 +54,84 @@
 .focus {
   border: 2px solid #2563EB;
 }
+
+
+
+/* ---------------- */
+
+.primary      { background: #0284C7; }
+.hover        { background: #0369A1; }
+.accent       { background: #06B6D4; }
+
+.success      { background: #16A34A; }
+.warning      { background: #D97706; }
+.danger       { background: #DC2626; }
+
+.surface      { background: #FFFFFF; }
+.surface-alt  { background: #F8FAFC; }
+
+.text         { background: #0F172A; }
+.text-muted   { background: #64748B; }
+
+.focus        { background: #2563EB; }
+
+
+
+/* ------------------------------- */
+
+.primary      { background: #2563EB; }
+.hover        { background: #1D4ED8; }
+.accent       { background: #22D3EE; }
+
+.success      { background: #22C55E; }
+.warning      { background: #F59E0B; }
+.danger       { background: #EF4444; }
+
+.surface      { background: #FFFFFF; }
+.surface-alt  { background: #F1F5F9; }
+
+.text         { background: #111827; }
+.text-muted   { background: #6B7280; }
+
+.focus        { background: #3B82F6; }
+
+
+
+/* ------------------------- */
+
+.primary      { background: #0F766E; }
+.hover        { background: #115E59; }
+.accent       { background: #06B6D4; }
+
+.success      { background: #16A34A; }
+.warning      { background: #EA580C; }
+.danger       { background: #DC2626; }
+
+.surface      { background: #FFFFFF; }
+.surface-alt  { background: #ECFEFF; }
+
+.text         { background: #0F172A; }
+.text-muted   { background: #475569; }
+
+.focus        { background: #14B8A6; }
+
+
+
+/* ------------------------------ */
+
+
+.primary      { background: #7C3AED; }
+.hover        { background: #6D28D9; }
+.accent       { background: #3B82F6; }
+
+.success      { background: #22C55E; }
+.warning      { background: #F59E0B; }
+.danger       { background: #EF4444; }
+
+.surface      { background: #FFFFFF; }
+.surface-alt  { background: #F8FAFC; }
+
+.text         { background: #111827; }
+.text-muted   { background: #6B7280; }
+
+.focus        { background: #8B5CF6; }

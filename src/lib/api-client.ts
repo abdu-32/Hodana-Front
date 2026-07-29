@@ -13,12 +13,59 @@
  *
  * Per Design Spec Sec 7.2: server state (hackathons, teams, submissions —
  * anything owned by the API) is managed with React Query, not global client
- * state. This client is the single place that knows the base URL and
- * attaches the JWT access token; React Query hooks in each feature/ folder
- * call through it.
+ * state. This client is the single place that knows the base URL; the two
+ * exports below cover the two trust levels every endpoint falls into:
+ *
+ * - `apiFetch`  — public endpoints (signup, hackathon discovery, ...). No
+ *   credential attached.
+ * - `authFetch` — anything requiring the signed-in user. Attaches the
+ *   in-memory access token (see features/auth/lib/session-store.ts) as a
+ *   Bearer header, and on a 401 transparently calls `/api/auth/refresh`
+ *   (a same-origin Next.js route that reads the httpOnly refresh cookie)
+ *   once and retries the original request. If the refresh itself fails,
+ *   the session is cleared and the original 401 propagates so the caller
+ *   can redirect to /login.
  */
 
+import {
+  clearSession,
+  getAccessToken,
+  setSession,
+} from "@/features/auth/lib/session-store";
+import type { SessionResponse } from "./api-types-helpers";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4010";
+
+export class ApiError extends Error {
+  status: number;
+  fields?: Record<string, string[]>;
+
+  constructor(status: number, message: string, fields?: Record<string, string[]>) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.fields = fields;
+  }
+
+  static async fromResponse(res: Response): Promise<ApiError> {
+    const body = await res.json().catch(() => null);
+    return new ApiError(
+      res.status,
+      body?.error?.message ?? `Request failed: ${res.status}`,
+      body?.error?.fields,
+    );
+  }
+}
+
+async function parseOrThrow<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    throw await ApiError.fromResponse(res);
+  }
+  if (res.status === 204) {
+    return undefined as T;
+  }
+  return res.json() as Promise<T>;
+}
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}/api/v1${path}`, {
@@ -28,11 +75,60 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
       ...init?.headers,
     },
   });
+  return parseOrThrow<T>(res);
+}
 
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.error?.message ?? `Request failed: ${res.status}`);
+// Coalesces concurrent 401s into a single refresh call rather than firing
+// one per in-flight request.
+let refreshInFlight: Promise<boolean> | null = null;
+
+async function silentRefresh(): Promise<boolean> {
+  if (!refreshInFlight) {
+    refreshInFlight = (async () => {
+      try {
+        const res = await fetch("/api/auth/refresh", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          clearSession();
+          return false;
+        }
+        const data: SessionResponse = await res.json();
+        setSession(data.accessToken, data.user);
+        return true;
+      } catch {
+        clearSession();
+        return false;
+      } finally {
+        refreshInFlight = null;
+      }
+    })();
+  }
+  return refreshInFlight;
+}
+
+export async function authFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const doFetch = () => {
+    const token = getAccessToken();
+    return fetch(`${API_URL}/api/v1${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...init?.headers,
+      },
+    });
+  };
+
+  let res = await doFetch();
+
+  if (res.status === 401) {
+    const refreshed = await silentRefresh();
+    if (refreshed) {
+      res = await doFetch();
+    }
   }
 
-  return res.json() as Promise<T>;
+  return parseOrThrow<T>(res);
 }

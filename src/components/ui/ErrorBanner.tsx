@@ -17,15 +17,18 @@ export function ErrorBanner({
   return (
     <div
       role="alert"
-      className="flex items-start justify-between gap-3 rounded-md border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"
+      className="flex items-start gap-2.5 rounded-lg border border-danger/20 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
     >
-      <span>{message}</span>
+      <span aria-hidden="true" className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-danger/15 text-[11px] font-bold">
+        !
+      </span>
+      <span className="flex-1 leading-snug">{message}</span>
       {onDismiss && (
         <button
           type="button"
           onClick={onDismiss}
           aria-label={dismissLabel}
-          className="shrink-0 rounded focus-visible:outline focus-visible:outline-2
+          className="shrink-0 rounded p-0.5 text-danger/70 hover:text-danger focus-visible:outline focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           ✕

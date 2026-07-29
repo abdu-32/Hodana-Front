@@ -1,21 +1,102 @@
 {
-  "Metadata": {
-    "title": "Ethiopia Innovation Hub",
-    "description": "Hackathon and innovation-challenge platform for Ethiopian universities, companies, NGOs, and government agencies."
-  },
-  "Home": {
-    "heading": "Ethiopia Innovation Hub"
-  },
-  "Nav": {
-    "hackathons": "Hackathons",
-    "myTeams": "My Teams",
-    "submissions": "Submissions",
-    "login": "Log in",
-    "signup": "Sign up",
-    "logout": "Log out"
-  },
-  "LanguageToggle": {
-    "en": "English",
-    "am": "Amharic"
-  }
+    "Metadata": {
+        "title": "Ethiopia Innovation Hub",
+        "description": "Hackathon and innovation-challenge platform for Ethiopian universities, companies, NGOs, and government agencies."
+    },
+    "Home": {
+        "heading": "Ethiopia Innovation Hub",
+        "subheading": "Hackathon and innovation-challenge platform for Ethiopian universities, companies, NGOs, and government agencies."
+    },
+    "Nav": {
+        "hackathons": "Hackathons",
+        "myTeams": "My Teams",
+        "submissions": "Submissions",
+        "login": "Log in",
+        "signup": "Sign up",
+        "logout": "Log out"
+    },
+    "LanguageToggle": {
+        "en": "English",
+        "am": "Amharic"
+    },
+    "Auth": {
+        "loginHeading": "Log in to your account",
+        "signupHeading": "Create your account",
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "fullNameLabel": "Full name",
+        "passwordHint": "At least 8 characters",
+        "loginCta": "Log in",
+        "loggingIn": "Logging in…",
+        "signupCta": "Sign up",
+        "signingUp": "Signing up…",
+        "loginSuccess": "Logged in",
+        "signupSuccess": "Account created — check your email to verify it",
+        "genericError": "Something went wrong. Please try again.",
+        "dismissError": "Dismiss",
+        "noAccount": "Don't have an account?",
+        "goToSignup": "Sign up",
+        "haveAccount": "Already have an account?",
+        "goToLogin": "Log in",
+        "forgotPasswordLink": "Forgot your password?",
+        "verifyEmailHeading": "Verify your email",
+        "verifyEmailPending": "Check your inbox for a verification link to activate your account.",
+        "verifyEmailPendingWithAddress": "We sent a verification link to {email}. Click it to activate your account.",
+        "verifyEmailConfirming": "Confirming your email…",
+        "verifyEmailSuccess": "Your email is verified. You can now log in.",
+        "verifyEmailError": "That verification link is invalid or has expired.",
+        "resendCta": "Resend verification email",
+        "resending": "Resending…",
+        "resendSuccess": "Verification email resent — check your inbox.",
+        "forgotPasswordHeading": "Reset your password",
+        "forgotPasswordInstructions": "Enter the email on your account and we'll send you a link to reset your password.",
+        "sendResetLinkCta": "Send reset link",
+        "sendingResetLink": "Sending…",
+        "forgotPasswordSuccess": "If that email is registered, a reset link is on its way. Check your inbox.",
+        "resetPasswordHeading": "Choose a new password",
+        "newPasswordLabel": "New password",
+        "confirmPasswordLabel": "Confirm new password",
+        "passwordMismatch": "Passwords don't match.",
+        "resetPasswordCta": "Reset password",
+        "resettingPassword": "Resetting…",
+        "resetPasswordSuccess": "Your password has been reset. You can now log in.",
+        "resetPasswordMissingToken": "This password reset link is invalid or has expired. Request a new one from the forgot password page."
+    },
+    "Profile": {
+        "heading": "My profile",
+        "verificationLabel": "Verification status",
+        "verificationStatus": {
+            "unverified": "Unverified",
+            "pending": "Pending review",
+            "verified": "Verified"
+        },
+        "sectionBasics": "Basic info",
+        "sectionAbout": "About",
+        "sectionLinks": "Links",
+        "emailLabel": "Email",
+        "emailHint": "Your login email can't be changed here.",
+        "fullNameLabel": "Full name",
+        "bioLabel": "Bio",
+        "universityLabel": "University",
+        "skillsLabel": "Skills",
+        "skillsHint": "Separate skills with commas, e.g. \"React, Figma, Data analysis\".",
+        "avatarUrlLabel": "Avatar URL",
+        "portfolioUrlLabel": "Portfolio URL",
+        "contactEmailLabel": "Public contact email",
+        "contactEmailHint": "Optional — shown on your public profile instead of your login email.",
+        "saveCta": "Save changes",
+        "saving": "Saving…",
+        "saveSuccess": "Profile updated.",
+        "genericError": "Something went wrong. Please try again.",
+        "dismissError": "Dismiss"
+    },
+    "PublicProfile": {
+        "skillsHeading": "Skills",
+        "badgesHeading": "Badges",
+        "badgeType": {
+            "verified_student": "Verified Student",
+            "hackathon_veteran": "Hackathon Veteran"
+        },
+        "portfolioLink": "View portfolio"
+    }
 }

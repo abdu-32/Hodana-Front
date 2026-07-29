@@ -51,7 +51,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
     <dialog
       ref={dialogRef}
       aria-labelledby="modal-title"
-      className="w-full max-w-md rounded-lg border-0 bg-surface p-6 shadow-xl backdrop:bg-black/40"
+      className="w-full max-w-md rounded-2xl border-0 bg-surface p-6 shadow-2xl backdrop:bg-ink/50 backdrop:backdrop-blur-sm"
       onCancel={(e) => {
         // Let the native <dialog> close via Escape; onClose runs from the
         // "close" event listener above so both paths (Escape and a
@@ -60,7 +60,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         dialogRef.current?.close();
       }}
     >
-      <h2 id="modal-title" className="mb-4 text-lg font-semibold text-text">
+      <h2 id="modal-title" className="mb-4 font-display text-lg font-semibold tracking-tight text-text">
         {title}
       </h2>
       {children}

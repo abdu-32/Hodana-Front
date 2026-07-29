@@ -10,8 +10,13 @@ export default async function Home({
   const t = await getTranslations("Home");
 
   return (
-    <main>
-      <h1>{t("heading")}</h1>
+    <main className="mx-auto flex max-w-6xl flex-col items-start gap-3 px-4 py-16 sm:px-6">
+      <h1 className="font-display text-3xl font-semibold tracking-tight text-text sm:text-4xl">
+        {t("heading")}
+      </h1>
+      <p className="max-w-xl text-base text-text-muted">
+        {t("subheading")}
+      </p>
     </main>
   );
 }

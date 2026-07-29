@@ -17,17 +17,21 @@ export function LanguageToggle() {
   const t = useTranslations("LanguageToggle");
 
   return (
-    <div role="group" aria-label={t("en") + " / " + t("am")} className="flex gap-1">
+    <div
+      role="group"
+      aria-label={t("en") + " / " + t("am")}
+      className="flex items-center gap-0.5 rounded-full bg-surface-alt p-0.5 ring-1 ring-black/5"
+    >
       {routing.locales.map((loc) => (
         <button
           key={loc}
           type="button"
           onClick={() => router.replace(pathname, { locale: loc })}
           aria-current={locale === loc ? "true" : undefined}
-          className={`rounded px-2 py-1 text-sm font-medium
+          className={`rounded-full px-2.5 py-1 text-sm font-medium transition-colors
             focus-visible:outline focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-focus
-            ${locale === loc ? "bg-primary text-white" : "text-text-muted hover:bg-surface-alt"}`}
+            ${locale === loc ? "bg-surface text-primary shadow-sm" : "text-text-muted hover:text-text"}`}
         >
           {t(loc)}
         </button>

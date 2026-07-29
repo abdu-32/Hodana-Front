@@ -19,3 +19,5 @@ export type { ModalProps } from "./Modal";
 export { ToastProvider, useToast } from "./Toast";
 
 export { LanguageToggle } from "./LanguageToggle";
+
+export { Logomark } from "./Logomark";

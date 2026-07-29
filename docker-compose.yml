@@ -22,6 +22,8 @@ services:
       - ./.env.local
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:4010
+      BACKEND_INTERNAL_URL: http://mock-api:4010
+      WATCHPACK_POLLING: "true"
     ports:
       - "3000:3000"
     depends_on:
@@ -32,7 +34,7 @@ services:
   # scripts/sync-contract.sh whenever the backend contract changes.
   mock-api:
     image: stoplight/prism:5
-    command: mock -h 0.0.0.0 /contracts/openapi.yaml
+    command: mock -h 0.0.0.0 -m false /contracts/openapi.yaml
     volumes:
       - ./contracts:/contracts
     ports:

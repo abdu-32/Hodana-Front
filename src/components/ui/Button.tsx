@@ -11,17 +11,18 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: "bg-primary text-white hover:bg-primary-hover",
+  primary:
+    "bg-primary text-white shadow-sm hover:bg-primary-hover hover:shadow active:bg-primary-hover",
   secondary:
-    "bg-surface text-text border border-text-muted/40 hover:bg-surface-alt",
-  danger: "bg-danger text-white hover:opacity-90",
+    "bg-surface text-text border border-black/10 shadow-sm hover:bg-surface-alt hover:border-black/15",
+  danger: "bg-danger text-white shadow-sm hover:brightness-95",
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
   // 44x44px minimum tap target (NFR-ACC-002 / Doc 06 Sec 3.4), regardless
   // of label length or language (Doc 06 Sec 9 -- no fixed pixel widths).
-  sm: "min-h-[36px] px-3 text-sm",
-  md: "min-h-[44px] px-4 text-base",
+  sm: "min-h-[36px] px-3.5 text-sm gap-1.5",
+  md: "min-h-[44px] px-4.5 text-[15px] gap-2",
 };
 
 /**
@@ -38,8 +39,8 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-md font-medium
-        transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      className={`inline-flex items-center justify-center rounded-lg font-medium tracking-tight
+        transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none
         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
         focus-visible:outline-focus
         ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}

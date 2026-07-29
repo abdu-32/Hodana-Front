@@ -23,10 +23,17 @@ export type StatusDomain =
 type Tone = "success" | "warning" | "danger" | "neutral";
 
 const TONE_CLASSES: Record<Tone, string> = {
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
-  danger: "bg-danger/10 text-danger",
-  neutral: "bg-surface-alt text-text-muted",
+  success: "bg-success/10 text-success ring-success/20",
+  warning: "bg-warning/10 text-warning ring-warning/20",
+  danger: "bg-danger/10 text-danger ring-danger/20",
+  neutral: "bg-surface-alt text-text-muted ring-black/10",
+};
+
+const TONE_DOT_CLASSES: Record<Tone, string> = {
+  success: "bg-success",
+  warning: "bg-warning",
+  danger: "bg-danger",
+  neutral: "bg-text-muted",
 };
 
 const STATUS_TONES: Record<StatusDomain, Record<string, Tone>> = {
@@ -50,8 +57,9 @@ export function StatusBadge({ domain, value, children }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ${TONE_CLASSES[tone]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ring-1 ring-inset ${TONE_CLASSES[tone]}`}
     >
+      <span aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONE_DOT_CLASSES[tone]}`} />
       {children}
     </span>
   );

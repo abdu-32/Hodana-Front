@@ -1,10 +1,12 @@
 {
   "Metadata": {
     "title": "የኢትዮጵያ ኢኖቬሽን ማዕከል",
-    "description": "ለኢትዮጵያ ዩኒቨርሲቲዎች፣ ኩባንያዎች፣ መንግስታዊ ያልሆኑ ድርጅቶች እና የመንግስት ተቋማት የሃካቶን እና የፈጠራ ውድድር መድረክ።"
+    "description": "ለኢትዮጵያ ዩኒቨርሲቲዎች፣ ኩባንያዎች፣ መንግስታዊ ያልሆኑ ድርጅቶች እና የመንግስት ተቋማት የሃካቶን እና የፈጠራ ውድድር መድረክ።",
+    "goToSignup": ""
   },
   "Home": {
-    "heading": "የኢትዮጵያ ኢኖቬሽን ማዕከል"
+    "heading": "የኢትዮጵያ ኢኖቬሽን ማዕከል",
+    "subheading": "ለኢትዮጵያ ዩኒቨርሲቲዎች፣ ኩባንያዎች፣ መንግስታዊ ያልሆኑ ድርጅቶች እና የመንግስት ተቋማት የሃካቶን እና የፈጠራ ውድድር መድረክ።"
   },
   "Nav": {
     "hackathons": "ሃካቶኖች",
@@ -17,5 +19,85 @@
   "LanguageToggle": {
     "en": "እንግሊዝኛ",
     "am": "አማርኛ"
+  },
+  "Auth": {
+    "loginHeading": "ወደ መለያዎ ይግቡ",
+    "signupHeading": "አዲስ መለያ ይፍጠሩ",
+    "emailLabel": "ኢሜይል",
+    "passwordLabel": "የይለፍ ቃል",
+    "fullNameLabel": "ሙሉ ስም",
+    "passwordHint": "ቢያንስ 8 ቁምፊዎች",
+    "loginCta": "ግባ",
+    "loggingIn": "በመግባት ላይ...",
+    "signupCta": "ተመዝገብ",
+    "signingUp": "በመመዝገብ ላይ...",
+    "loginSuccess": "በተሳካ ሁኔታ ገብተዋል",
+    "signupSuccess": "መለያ ተፈጥሯል — ለማረጋገጥ ኢሜይልዎን ይመልከቱ",
+    "genericError": "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+    "dismissError": "አሰናብት",
+    "noAccount": "መለያ የለዎትም?",
+    "goToSignup": "ይመዝገቡ",
+    "haveAccount": "መለያ አለዎት?",
+    "goToLogin": "ይግቡ",
+    "forgotPasswordLink": "የይለፍ ቃልዎን ረሱ?",
+    "verifyEmailHeading": "ኢሜይልዎን ያረጋግጡ",
+    "verifyEmailPending": "መለያዎን ለማንቃት ወደ የገቢ መልእክት ሳጥንዎ የተላከውን የማረጋገጫ አገናኝ ይመልከቱ።",
+    "verifyEmailPendingWithAddress": "የማረጋገጫ አገናኝ ወደ {email} ልከናል። መለያዎን ለማንቃት ይጫኑት።",
+    "verifyEmailConfirming": "ኢሜይልዎን በማረጋገጥ ላይ...",
+    "verifyEmailSuccess": "ኢሜይልዎ ተረጋግጧል። አሁን መግባት ይችላሉ።",
+    "verifyEmailError": "ይህ የማረጋገጫ አገናኝ ልክ ያልሆነ ወይም ጊዜው ያለፈበት ነው።",
+    "resendCta": "የማረጋገጫ ኢሜይል እንደገና ላክ",
+    "resending": "በመላክ ላይ...",
+    "resendSuccess": "የማረጋገጫ ኢሜይል እንደገና ተልኳል — የገቢ መልእክት ሳጥንዎን ይመልከቱ።",
+    "forgotPasswordHeading": "የይለፍ ቃልዎን ዳግም ያስጀምሩ",
+    "forgotPasswordInstructions": "በመለያዎ ላይ ያለውን ኢሜይል ያስገቡ እና የይለፍ ቃል ዳግም ማስጀመሪያ አገናኝ እንልክልዎታለን።",
+    "sendResetLinkCta": "የዳግም ማስጀመሪያ አገናኝ ላክ",
+    "sendingResetLink": "በመላክ ላይ...",
+    "forgotPasswordSuccess": "ያ ኢሜይል የተመዘገበ ከሆነ፣ የዳግም ማስጀመሪያ አገናኝ በመንገድ ላይ ነው። የገቢ መልእክት ሳጥንዎን ይመልከቱ።",
+    "resetPasswordHeading": "አዲስ የይለፍ ቃል ይምረጡ",
+    "newPasswordLabel": "አዲስ የይለፍ ቃል",
+    "confirmPasswordLabel": "አዲሱን የይለፍ ቃል ያረጋግጡ",
+    "passwordMismatch": "የይለፍ ቃሎቹ አይመሳሰሉም።",
+    "resetPasswordCta": "የይለፍ ቃል ዳግም አስጀምር",
+    "resettingPassword": "በማስጀመር ላይ...",
+    "resetPasswordSuccess": "የይለፍ ቃልዎ ዳግም ተጀምሯል። አሁን መግባት ይችላሉ።",
+    "resetPasswordMissingToken": "ይህ የይለፍ ቃል ዳግም ማስጀመሪያ አገናኝ ልክ ያልሆነ ወይም ጊዜው ያለፈበት ነው። ከይለፍ ቃል መርሳት ገጽ አዲስ ይጠይቁ።"
+  },
+  "Profile": {
+    "heading": "የእኔ መገለጫ",
+    "verificationLabel": "የማረጋገጫ ሁኔታ",
+    "verificationStatus": {
+      "unverified": "ያልተረጋገጠ",
+      "pending": "በመገምገም ላይ",
+      "verified": "የተረጋገጠ"
+    },
+    "sectionBasics": "መሰረታዊ መረጃ",
+    "sectionAbout": "ስለ እኔ",
+    "sectionLinks": "አገናኞች",
+    "emailLabel": "ኢሜይል",
+    "emailHint": "የመግቢያ ኢሜይልዎ እዚህ ሊቀየር አይችልም።",
+    "fullNameLabel": "ሙሉ ስም",
+    "bioLabel": "ስለ እኔ",
+    "universityLabel": "ዩኒቨርሲቲ",
+    "skillsLabel": "ክህሎቶች",
+    "skillsHint": "ክህሎቶችን በኮማ ይለያዩ፣ ለምሳሌ «React, Figma, Data analysis»።",
+    "avatarUrlLabel": "የመገለጫ ምስል URL",
+    "portfolioUrlLabel": "የፖርትፎሊዮ URL",
+    "contactEmailLabel": "የህዝብ መገናኛ ኢሜይል",
+    "contactEmailHint": "አማራጭ — በህዝባዊ መገለጫዎ ላይ ከመግቢያ ኢሜይልዎ ይልቅ ይታያል።",
+    "saveCta": "ለውጦችን አስቀምጥ",
+    "saving": "በማስቀመጥ ላይ...",
+    "saveSuccess": "መገለጫ ተዘምኗል።",
+    "genericError": "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+    "dismissError": "አሰናብት"
+  },
+  "PublicProfile": {
+    "skillsHeading": "ክህሎቶች",
+    "badgesHeading": "ባጆች",
+    "badgeType": {
+      "verified_student": "የተረጋገጠ ተማሪ",
+      "hackathon_veteran": "ልምድ ያለው ሃካቶን ተሳታፊ"
+    },
+    "portfolioLink": "ፖርትፎሊዮን ይመልከቱ"
   }
 }

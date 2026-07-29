@@ -25,7 +25,13 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const TONE_CLASSES: Record<ToastTone, string> = {
   success: "bg-success text-white",
   danger: "bg-danger text-white",
-  neutral: "bg-text text-white",
+  neutral: "bg-ink text-white",
+};
+
+const TONE_ICON: Record<ToastTone, string> = {
+  success: "✓",
+  danger: "✕",
+  neutral: "•",
 };
 
 /**
@@ -54,12 +60,25 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`rounded-md px-4 py-3 text-sm shadow-lg ${TONE_CLASSES[toast.tone]}`}
+            className={`flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-medium shadow-lg
+              ring-1 ring-black/5 animate-[toast-in_0.2s_ease-out] ${TONE_CLASSES[toast.tone]}`}
           >
+            <span
+              aria-hidden="true"
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs"
+            >
+              {TONE_ICON[toast.tone]}
+            </span>
             {toast.message}
           </div>
         ))}
       </div>
+      <style>{`
+        @keyframes toast-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </ToastContext.Provider>
   );
 }

@@ -21,6 +21,7 @@ export function TextField({
   hint,
   required,
   className = "",
+  disabled,
   ...props
 }: TextFieldProps) {
   const id = useId();
@@ -28,7 +29,7 @@ export function TextField({
   const hintId = `${id}-hint`;
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium text-text">
         {label}
         {required && <span aria-hidden="true"> *</span>}
@@ -36,12 +37,15 @@ export function TextField({
       <input
         id={id}
         required={required}
+        disabled={disabled}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? errorId : hint ? hintId : undefined}
-        className={`min-h-[44px] rounded-md border px-3 text-base text-text
-          bg-surface focus-visible:outline focus-visible:outline-2
-          focus-visible:outline-offset-2 focus-visible:outline-focus
-          ${error ? "border-danger" : "border-text-muted/40"} ${className}`}
+        className={`min-h-[44px] rounded-lg border px-3.5 text-[15px] text-text
+          bg-surface shadow-xs transition-colors placeholder:text-text-muted/70
+          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+          focus-visible:outline-focus disabled:cursor-not-allowed disabled:bg-surface-alt
+          disabled:text-text-muted disabled:shadow-none
+          ${error ? "border-danger" : "border-black/12 hover:border-black/20"} ${className}`}
         {...props}
       />
       {hint && !error && (
@@ -50,8 +54,9 @@ export function TextField({
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-sm text-danger" role="alert">
-          {error}
+        <p id={errorId} className="flex items-start gap-1 text-sm text-danger" role="alert">
+          <span aria-hidden="true">•</span>
+          <span>{error}</span>
         </p>
       )}
     </div>
