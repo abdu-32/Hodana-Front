@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import { LanguageToggle, Logomark, ToastProvider } from "@/components/ui";
 import { Providers } from "../providers";
 import { HeaderAuthControl } from "@/features/auth";
+import { OrganizationNavLinks } from "@/features/organizations";
 import { Link } from "@/i18n/navigation";
 import "../globals.css";
 
@@ -48,7 +49,26 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("description"),
+    icons: {
+      icon: [
+        { url: "/favicon.ico" },
+        {
+          url: "/favicon-16x16.png",
+          sizes: "16x16",
+          type: "image/png",
+        },
+        {
+          url: "/favicon-32x32.png",
+          sizes: "32x32",
+          type: "image/png",
+        },
+      ],
+      apple: "/apple-touch-icon.png",
+    },
+
+    manifest: "/site.webmanifest",
   };
+
 }
 
 export default async function LocaleLayout({
@@ -82,7 +102,7 @@ export default async function LocaleLayout({
                   <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
                     <Link
                       href="/"
-                      className="flex items-center gap-2 rounded-md text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
+                      className="flex items-center gap-2 rounded-md text-text focus-visible:outline-2  focus-visible:outline-offset-4 focus-visible:outline-focus"
                     >
                       <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
                         <Logomark className="h-4.5 w-4.5" />
@@ -91,6 +111,7 @@ export default async function LocaleLayout({
                         {t("heading")}
                       </span>
                     </Link>
+                    <OrganizationNavLinks />
                     <div className="flex items-center gap-3 sm:gap-4">
                       <HeaderAuthControl />
                       <div className="hidden h-6 w-px bg-black/10 sm:block" aria-hidden="true" />
@@ -98,7 +119,7 @@ export default async function LocaleLayout({
                     </div>
                   </div>
                 </header>
-                <div className="flex-1">{children}</div>
+                <div className="flex-1">{children}</div>     
               </div>
             </ToastProvider>
           </Providers>

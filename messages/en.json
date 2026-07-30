@@ -13,7 +13,11 @@
         "submissions": "Submissions",
         "login": "Log in",
         "signup": "Sign up",
-        "logout": "Log out"
+        "logout": "Log out",
+        "organizationsNavLabel": "Organizations",
+        "registerOrganization": "Register organization",
+        "myOrganization": "My organization",
+        "adminQueue": "Admin"
     },
     "LanguageToggle": {
         "en": "English",
@@ -98,5 +102,68 @@
             "hackathon_veteran": "Hackathon Veteran"
         },
         "portfolioLink": "View portfolio"
+    },
+    "Organizations": {
+        "registerHeading": "Register your organization",
+        "registerIntro": "Register your university, company, NGO, or government agency to host hackathons on the platform. Registering makes you an Organizer for this organization.",
+        "nameLabel": "Organization name",
+        "typeLabel": "Organization type",
+        "typePlaceholder": "Select a type",
+        "typeOptions": {
+            "university": "University",
+            "company": "Company",
+            "ngo": "NGO",
+            "government": "Government"
+        },
+        "contactEmailLabel": "Contact email",
+        "primaryEmailDomainLabel": "Primary email domain",
+        "primaryEmailDomainHint": "Optional — if your domain matches a recognized institution, your organization is verified immediately.",
+        "registerCta": "Register organization",
+        "registering": "Registering…",
+        "genericError": "Something went wrong. Please try again.",
+        "dismissError": "Dismiss",
+        "verificationHeading": "Organization verification",
+        "verificationStatus": {
+            "unverified": "Unverified",
+            "pending": "Pending review",
+            "verified": "Verified"
+        },
+        "verifiedMessage": "Your organization is verified. A verified badge appears everywhere it's referenced across the platform.",
+        "verifiedMessageWithDate": "Your organization was verified on {date}. A verified badge appears everywhere it's referenced across the platform.",
+        "pendingMessage": "Your documents are being reviewed by our team. This page will update once a decision is made.",
+        "unverifiedMessage": "Upload up to 3 supporting documents (e.g. registration certificate, letterhead) to verify your organization.",
+        "notFound": "Organization not found.",
+        "loadError": "Couldn't load this organization. Please try again.",
+        "documentsHeading": "Verification documents",
+        "documentUrlLabel": "Document URL {index}",
+        "addDocumentCta": "Add another document",
+        "removeDocumentCta": "Remove",
+        "submitDocumentsCta": "Submit for review",
+        "submittingDocuments": "Submitting…",
+        "submitSuccess": "Documents submitted — pending admin review."
+    },
+    "AdminOrganizations": {
+        "heading": "Organization verification queue",
+        "emptyState": "No organizations awaiting verification.",
+        "loadError": "Couldn't load the verification queue. Please try again.",
+        "genericError": "Something went wrong. Please try again.",
+        "accessDenied": "You don't have access to this page.",
+        "typeOptions": {
+            "university": "University",
+            "company": "Company",
+            "ngo": "NGO",
+            "government": "Government"
+        },
+        "statusPending": "Pending review",
+        "submittedLabel": "Registered {date}",
+        "approveCta": "Approve",
+        "rejectCta": "Reject",
+        "rejectModalTitle": "Reject verification",
+        "rejectionReasonLabel": "Reason",
+        "cancelCta": "Cancel",
+        "confirmRejectCta": "Confirm rejection",
+        "submittingReview": "Submitting…",
+        "reviewSuccessApproved": "{name} approved.",
+        "reviewSuccessRejected": "{name} rejected."
     }
 }

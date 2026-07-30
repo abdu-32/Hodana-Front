@@ -55,7 +55,7 @@ export function ResetPasswordForm({ token }: { token: string | undefined }) {
       <div className="flex w-full flex-col gap-4">
         <div
           role="status"
-          className="flex items-start gap-2.5 rounded-lg border border-success/20 bg-success/[0.06] px-4 py-3 text-sm text-text"
+          className="flex items-start gap-2.5 rounded-lg border border-success/20 bg-success/6 px-4 py-3 text-sm text-text"
         >
           <span
             aria-hidden="true"
@@ -78,7 +78,7 @@ export function ResetPasswordForm({ token }: { token: string | undefined }) {
   if (!token) {
     return (
       <p
-        className="w-full rounded-lg border border-danger/20 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+        className="w-full rounded-lg border border-danger/20 bg-danger/6 px-4 py-3 text-sm text-danger"
         role="alert"
       >
         {t("resetPasswordMissingToken")}

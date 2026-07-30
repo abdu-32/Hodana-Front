@@ -17,7 +17,7 @@ export function ErrorBanner({
   return (
     <div
       role="alert"
-      className="flex items-start gap-2.5 rounded-lg border border-danger/20 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+      className="flex items-start gap-2.5 rounded-lg border border-danger/20 bg-danger/6 px-4 py-3 text-sm text-danger"
     >
       <span aria-hidden="true" className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-danger/15 text-[11px] font-bold">
         !

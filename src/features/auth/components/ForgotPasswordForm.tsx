@@ -47,7 +47,7 @@ export function ForgotPasswordForm() {
     return (
       <div
         role="status"
-        className="flex items-start gap-2.5 rounded-lg border border-success/20 bg-success/[0.06] px-4 py-3 text-sm text-text"
+        className="flex items-start gap-2.5 rounded-lg border border-success/20 bg-success/6 px-4 py-3 text-sm text-text"
       >
         <span
           aria-hidden="true"

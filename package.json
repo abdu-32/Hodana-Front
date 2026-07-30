@@ -11,11 +11,12 @@
     "generate-types": "bash scripts/generate-types.sh"
   },
   "dependencies": {
-    "next": "16.2.10",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
     "@tanstack/react-query": "^5.59.0",
-    "next-intl": "^4.13.4"
+    "lucide-react": "^1.28.0",
+    "next": "16.2.10",
+    "next-intl": "^4.13.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

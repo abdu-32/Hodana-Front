@@ -24,4 +24,4 @@ export const REFRESH_TOKEN_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
  * per Doc 06 Sec 4.2, everything under the authenticated shell needs this,
  * but only `/settings/profile` (FR-PROFILE-001) exists today.
  */
-export const PROTECTED_PATH_PREFIXES = ["/settings"];
+export const PROTECTED_PATH_PREFIXES = ["/settings", "/orgs", "/admin"];

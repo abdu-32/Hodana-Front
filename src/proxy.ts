@@ -42,7 +42,7 @@ export default function middleware(request: NextRequest) {
     !request.cookies.get(REFRESH_TOKEN_COOKIE)
   ) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("next", request.nextUrl.pathname);
+    loginUrl.searchParams.set("next", withoutLocalePrefix(request.nextUrl.pathname),);
     return NextResponse.redirect(loginUrl);
   }
 

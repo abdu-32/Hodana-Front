@@ -34,7 +34,11 @@ import {
 } from "@/features/auth/lib/session-store";
 import type { SessionResponse } from "./api-types-helpers";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4010";
+const CLIENT_API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4010";
+
+const SERVER_API_URL =
+  process.env.BACKEND_INTERNAL_URL ?? "http://mock-api:4010";
 
 export class ApiError extends Error {
   status: number;
@@ -61,14 +65,16 @@ async function parseOrThrow<T>(res: Response): Promise<T> {
   if (!res.ok) {
     throw await ApiError.fromResponse(res);
   }
-  if (res.status === 204) {
+  if (res.status === 204 || res.headers.get("Content-Length") === "0") {
     return undefined as T;
   }
   return res.json() as Promise<T>;
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}/api/v1${path}`, {
+  const apiUrl = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
+
+  const res = await fetch(`${apiUrl}/api/v1${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
@@ -86,7 +92,9 @@ async function silentRefresh(): Promise<boolean> {
   if (!refreshInFlight) {
     refreshInFlight = (async () => {
       try {
-        const res = await fetch("/api/auth/refresh", {
+        const apiUrl = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
+        
+        const res = await fetch(`${apiUrl}/api/auth/refresh`, {
           method: "POST",
           credentials: "include",
         });
@@ -111,7 +119,8 @@ async function silentRefresh(): Promise<boolean> {
 export async function authFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const doFetch = () => {
     const token = getAccessToken();
-    return fetch(`${API_URL}/api/v1${path}`, {
+    const apiUrl = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
+    return fetch(`${apiUrl}/api/v1${path}`, {
       ...init,
       headers: {
         "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
-/**
+/*
  * Doc 06 Sec 4: "not a standalone screen; it is a persistent control in the
  * global header, present on every screen in this inventory" (FR-I18N-001,
  * FR-I18N-002). Swaps the locale segment of the current path rather than
@@ -29,7 +29,7 @@ export function LanguageToggle() {
           onClick={() => router.replace(pathname, { locale: loc })}
           aria-current={locale === loc ? "true" : undefined}
           className={`rounded-full px-2.5 py-1 text-sm font-medium transition-colors
-            focus-visible:outline focus-visible:outline-2
+            focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-focus
             ${locale === loc ? "bg-surface text-primary shadow-sm" : "text-text-muted hover:text-text"}`}
         >

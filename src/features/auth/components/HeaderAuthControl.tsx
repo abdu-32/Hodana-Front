@@ -16,13 +16,13 @@ import { useSession } from "./SessionProvider";
 // patterns -- they only differ in color treatment, and each one's active
 // state is a filled pill so "which page am I on" is equally obvious for
 // both, not just for Signup.
-const NAV_LINK_BASE =
-  "inline-flex min-h-[36px] items-center justify-center rounded-lg px-3.5 text-sm font-medium tracking-tight transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
+export const NAV_LINK_BASE =
+  "inline-flex min-h-[36px] items-center justify-center rounded-lg px-3.5 text-sm font-medium tracking-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
 
-const NAV_LINK_ACTIVE = `${NAV_LINK_BASE} bg-primary text-white shadow-sm hover:bg-primary-hover`;
+export const NAV_LINK_ACTIVE = `${NAV_LINK_BASE} bg-primary text-white shadow-sm hover:bg-primary-hover`;
 
-const NAV_LINK_INACTIVE = `${NAV_LINK_BASE} text-text hover:bg-primary/5 hover:text-primary`;
-/**
+export const NAV_LINK_INACTIVE = `${NAV_LINK_BASE} text-text hover:bg-primary/5 hover:text-primary`;
+/*
  * Doc 06 Sec 4.1/4.2: the persistent header shows Login/Signup for
  * unauthenticated visitors, and switches to the signed-in identity once a
  * session exists -- driven entirely by SessionProvider's `user`, never a
@@ -75,9 +75,9 @@ export function HeaderAuthControl() {
     <div className="flex items-center gap-3">
       <Link
         href="/settings/profile"
-        className="flex items-center gap-2 rounded-md text-sm font-medium text-text hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="flex items-center gap-2 rounded-md text-sm font-medium text-text hover:text-primary  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
-        {user.avatarUrl ? (
+        {user.avatarUrl  ? (
           // eslint-disable-next-line @next/next/no-img-element -- avatar
           // comes from an arbitrary user-supplied URL.
           <img

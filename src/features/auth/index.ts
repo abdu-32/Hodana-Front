@@ -2,6 +2,11 @@ export { SessionProvider, useSession } from "./components/SessionProvider";
 export { AuthShell } from "./components/AuthShell";
 export { LoginForm } from "./components/LoginForm";
 export { HeaderAuthControl } from "./components/HeaderAuthControl";
+export {
+  NAV_LINK_BASE,
+  NAV_LINK_ACTIVE,
+  NAV_LINK_INACTIVE,
+} from "./components/HeaderAuthControl";
 export { SignupForm } from "./components/SignupForm";
 export { ForgotPasswordForm } from "./components/ForgotPasswordForm";
 export { ResetPasswordForm } from "./components/ResetPasswordForm";

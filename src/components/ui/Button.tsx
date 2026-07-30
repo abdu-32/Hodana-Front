@@ -41,7 +41,7 @@ export function Button({
     <button
       className={`inline-flex items-center justify-center rounded-lg font-medium tracking-tight
         transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none
-        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+        focus-visible:outline-2 focus-visible:outline-offset-2
         focus-visible:outline-focus
         ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
       disabled={disabled}

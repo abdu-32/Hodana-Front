@@ -61,12 +61,7 @@ export function AuthShell({
 
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-16">
         <div className="w-full max-w-sm">
-          <div className="mb-8 flex flex-col gap-2 lg:hidden">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white">
-              <Logomark className="h-4.5 w-4.5" />
-            </span>
-          </div>
-
+          
           <h1 className="font-display text-2xl font-semibold tracking-tight text-text">
             {title}
           </h1>

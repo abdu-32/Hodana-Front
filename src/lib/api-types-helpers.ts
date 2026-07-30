@@ -31,3 +31,21 @@ export type PasswordResetConfirmRequest =
 
 export type PublicProfile = components["schemas"]["PublicProfile"];
 export type UserUpdateRequest = components["schemas"]["UserUpdate"];
+
+
+// Doc 06 Sec 5.2 (organization registration & verification, FR-ORG-001 --
+// FR-ORG-003 / FR-ADMIN-001).
+export type Organization = components["schemas"]["Organization"];
+export type AdminOrganization = components["schemas"]["AdminOrganization"];
+export type RegisterOrganizationRequest =
+  components["schemas"]["RegisterOrganization"];
+export type RegisterOrganizationType =
+  components["schemas"]["RegisterOrganizationTypeEnum"];
+export type SubmitVerificationDocumentsRequest =
+  components["schemas"]["SubmitVerificationDocuments"];
+export type OrgVerificationDocument =
+  components["schemas"]["OrgVerificationDocument"];
+export type ReviewOrganizationVerificationRequest =
+  components["schemas"]["ReviewOrganizationVerification"];
+export type OrgVerificationReview =
+  components["schemas"]["OrgVerificationReview"];

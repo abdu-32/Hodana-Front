@@ -14,7 +14,11 @@
     "submissions": "የቀረቡ ስራዎች",
     "login": "ግባ",
     "signup": "ተመዝገብ",
-    "logout": "ውጣ"
+    "logout": "ውጣ",
+    "organizationsNavLabel": "ድርጅቶች",
+    "registerOrganization": "ድርጅት መዝግብ",
+    "myOrganization": "ድርጅቴ",
+    "adminQueue": "አስተዳደር"
   },
   "LanguageToggle": {
     "en": "እንግሊዝኛ",
@@ -99,5 +103,68 @@
       "hackathon_veteran": "ልምድ ያለው ሃካቶን ተሳታፊ"
     },
     "portfolioLink": "ፖርትፎሊዮን ይመልከቱ"
+  },
+  "Organizations": {
+    "registerHeading": "ድርጅትዎን ይመዝግቡ",
+    "registerIntro": "በመድረኩ ላይ ሃካቶኖችን ለማዘጋጀት ዩኒቨርሲቲዎን፣ ኩባንያዎን፣ መንግስታዊ ያልሆነ ድርጅትዎን ወይም የመንግስት ተቋምዎን ይመዝግቡ። መመዝገብ የዚህ ድርጅት አዘጋጅ (Organizer) ያደርግዎታል።",
+    "nameLabel": "የድርጅት ስም",
+    "typeLabel": "የድርጅት አይነት",
+    "typePlaceholder": "አይነት ይምረጡ",
+    "typeOptions": {
+      "university": "ዩኒቨርሲቲ",
+      "company": "ኩባንያ",
+      "ngo": "መንግስታዊ ያልሆነ ድርጅት",
+      "government": "የመንግስት ተቋም"
+    },
+    "contactEmailLabel": "የመገናኛ ኢሜይል",
+    "primaryEmailDomainLabel": "ዋና የኢሜይል ዶሜይን",
+    "primaryEmailDomainHint": "አማራጭ — ዶሜይንዎ ከታወቀ ተቋም ጋር የሚመሳሰል ከሆነ፣ ድርጅትዎ ወዲያውኑ ይረጋገጣል።",
+    "registerCta": "ድርጅት መዝግብ",
+    "registering": "በመመዝገብ ላይ...",
+    "genericError": "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+    "dismissError": "አሰናብት",
+    "verificationHeading": "የድርጅት ማረጋገጫ",
+    "verificationStatus": {
+      "unverified": "ያልተረጋገጠ",
+      "pending": "በመገምገም ላይ",
+      "verified": "የተረጋገጠ"
+    },
+    "verifiedMessage": "ድርጅትዎ ተረጋግጧል። የተረጋገጠ ባጅ በመድረኩ ላይ በሁሉም ቦታ ይታያል።",
+    "verifiedMessageWithDate": "ድርጅትዎ በ{date} ተረጋግጧል። የተረጋገጠ ባጅ በመድረኩ ላይ በሁሉም ቦታ ይታያል።",
+    "pendingMessage": "ሰነዶችዎ በቡድናችን እየተገመገሙ ነው። ውሳኔ ሲደረግ ይህ ገጽ ይዘምናል።",
+    "unverifiedMessage": "ድርጅትዎን ለማረጋገጥ እስከ 3 የሚደርሱ ደጋፊ ሰነዶችን (ለምሳሌ የምዝገባ የምስክር ወረቀት፣ ደብዳቤ ራስጌ) ይላኩ።",
+    "notFound": "ድርጅቱ አልተገኘም።",
+    "loadError": "ይህን ድርጅት መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+    "documentsHeading": "የማረጋገጫ ሰነዶች",
+    "documentUrlLabel": "የሰነድ URL {index}",
+    "addDocumentCta": "ሌላ ሰነድ ጨምር",
+    "removeDocumentCta": "አስወግድ",
+    "submitDocumentsCta": "ለግምገማ አስገባ",
+    "submittingDocuments": "በማስገባት ላይ...",
+    "submitSuccess": "ሰነዶች ገብተዋል — የአስተዳዳሪ ግምገማ በመጠባበቅ ላይ።"
+  },
+  "AdminOrganizations": {
+    "heading": "የድርጅት ማረጋገጫ ወረፋ",
+    "emptyState": "ማረጋገጫ የሚጠብቁ ድርጅቶች የሉም።",
+    "loadError": "የማረጋገጫ ወረፋን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+    "genericError": "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+    "accessDenied": "ወደዚህ ገጽ መድረስ አይችሉም።",
+    "typeOptions": {
+      "university": "ዩኒቨርሲቲ",
+      "company": "ኩባንያ",
+      "ngo": "መንግስታዊ ያልሆነ ድርጅት",
+      "government": "የመንግስት ተቋም"
+    },
+    "statusPending": "በመገምገም ላይ",
+    "submittedLabel": "የተመዘገበው {date}",
+    "approveCta": "አጽድቅ",
+    "rejectCta": "ውድቅ አድርግ",
+    "rejectModalTitle": "ማረጋገጫ ውድቅ አድርግ",
+    "rejectionReasonLabel": "ምክንያት",
+    "cancelCta": "ሰርዝ",
+    "confirmRejectCta": "ውድቅ ማድረግን አረጋግጥ",
+    "submittingReview": "በማስገባት ላይ...",
+    "reviewSuccessApproved": "{name} ጸድቋል።",
+    "reviewSuccessRejected": "{name} ውድቅ ተደርጓል።"
   }
 }
