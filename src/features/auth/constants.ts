@@ -21,7 +21,18 @@ export const REFRESH_TOKEN_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
  * Route prefixes (locale-stripped) that require an active session.
  * `middleware.ts` redirects to `/login` when none of these match a
  * refresh cookie. Extend this list as each authenticated feature ships --
- * per Doc 06 Sec 4.2, everything under the authenticated shell needs this,
- * but only `/settings/profile` (FR-PROFILE-001) exists today.
+ * per Doc 06 Sec 4.2, everything under the authenticated shell needs this.
+ *
+ * Hackathon register/team screens are matched separately in `proxy.ts`
+ * because `/hackathons` itself stays public for discovery (FR-DISC-001).
  */
-export const PROTECTED_PATH_PREFIXES = ["/settings", "/orgs", "/admin"];
+export const PROTECTED_PATH_PREFIXES = [
+  "/settings",
+  "/orgs",
+  "/admin",
+  "/dashboard",
+];
+
+/** `/hackathons/{slug}/register` and `/hackathons/{slug}/team` (FR-REG / FR-TEAM). */
+export const PROTECTED_HACKATHON_PATH =
+  /^\/hackathons\/[^/]+\/(register|team)\/?$/;

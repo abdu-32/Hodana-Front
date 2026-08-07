@@ -49,3 +49,15 @@ export type ReviewOrganizationVerificationRequest =
   components["schemas"]["ReviewOrganizationVerification"];
 export type OrgVerificationReview =
   components["schemas"]["OrgVerificationReview"];
+
+// Doc 06 Sec 5.4 (registration & team formation).
+export type Hackathon = components["schemas"]["Hackathon"];
+export type PaginatedHackathons = components["schemas"]["PaginatedHackathons"];
+export type Registration = components["schemas"]["Registration"];
+export type RegisterForHackathonRequest =
+  components["schemas"]["RegisterForHackathon"];
+export type Team = components["schemas"]["Team"];
+export type TeamMember = components["schemas"]["TeamMember"];
+export type TeamRoster = components["schemas"]["TeamRoster"];
+export type CreateTeamRequest = components["schemas"]["CreateTeam"];
+export type InviteMemberRequest = components["schemas"]["InviteMember"];

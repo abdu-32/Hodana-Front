@@ -8,6 +8,7 @@ import { LanguageToggle, Logomark, ToastProvider } from "@/components/ui";
 import { Providers } from "../providers";
 import { HeaderAuthControl } from "@/features/auth";
 import { OrganizationNavLinks } from "@/features/organizations";
+import { ParticipantNavLinks } from "@/features/registrations";
 import { Link } from "@/i18n/navigation";
 import "../globals.css";
 
@@ -98,24 +99,33 @@ export default async function LocaleLayout({
           <Providers>
             <ToastProvider>
               <div className="flex min-h-dvh flex-col">
-                <header className="sticky top-0 z-40 border-b border-black/6 bg-surface/85 backdrop-blur">
-                  <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+                <header className="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-md">
+                  <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                     <Link
                       href="/"
-                      className="flex items-center gap-2 rounded-md text-text focus-visible:outline-2  focus-visible:outline-offset-4 focus-visible:outline-focus"
+                      className="flex items-center gap-2 text-text focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
                     >
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
-                        <Logomark className="h-4.5 w-4.5" />
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#4338CA] text-white shadow-sm">
+                        <Logomark className="h-5 w-5" />
                       </span>
-                      <span className="font-display text-[15px] font-semibold tracking-tight text-text sm:text-base">
-                        {t("heading")}
+                      <span className="font-display text-lg font-extrabold tracking-tight text-[#4338CA]">
+                        EthioInnovate
                       </span>
                     </Link>
-                    <OrganizationNavLinks />
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <HeaderAuthControl />
-                      <div className="hidden h-6 w-px bg-black/10 sm:block" aria-hidden="true" />
+                    <div className="flex min-w-0 flex-1 items-center justify-end gap-1 overflow-x-auto sm:justify-center sm:gap-4 text-xs font-semibold text-[#52526B]">
+                      <Link href="/" className="px-3 py-1.5 rounded-lg hover:text-[#4338CA] transition-colors">
+                        Discover
+                      </Link>
+                      <Link href="/" className="px-3 py-1.5 rounded-lg hover:text-[#4338CA] transition-colors">
+                        Startups
+                      </Link>
+                      <ParticipantNavLinks />
+                      <OrganizationNavLinks />
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3 sm:gap-4">
                       <LanguageToggle />
+                      <div className="hidden h-5 w-px bg-black/10 sm:block" aria-hidden="true" />
+                      <HeaderAuthControl />
                     </div>
                   </div>
                 </header>

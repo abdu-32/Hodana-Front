@@ -1,97 +1,45 @@
 @import "tailwindcss";
 
 /**
- * Design tokens -- Doc 06 Sec 3 (Design System Foundations).
- *
- * Tailwind v4's CSS-first config: every var below becomes a utility class
- * automatically (e.g. --color-primary -> bg-primary/text-primary/
- * border-primary, --font-latin -> font-latin). No tailwind.config.js.
- *
- * Palette: "Meskel" -- named for the golden Meskel-daisy fields that bloom
- * across the highlands at the Ethiopian New Year, set against deep highland
- * green. Deliberately not the flag's red/yellow/green triad (too literal
- * for a daily-use product UI); the growth-green + warm-gold pairing carries
- * the same association more quietly and reads as a distinct, ownable brand
- * rather than a generic SaaS blue.
- *
- * All role-token pairings are contrast-checked against WCAG 2.1 AA
- * (4.5:1 text, 3:1 large text/UI) per NFR-ACC-001 -- ratios noted inline.
+ * Design tokens -- EthioInnovate Theme Palette.
  */
 @theme {
-  /* ---- 3.1 Typography ----
-   * font-ethiopic is listed first in the fallback chain deliberately: a
-   * mixed-language string (Amharic bio inside an English admin screen)
-   * must never fall back to tofu glyphs regardless of which script
-   * appears first in the actual text. font-display carries the same
-   * fallback chain -- Space Grotesk has no Ethiopic glyphs, so the browser
-   * transparently falls through to Noto Sans Ethiopic per-character for
-   * any Amharic heading, rather than the whole string dropping to serif
-   * tofu boxes. Font faces themselves are loaded once via next/font in
-   * app/[locale]/layout.tsx and exposed as the --font-inter /
-   * --font-space-grotesk / --font-noto-ethiopic variables referenced here. */
   --font-latin: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-ethiopic: var(--font-noto-ethiopic), var(--font-inter), ui-sans-serif,
     system-ui, sans-serif;
   --font-display: var(--font-space-grotesk), var(--font-noto-ethiopic),
     var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  /* ---- 3.2 Color roles ----
-   * color-primary: 6.41:1 with white text -- primary actions (Register,
-   * Submit, Publish), active nav state.
-   */
-  --color-primary: #0f6b5c;
-  --color-primary-hover: #0b5347;
-  --color-accent: #c68a00;
+  /* EthioInnovate Brand Palette */
+  --color-primary: #4338CA;
+  --color-primary-hover: #3730A3;
+  --color-accent: #EA580C;
 
-  /* Page/card background distinction used across dashboards. */
-  --color-surface: #ffffff;
-  --color-surface-alt: #f3f6f4;
+  /* Surface & Page background */
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5F5FA;
 
-  /* color-text: 15.84:1 on color-surface. color-text-muted: 5.91:1 --
-   * timestamps, helper copy, secondary meta text. */
-  --color-text: #122622;
-  --color-text-muted: #57685f;
+  /* Text colors */
+  --color-text: #1E1E38;
+  --color-text-muted: #6B6B80;
 
-  /* Status badges (verification/eligibility/join/hackathon status -- see
-   * components/ui/StatusBadge) and form validation states. Each checked
-   * at >=4.5:1 against white text, since badges/buttons render text
-   * directly on these fills. */
-  --color-success: #16793d;
-  --color-warning: #b45309;
-  --color-danger: #c4211c;
+  /* Status Badges */
+  --color-success: #10B981;
+  --color-warning: #D97706;
+  --color-danger: #EF4444;
 
-  /* color-focus: deliberately distinct from color-primary (NFR-ACC-002) --
-   * 5.17:1, independently verified rather than reusing primary, which
-   * wouldn't necessarily clear 3:1 against every surface it'd need to. */
-  --color-focus: #2563eb;
+  --color-focus: #4F46E5;
 
-  /* Deep panel background used only for the auth brand panel and other
-   * high-contrast decorative surfaces (never for body copy) -- Doc 06
-   * scopes final brand color to a design-tool deliverable, so this stays
-   * a token like everything else rather than a one-off hex in markup. */
-  --color-ink: #0e2b25;
-  --color-ink-alt: #123b32;
+  --color-ink: #312E81;
+  --color-ink-alt: #4338CA;
 
-  /* ---- 3.3 Spacing and layout grid ----
-   * Tailwind v4's default spacing scale is already a 4px base unit
-   * (--spacing: 0.25rem), so p-1/p-2/p-3/p-4/p-6/p-8/p-12/p-16 already
-   * land on 4/8/12/16/24/32/48/64px -- no override needed here, just
-   * use the default scale.
-   *
-   * Breakpoints: doc's `sm` (360px, minimum supported width per
-   * NFR-USE-002) differs from Tailwind's default `sm` (640px) -- override
-   * only that one, `md`/`lg`/`xl` already match (768/1024/1280).
-   */
   --breakpoint-sm: 360px;
 }
 
 body {
-  background: var(--color-surface);
+  background: #F5F5FA;
   color: var(--color-text);
   font-family: var(--font-latin);
-  /* Shared line-height across both languages (Doc 06 Sec 3.1) rather than
-   * a per-language override, so Ethiopic's taller x-height doesn't disturb
-   * vertical rhythm on a bilingual page. */
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -106,17 +54,10 @@ body {
   color: var(--color-text);
 }
 
-/*
- * Signature decorative surface -- the "Meskel field" dot pattern used on
- * the auth brand panel (features/auth/components/AuthShell.tsx). A plain
- * CSS radial-gradient dot-grid rather than an image asset, so it costs
- * nothing on the 3G budget (Doc 06 Sec 2 "low-bandwidth first") and scales
- * losslessly at any viewport.
- */
 .bg-hub-pattern {
   background-image: radial-gradient(
     circle at 1px 1px,
-    color-mix(in srgb, white 16%, transparent) 1px,
+    color-mix(in srgb, #4338CA 12%, transparent) 1px,
     transparent 0
   );
   background-size: 24px 24px;

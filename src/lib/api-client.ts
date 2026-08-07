@@ -92,9 +92,9 @@ async function silentRefresh(): Promise<boolean> {
   if (!refreshInFlight) {
     refreshInFlight = (async () => {
       try {
-        const apiUrl = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
-        
-        const res = await fetch(`${apiUrl}/api/auth/refresh`, {
+        // Same-origin Next.js route (reads the httpOnly refresh cookie) —
+        // never the backend/Prism base URL. See auth-client.restoreSession.
+        const res = await fetch("/api/auth/refresh", {
           method: "POST",
           credentials: "include",
         });

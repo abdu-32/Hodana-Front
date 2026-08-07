@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import {
+  PROTECTED_HACKATHON_PATH,
   PROTECTED_PATH_PREFIXES,
   REFRESH_TOKEN_COOKIE,
 } from "./features/auth/constants";
@@ -22,9 +23,14 @@ function withoutLocalePrefix(pathname: string): string {
 
 function isProtectedPath(pathname: string): boolean {
   const path = withoutLocalePrefix(pathname);
-  return PROTECTED_PATH_PREFIXES.some(
-    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
-  );
+  if (
+    PROTECTED_PATH_PREFIXES.some(
+      (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+    )
+  ) {
+    return true;
+  }
+  return PROTECTED_HACKATHON_PATH.test(path);
 }
 
 /**
