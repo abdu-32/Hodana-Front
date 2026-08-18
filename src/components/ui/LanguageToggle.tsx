@@ -26,7 +26,12 @@ export function LanguageToggle() {
         <button
           key={loc}
           type="button"
-          onClick={() => router.replace(pathname, { locale: loc })}
+          onClick={() => {
+            if (typeof document !== "undefined") {
+              document.cookie = `NEXT_LOCALE=${loc}; path=/; max-age=31536000; SameSite=Lax`;
+            }
+            router.replace(pathname, { locale: loc });
+          }}
           aria-current={locale === loc ? "true" : undefined}
           className={`rounded-full px-2.5 py-1 text-sm font-medium transition-colors
             focus-visible:outline-2

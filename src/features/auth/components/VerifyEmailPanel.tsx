@@ -38,8 +38,10 @@ function ConfirmState({ token }: { token: string }) {
   const t = useTranslations("Auth");
   const attempted = useRef(false);
 
+  const cleanToken = decodeURIComponent(token).trim();
+
   const mutation = useMutation({
-    mutationFn: () => verifyEmail({ token }),
+    mutationFn: () => verifyEmail({ token: cleanToken }),
   });
 
   useEffect(() => {

@@ -21,3 +21,8 @@ export { ToastProvider, useToast } from "./Toast";
 export { LanguageToggle } from "./LanguageToggle";
 
 export { Logomark } from "./Logomark";
+
+export { Footer } from "./Footer";
+
+export { LegalModal } from "./LegalModal";
+export type { LegalModalType } from "./LegalModal";

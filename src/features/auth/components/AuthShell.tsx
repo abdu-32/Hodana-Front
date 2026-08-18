@@ -41,8 +41,8 @@ export function AuthShell({
           aria-hidden="true"
         />
 
-        <span className="relative z-10 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white ring-1 ring-white/15">
-          <Logomark className="h-5 w-5" />
+        <span className="relative z-10 flex h-20 w-20 items-center justify-center rounded-3xl bg-[#F9F8F3] shadow-lg ring-1 ring-white/30 overflow-hidden p-2">
+          <Logomark className="h-full w-full object-contain" />
         </span>
 
         <div className="relative z-10 flex max-w-md flex-col gap-4">
@@ -55,7 +55,7 @@ export function AuthShell({
         </div>
 
         <p className="relative z-10 text-sm text-white/40">
-          &copy; {new Date().getFullYear()} Ethiopia Innovation Hub
+          &copy; {new Date().getFullYear()} HODANA
         </p>
       </aside>
 

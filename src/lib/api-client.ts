@@ -34,11 +34,16 @@ import {
 } from "@/features/auth/lib/session-store";
 import type { SessionResponse } from "./api-types-helpers";
 
-const CLIENT_API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4010";
-
 const SERVER_API_URL =
-  process.env.BACKEND_INTERNAL_URL ?? "http://mock-api:4010";
+  process.env.BACKEND_INTERNAL_URL ?? "http://localhost:8000";
+
+function getClientApiUrl(): string {
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+  if (typeof window !== "undefined" && base.includes("localhost") && window.location.hostname !== "localhost") {
+    return base.replace("localhost", window.location.hostname);
+  }
+  return base;
+}
 
 export class ApiError extends Error {
   status: number;
@@ -72,7 +77,7 @@ async function parseOrThrow<T>(res: Response): Promise<T> {
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const apiUrl = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
+  const apiUrl = typeof window === "undefined" ? SERVER_API_URL : getClientApiUrl();
 
   const res = await fetch(`${apiUrl}/api/v1${path}`, {
     ...init,
@@ -119,7 +124,7 @@ async function silentRefresh(): Promise<boolean> {
 export async function authFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const doFetch = () => {
     const token = getAccessToken();
-    const apiUrl = typeof window === "undefined" ? SERVER_API_URL : CLIENT_API_URL;
+    const apiUrl = typeof window === "undefined" ? SERVER_API_URL : getClientApiUrl();
     return fetch(`${apiUrl}/api/v1${path}`, {
       ...init,
       headers: {

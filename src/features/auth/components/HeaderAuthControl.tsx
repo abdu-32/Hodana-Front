@@ -5,6 +5,10 @@ import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui";
 import { useSession } from "./SessionProvider";
 
+export const NAV_LINK_BASE = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors";
+export const NAV_LINK_ACTIVE = "px-3 py-1.5 rounded-lg text-xs font-bold text-[#0f6b5c] bg-[#e8f3f0]";
+export const NAV_LINK_INACTIVE = "px-3 py-1.5 rounded-lg text-xs font-semibold text-[#57685f] hover:text-[#0f6b5c] transition-colors";
+
 export function HeaderAuthControl() {
   const t = useTranslations("Nav");
   const router = useRouter();
@@ -25,15 +29,15 @@ export function HeaderAuthControl() {
           href="/login"
           className={`inline-flex min-h-[38px] items-center justify-center rounded-xl px-3.5 text-xs sm:text-sm font-semibold transition-colors ${
             isLoginActive
-              ? "text-[#4338CA] bg-indigo-50"
-              : "text-[#1E1E38] hover:text-[#4338CA] hover:bg-gray-100"
+              ? "text-[#0f6b5c] bg-[#e8f3f0]"
+              : "text-[#122622] hover:text-[#0f6b5c] hover:bg-gray-100"
           }`}
         >
           {t("login")}
         </Link>
         <Link
           href="/signup"
-          className="inline-flex min-h-[38px] items-center justify-center rounded-xl bg-[#4338CA] px-4.5 text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-[#3730A3] hover:shadow-md"
+          className="inline-flex min-h-[38px] items-center justify-center rounded-xl bg-[#0f6b5c] px-4.5 text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-[#0b5347] hover:shadow-md"
         >
           Register
         </Link>
@@ -46,35 +50,35 @@ export function HeaderAuthControl() {
   return (
     <div className="flex items-center gap-3">
       <Link
-        href="/settings/profile"
-        className="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-semibold text-[#1E1E38] hover:bg-gray-100 hover:text-[#4338CA] transition-colors"
+        href="/dashboard"
+        className="flex items-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-3 py-1.5 text-xs sm:text-sm font-semibold text-[#122622] shadow-2xs hover:border-[#b5d6cc] hover:bg-[#f3f6f4] hover:text-[#0f6b5c] transition-all"
       >
         {user.avatarUrl ? (
           <img
             src={user.avatarUrl}
             alt=""
-            className="h-7 w-7 rounded-full object-cover ring-2 ring-[#4338CA]/20"
+            className="h-6 w-6 rounded-full object-cover ring-2 ring-[#0f6b5c]/20"
           />
         ) : (
           <span
             aria-hidden="true"
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-[#4338CA] text-xs font-bold text-white shadow-xs"
+            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0f6b5c] text-[11px] font-extrabold text-white shadow-xs"
           >
             {initial}
           </span>
         )}
-        <span className="hidden sm:inline">{user.fullName}</span>
+        <span className="hidden sm:inline font-bold text-xs">{user.fullName}</span>
       </Link>
-      <Button
-        variant="secondary"
-        size="sm"
+      <button
+        type="button"
         onClick={async () => {
           await logout();
           router.push("/");
         }}
+        className="inline-flex min-h-[38px] items-center justify-center rounded-xl border border-[#d6e7e1] bg-white px-3.5 text-xs sm:text-sm font-semibold text-[#57685f] shadow-2xs hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
       >
         {t("logout")}
-      </Button>
+      </button>
     </div>
   );
 }

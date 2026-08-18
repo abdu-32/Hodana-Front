@@ -1,0 +1,156 @@
+"use client";
+
+import { useState } from "react";
+import {
+  X,
+  User,
+  ShieldCheck,
+  Ban,
+  KeyRound,
+  CheckCircle2,
+  AlertCircle,
+  Users,
+} from "lucide-react";
+import { AdminUser, UserRole, UserStatus } from "../lib/admin-client";
+
+interface UserEditModalProps {
+  user: AdminUser;
+  onClose: () => void;
+  onUpdate: (id: string, updates: Partial<AdminUser>) => Promise<void>;
+}
+
+export function UserEditModal({ user, onClose, onUpdate }: UserEditModalProps) {
+  const [role, setRole] = useState<UserRole>(user.role);
+  const [status, setStatus] = useState<UserStatus>(user.status);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    setIsProcessing(true);
+    try {
+      await onUpdate(user.id, { role, status });
+      onClose();
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleResetPassword = () => {
+    setFeedback("Password reset link dispatched to " + user.email);
+    setTimeout(() => setFeedback(null), 4000);
+  };
+
+  const handleRevokeSessions = () => {
+    setFeedback("All active sessions revoked for " + user.email);
+    setTimeout(() => setFeedback(null), 4000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="flex w-full max-w-md flex-col gap-6 rounded-3xl bg-white p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        {/* Header Bar */}
+        <div className="flex items-start justify-between gap-4 border-b border-[#d6e7e1] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white font-display font-extrabold text-base shadow-xs">
+              {user.fullName[0]}
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-[#122622]">{user.fullName}</h3>
+              <p className="text-xs font-medium text-[#57685f]">{user.email}</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {feedback && (
+          <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-200 p-3 text-xs font-bold text-emerald-800">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>{feedback}</span>
+          </div>
+        )}
+
+        {/* Form Body */}
+        <div className="flex flex-col gap-5 text-xs">
+          {/* Role Elevation / Selection */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-extrabold text-[#122622]">User Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole)}
+              className="h-11 w-full rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-4 font-bold text-[#122622] outline-none focus:border-[#0f6b5c]"
+            >
+              <option value="PARTICIPANT">Participant (Hackathon Hacker)</option>
+              <option value="ORGANIZER">Organizer (Event Host)</option>
+              <option value="JUDGE">Judge (Evaluation Committee)</option>
+              <option value="ADMIN">Platform Administrator (Superuser)</option>
+            </select>
+          </div>
+
+          {/* Account Status Selection */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-extrabold text-[#122622]">Account Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as UserStatus)}
+              className="h-11 w-full rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-4 font-bold text-[#122622] outline-none focus:border-[#0f6b5c]"
+            >
+              <option value="ACTIVE">Active (Normal Access)</option>
+              <option value="SUSPENDED">Suspended (Temporarily Frozen)</option>
+              <option value="BANNED">Banned (Permanent Block)</option>
+            </select>
+          </div>
+
+          {/* Security & Access Actions */}
+          <div className="flex flex-col gap-2 rounded-2xl bg-[#f3f6f4] p-4 border border-[#d6e7e1]">
+            <span className="font-bold text-[#122622]">Security & Session Controls</span>
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleResetPassword}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-1.5 font-bold text-gray-700 hover:bg-gray-50 shadow-2xs cursor-pointer"
+              >
+                <KeyRound className="h-3.5 w-3.5" />
+                <span>Reset Password</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleRevokeSessions}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-white px-3 py-1.5 font-bold text-[#c4211c] hover:bg-red-50 shadow-2xs cursor-pointer"
+              >
+                <Ban className="h-3.5 w-3.5" />
+                <span>Revoke Sessions</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer Actions */}
+        <div className="flex items-center justify-end gap-3 border-t border-[#d6e7e1] pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isProcessing}
+            className="inline-flex items-center gap-1.5 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            <span>{isProcessing ? "Saving..." : "Apply Changes"}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -106,7 +106,7 @@ export default function HackathonDetailPage({
                 </div>
                 <div>
                   <p className="text-xs text-white/70 uppercase tracking-wider">Host Organization</p>
-                  <p className="text-sm font-medium text-white">Innovation Hub Ethiopia</p>
+                  <p className="text-sm font-medium text-white">HODANA</p>
                 </div>
               </div>
 

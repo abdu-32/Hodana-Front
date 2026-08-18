@@ -170,7 +170,7 @@ export function RegistrationForm({
 
         <div className="flex flex-col gap-4 rounded-2xl border border-black/[0.08] bg-surface p-6 shadow-sm">
           <p className="rounded-xl bg-surface-alt p-4 text-xs sm:text-sm text-text leading-relaxed">
-            By registering, you confirm that your team will adhere to the event guidelines, intellectual property policies, and code of conduct of Innovation Hub Ethiopia.
+            By registering, you confirm that your team will adhere to the event guidelines, intellectual property policies, and code of conduct of HODANA.
           </p>
 
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-black/[0.08] p-4 transition-all hover:bg-surface-alt/70">

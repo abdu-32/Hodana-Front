@@ -10,34 +10,34 @@
   --font-display: var(--font-space-grotesk), var(--font-noto-ethiopic),
     var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  /* EthioInnovate Brand Palette */
-  --color-primary: #4338CA;
-  --color-primary-hover: #3730A3;
-  --color-accent: #EA580C;
+  /* Option A - Green Palette Brand Tokens */
+  --color-primary: #0f6b5c;
+  --color-primary-hover: #0b5347;
+  --color-accent: #c68a00;
 
   /* Surface & Page background */
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F5F5FA;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f3f6f4;
 
   /* Text colors */
-  --color-text: #1E1E38;
-  --color-text-muted: #6B6B80;
+  --color-text: #122622;
+  --color-text-muted: #57685f;
 
   /* Status Badges */
-  --color-success: #10B981;
-  --color-warning: #D97706;
-  --color-danger: #EF4444;
+  --color-success: #16793d;
+  --color-warning: #b45309;
+  --color-danger: #c4211c;
 
-  --color-focus: #4F46E5;
+  --color-focus: #0f6b5c;
 
-  --color-ink: #312E81;
-  --color-ink-alt: #4338CA;
+  --color-ink: #0e2b25;
+  --color-ink-alt: #123b32;
 
   --breakpoint-sm: 360px;
 }
 
 body {
-  background: #F5F5FA;
+  background: #f3f6f4;
   color: var(--color-text);
   font-family: var(--font-latin);
   line-height: 1.5;
@@ -57,7 +57,7 @@ body {
 .bg-hub-pattern {
   background-image: radial-gradient(
     circle at 1px 1px,
-    color-mix(in srgb, #4338CA 12%, transparent) 1px,
+    color-mix(in srgb, #0f6b5c 12%, transparent) 1px,
     transparent 0
   );
   background-size: 24px 24px;
