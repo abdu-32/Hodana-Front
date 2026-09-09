@@ -41,8 +41,10 @@ export async function POST() {
       { status: backendRes.status },
     );
     // The refresh token itself was rejected (expired/revoked) -- drop the
-    // cookie rather than leaving a dead one around for next time.
-    response.cookies.delete(REFRESH_TOKEN_COOKIE);
+    // cookie only on 401 unauthorized rather than on transient 5xx server errors.
+    if (backendRes.status === 401) {
+      response.cookies.delete(REFRESH_TOKEN_COOKIE);
+    }
     return response;
   }
 

@@ -76,10 +76,20 @@ async function parseOrThrow<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const apiUrl = typeof window === "undefined" ? SERVER_API_URL : getClientApiUrl();
+function buildFullApiUrl(path: string): string {
+  const base = (typeof window === "undefined" ? SERVER_API_URL : getClientApiUrl())
+    .replace(/\/api\/v1\/?$/, "")
+    .replace(/\/+$/, "");
+  const normalizedPath = path.startsWith("/api/v1")
+    ? path
+    : `/api/v1${path.startsWith("/") ? path : `/${path}`}`;
+  return `${base}${normalizedPath}`;
+}
 
-  const res = await fetch(`${apiUrl}/api/v1${path}`, {
+export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const url = buildFullApiUrl(path);
+
+  const res = await fetch(url, {
     ...init,
     headers: {
       "Content-Type": "application/json",
@@ -93,7 +103,8 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 // one per in-flight request.
 let refreshInFlight: Promise<boolean> | null = null;
 
-async function silentRefresh(): Promise<boolean> {
+export async function silentRefresh(): Promise<boolean> {
+  if (typeof window === "undefined") return false;
   if (!refreshInFlight) {
     refreshInFlight = (async () => {
       try {
@@ -122,14 +133,21 @@ async function silentRefresh(): Promise<boolean> {
 }
 
 export async function authFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  let token = getAccessToken();
+
+  if (!token && typeof window !== "undefined") {
+    await silentRefresh();
+    token = getAccessToken();
+  }
+
   const doFetch = () => {
-    const token = getAccessToken();
-    const apiUrl = typeof window === "undefined" ? SERVER_API_URL : getClientApiUrl();
-    return fetch(`${apiUrl}/api/v1${path}`, {
+    const currentToken = getAccessToken();
+    const url = buildFullApiUrl(path);
+    return fetch(url, {
       ...init,
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(currentToken ? { Authorization: `Bearer ${currentToken}` } : {}),
         ...init?.headers,
       },
     });

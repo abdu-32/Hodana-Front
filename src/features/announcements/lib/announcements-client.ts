@@ -1,3 +1,6 @@
+import { authFetch } from "@/lib/api-client";
+import { notificationsClient } from "@/features/notifications/lib/notifications-client";
+
 export type AnnouncementPriority = "INFO" | "IMPORTANT" | "URGENT";
 export type AnnouncementStatus = "DRAFT" | "PUBLISHED" | "SCHEDULED";
 
@@ -18,71 +21,21 @@ export interface Announcement {
 
 const ANNOUNCEMENTS_STORAGE_KEY = "hodana_organizer_announcements_v1";
 
-const INITIAL_ANNOUNCEMENTS: Announcement[] = [
-  {
-    id: "ann-101",
-    organizerId: "org-1",
-    hackathonId: "hck-agritech",
-    hackathonName: "AgriTech Hack 2024",
-    title: "Submission Deadline Extended by 2 Hours!",
-    content: "Due to high traffic on our code evaluation servers, we are extending the final project repository submission deadline to 6:00 PM EAT today. Make sure your GitHub links are public!",
-    priority: "URGENT",
-    channels: ["IN_APP", "EMAIL", "PUSH"],
-    status: "PUBLISHED",
-    recipientCount: 412,
-    createdAt: "2024-08-11T11:30:00Z",
-    publishedAt: "2024-08-11T11:30:00Z",
-  },
-  {
-    id: "ann-102",
-    organizerId: "org-1",
-    hackathonId: "hck-agritech",
-    hackathonName: "AgriTech Hack 2024",
-    title: "Live Q&A Session with Ministry Mentors at 4:00 PM",
-    content: "Join us in the virtual main hall for an interactive technical Q&A session with CTOs from the Ministry of Agriculture. Bring your questions about satellite API endpoints.",
-    priority: "IMPORTANT",
-    channels: ["IN_APP", "EMAIL"],
-    status: "PUBLISHED",
-    recipientCount: 412,
-    createdAt: "2024-08-10T14:00:00Z",
-    publishedAt: "2024-08-10T14:00:00Z",
-  },
-  {
-    id: "ann-103",
-    organizerId: "org-1",
-    hackathonId: "hck-fintech",
-    hackathonName: "FinTech Frontier",
-    title: "Chapa Payment Sandbox Credentials Released",
-    content: "Test API keys and merchant sandbox tokens for Chapa and Telebirr digital wallet integrations have been posted in the developer resources portal.",
-    priority: "INFO",
-    channels: ["IN_APP"],
-    status: "PUBLISHED",
-    recipientCount: 285,
-    createdAt: "2024-08-09T09:15:00Z",
-    publishedAt: "2024-08-09T09:15:00Z",
-  },
-  {
-    id: "ann-104",
-    organizerId: "org-1",
-    hackathonId: "hck-fintech",
-    hackathonName: "FinTech Frontier",
-    title: "Draft: Final Judging Panel Schedule & Criteria",
-    content: "Draft announcement outlining presentation time slots per team.",
-    priority: "INFO",
-    channels: ["IN_APP", "EMAIL"],
-    status: "DRAFT",
-    recipientCount: 0,
-    createdAt: "2024-08-11T13:00:00Z",
-  },
-];
+const INITIAL_ANNOUNCEMENTS: Announcement[] = [];
 
 function getStoredAnnouncements(): Announcement[] {
-  if (typeof window === "undefined") return INITIAL_ANNOUNCEMENTS;
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(ANNOUNCEMENTS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : INITIAL_ANNOUNCEMENTS;
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const legacyMockIds = new Set(["ann-101", "ann-102", "ann-103", "ann-104"]);
+      return parsed.filter((item: Announcement) => !legacyMockIds.has(item.id));
+    }
+    return [];
   } catch {
-    return INITIAL_ANNOUNCEMENTS;
+    return [];
   }
 }
 
@@ -132,6 +85,39 @@ export const announcementsClient = {
       createdAt: new Date().toISOString(),
       publishedAt: data.status === "PUBLISHED" ? new Date().toISOString() : undefined,
     };
+
+    // 1. Try dispatching to real backend notification broadcast
+    if (data.status === "PUBLISHED" && data.hackathonId && data.hackathonId !== "all") {
+      try {
+        const priorityTag = data.priority !== "INFO" ? `[${data.priority}] ` : "";
+        const formattedMessage = `${priorityTag}${data.title}:\n${data.content}`;
+
+        await authFetch("/notifications/", {
+          method: "POST",
+          body: JSON.stringify({
+            hackathonId: data.hackathonId,
+            message: formattedMessage,
+            channels: data.channels.map((c) => (c === "IN_APP" ? "in_portal" : c.toLowerCase())),
+          }),
+        });
+      } catch (err) {
+        console.warn("Backend announcement broadcast attempt:", err);
+      }
+    }
+
+    // 2. Also record in notificationsClient for instant in-app delivery on participant devices
+    if (data.status === "PUBLISHED") {
+      notificationsClient.pushLocalNotification({
+        id: newAnnouncement.id,
+        title: newAnnouncement.title,
+        message: newAnnouncement.content,
+        priority: newAnnouncement.priority,
+        hackathonId: newAnnouncement.hackathonId,
+        hackathonTitle: newAnnouncement.hackathonName,
+        createdAt: newAnnouncement.createdAt,
+        read: false,
+      });
+    }
 
     const updated = [newAnnouncement, ...list];
     saveStoredAnnouncements(updated);

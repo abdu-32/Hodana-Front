@@ -13,6 +13,7 @@ import {
   Users,
   Calendar,
   Layers,
+  Trash2,
 } from "lucide-react";
 import { AdminShell } from "@/features/admin/components/AdminShell";
 import { HackathonInspectModal } from "@/features/admin/components/HackathonInspectModal";
@@ -23,7 +24,9 @@ export default function AdminHackathonsPage() {
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedHackathon, setSelectedHackathon] = useState<AdminHackathon | null>(null);
+  const [hackathonToDelete, setHackathonToDelete] = useState<AdminHackathon | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const loadHackathons = async () => {
@@ -50,8 +53,10 @@ export default function AdminHackathonsPage() {
           : `Hackathon "${updated.title}" reactivated.`
       );
       setTimeout(() => setToastMessage(null), 4000);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setToastMessage(err?.message || "Failed to update hackathon suspension status.");
+      setTimeout(() => setToastMessage(null), 4000);
     }
   };
 
@@ -67,6 +72,25 @@ export default function AdminHackathonsPage() {
       setTimeout(() => setToastMessage(null), 4000);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleDeleteHackathon = async (id: string, title?: string) => {
+    setIsDeleting(true);
+    try {
+      await adminClient.deleteHackathon(id);
+      setHackathonToDelete(null);
+      if (selectedHackathon?.id === id) {
+        setSelectedHackathon(null);
+      }
+      await loadHackathons();
+      setToastMessage(`Hackathon "${title || "Event"}" has been permanently deleted.`);
+      setTimeout(() => setToastMessage(null), 4000);
+    } catch (err: any) {
+      console.error("Failed to delete hackathon:", err);
+      alert(err?.message || "Failed to delete hackathon. You must be an authorized platform administrator.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -271,6 +295,14 @@ export default function AdminHackathonsPage() {
                         >
                           <Sparkles className="h-4 w-4" />
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => setHackathonToDelete(h)}
+                          title="Delete Hackathon"
+                          className="rounded-xl p-1.5 border border-red-100 bg-white text-gray-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -289,6 +321,53 @@ export default function AdminHackathonsPage() {
           onToggleSuspend={handleToggleSuspend}
           onToggleFeatured={handleToggleFeatured}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {hackathonToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="flex w-full max-w-md flex-col gap-4 rounded-3xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-700">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#122622]">Delete Hackathon</h3>
+                <p className="text-xs text-[#57685f]">Irreversible Administrative Action</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-red-50/70 border border-red-200/60 p-4 text-xs text-red-950">
+              <p className="font-semibold">
+                Are you sure you want to permanently delete hackathon{" "}
+                <span className="font-bold underline">{hackathonToDelete.title}</span>?
+              </p>
+              <p className="mt-1.5 text-[11px] text-red-700">
+                This will remove the event, its registrations, tracks, and associated data from the platform.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setHackathonToDelete(null)}
+                disabled={isDeleting}
+                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => handleDeleteHackathon(hackathonToDelete.id, hackathonToDelete.title)}
+                className="inline-flex items-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isDeleting ? "Deleting..." : "Delete Hackathon"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </AdminShell>
   );

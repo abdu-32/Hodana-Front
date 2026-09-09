@@ -20,6 +20,7 @@ import {
   LogOut,
   Bell,
   Search,
+  User,
 } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -32,6 +33,8 @@ import {
 } from "@/features/submissions/lib/participant-submissions-client";
 import { SubmissionForm } from "@/features/submissions/components/SubmissionForm";
 import { SubmissionSummaryView } from "@/features/submissions/components/SubmissionSummaryView";
+import { NotificationBellDropdown } from "@/features/notifications/components/NotificationBellDropdown";
+import { PortalMobileNav } from "@/components/layout/PortalMobileNav";
 
 export default function ParticipantSubmissionsPage() {
   const tDash = useTranslations("Dashboard");
@@ -134,6 +137,9 @@ export default function ParticipantSubmissionsPage() {
 
   return (
     <div className="min-h-screen bg-[#f3f6f4] text-[#122622] font-sans antialiased">
+      {/* Mobile Sticky Navigation Bar & Slide-Out Drawer */}
+      <PortalMobileNav portalType="participant" title="Workspace" />
+
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 rounded-2xl bg-[#0e2b25] px-5 py-3 text-xs font-extrabold text-white shadow-xl animate-in fade-in slide-in-from-top-4">
@@ -222,27 +228,26 @@ export default function ParticipantSubmissionsPage() {
                 {!isSidebarCollapsed && <span className="whitespace-nowrap">{tDash("navMyProjects")}</span>}
               </Link>
 
-              {/* Submissions (Active) */}
               <Link
-                href="/submissions"
-                title={isSidebarCollapsed ? tDash("navSubmissions") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-3 transition-all bg-[#0f6b5c] text-white shadow-md font-bold ${
-                  isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
-                }`}
-              >
-                <UploadCloud className="h-4 w-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="whitespace-nowrap">{tDash("navSubmissions")}</span>}
-              </Link>
-
-              <Link
-                href="/dashboard/portfolio"
-                title={isSidebarCollapsed ? tDash("navPortfolio") : undefined}
+                href="/dashboard/registrations"
+                title={isSidebarCollapsed ? tDash("navRegistrations") : undefined}
                 className={`flex items-center gap-3 rounded-xl py-3 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
-                <Briefcase className="h-4 w-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="whitespace-nowrap">{tDash("navPortfolio")}</span>}
+                <Layers className="h-4 w-4 shrink-0" />
+                {!isSidebarCollapsed && <span className="whitespace-nowrap">{tDash("navRegistrations")}</span>}
+              </Link>
+
+              <Link
+                href="/profile"
+                title={isSidebarCollapsed ? tDash("navProfile") : undefined}
+                className={`flex items-center gap-3 rounded-xl py-3 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
+                  isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
+                }`}
+              >
+                <User className="h-4 w-4 shrink-0" />
+                {!isSidebarCollapsed && <span className="whitespace-nowrap">{tDash("navProfile")}</span>}
               </Link>
             </nav>
           </div>
@@ -297,38 +302,41 @@ export default function ParticipantSubmissionsPage() {
               </p>
             </div>
 
-            {/* Hackathon Selector & Countdown Badge */}
-            {registeredHackathons.length > 0 && (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
-                {/* Active Hackathon Select Dropdown */}
-                <div className="relative flex items-center">
-                  <select
-                    value={selectedHackathonId}
-                    onChange={(e) => handleSelectHackathon(e.target.value)}
-                    className="h-11 appearance-none rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] pl-4 pr-10 text-xs font-extrabold text-[#122622] shadow-xs outline-none focus:border-[#0f6b5c] focus:ring-2 focus:ring-[#e8f3f0] transition-all cursor-pointer"
-                  >
-                    {registeredHackathons.map((h) => (
-                      <option key={h.id} value={h.id}>
-                        {h.title}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 h-4 w-4 text-gray-400" />
-                </div>
+            {/* Hackathon Selector, Countdown Badge & Notifications */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+              {registeredHackathons.length > 0 && (
+                <>
+                  {/* Active Hackathon Select Dropdown */}
+                  <div className="relative flex items-center">
+                    <select
+                      value={selectedHackathonId}
+                      onChange={(e) => handleSelectHackathon(e.target.value)}
+                      className="h-11 appearance-none rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] pl-4 pr-10 text-xs font-extrabold text-[#122622] shadow-xs outline-none focus:border-[#0f6b5c] focus:ring-2 focus:ring-[#e8f3f0] transition-all cursor-pointer"
+                    >
+                      {registeredHackathons.map((h) => (
+                        <option key={h.id} value={h.id}>
+                          {h.title}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 h-4 w-4 text-gray-400" />
+                  </div>
 
-                {/* Deadline Countdown Badge */}
-                <div
-                  className={`flex items-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-xs font-extrabold shadow-xs ${
-                    deadlineInfo.isUrgent
-                      ? "bg-amber-50 text-amber-900 border border-amber-200"
-                      : "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                  }`}
-                >
-                  <Clock className="h-3.5 w-3.5 shrink-0" />
-                  <span>{tSub("deadlinePrefix")} {deadlineInfo.text}</span>
-                </div>
-              </div>
-            )}
+                  {/* Deadline Countdown Badge */}
+                  <div
+                    className={`flex items-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-xs font-extrabold shadow-xs ${
+                      deadlineInfo.isUrgent
+                        ? "bg-amber-50 text-amber-900 border border-amber-200"
+                        : "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                    }`}
+                  >
+                    <Clock className="h-3.5 w-3.5 shrink-0" />
+                    <span>{tSub("deadlinePrefix")} {deadlineInfo.text}</span>
+                  </div>
+                </>
+              )}
+              <NotificationBellDropdown />
+            </div>
           </div>
 
           {/* Body Section */}
@@ -390,6 +398,7 @@ export default function ParticipantSubmissionsPage() {
                 )}
 
                 <SubmissionForm
+                  key={selectedHackathon.id}
                   hackathon={selectedHackathon}
                   initialSubmission={currentSubmission}
                   onSaved={handleSavedDraft}

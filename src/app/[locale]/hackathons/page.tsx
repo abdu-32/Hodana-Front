@@ -16,9 +16,12 @@ import {
   Users,
   Award,
   TrendingUp,
+  ShieldCheck,
+  Globe,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { hackathonsClient } from "@/features/hackathons";
+import { hackathonsClient, formatHackathonPrize } from "@/features/hackathons";
+import { getPlatformStats, type PlatformStats } from "@/features/hackathons/lib/hackathons-client";
 
 interface HackathonItem {
   id: string;
@@ -26,13 +29,16 @@ interface HackathonItem {
   title: string;
   isFeatured?: boolean;
   category: string;
+  field: string;
   description: string;
   status: "Active" | "Upcoming" | "Ended";
   interestTags: string[];
   length: "Sprint" | "Week" | "Month";
   hostType: "OpenToAll" | "Students" | "Gov";
+  openTo: string[];
   hostName: string;
   location: string;
+  venue?: string;
   dates: string;
   prizePool: string;
   daysRemaining?: number;
@@ -45,16 +51,19 @@ const MOCK_HACKATHONS_LIST: HackathonItem[] = [
     slug: "ethio-fin-innovate-2024",
     title: "Ethio-Fin Innovate 2024",
     isFeatured: true,
-    category: "FinTech & Blockchain",
+    category: "FinTech",
+    field: "FinTech",
     description: "Revolutionizing digital payments for the Horn of Africa. Build the next generation of inclusive banking systems.",
     status: "Active",
-    interestTags: ["Machine Learning / AI", "FinTech & Blockchain", "Beginner Friendly"],
+    interestTags: ["FinTech", "Blockchain", "Machine Learning"],
     length: "Sprint",
     hostType: "Gov",
+    openTo: ["ALL"],
     hostName: "National Bank",
-    location: "Addis Ababa / Hybrid",
+    location: "Addis Ababa, Ethiopia",
+    venue: "National Bank Innovation Lab",
     dates: "Aug 10 - Aug 14, 2024",
-    prizePool: "1.2M ETB",
+    prizePool: "1,200,000 ETB",
     daysRemaining: 4,
     imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80",
   },
@@ -62,48 +71,56 @@ const MOCK_HACKATHONS_LIST: HackathonItem[] = [
     id: "greenseed-challenge",
     slug: "greenseed-challenge-2024",
     title: "GreenSeed Challenge",
-    category: "AgriTech",
+    category: "Agriculture",
+    field: "Agriculture",
     description: "Optimizing coffee yield through IoT and satellite data mapping across the Oromia region.",
     status: "Active",
-    interestTags: ["AgriTech", "Social Good", "Beginner Friendly"],
+    interestTags: ["Agriculture", "IoT", "Data Science"],
     length: "Sprint",
     hostType: "OpenToAll",
+    openTo: ["ALL"],
     hostName: "Ministry of Agriculture",
     location: "Jimma, Ethiopia",
+    venue: "Jimma Agricultural Center",
     dates: "Sept 12 - Sept 15, 2024",
-    prizePool: "500k ETB",
+    prizePool: "500,000 ETB",
     imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "amharic-nlp-sprint",
     slug: "amharic-nlp-sprint-2024",
     title: "Amharic NLP Sprint",
-    category: "AI & Data",
+    category: "Artificial Intelligence",
+    field: "Artificial Intelligence",
     description: "Develop open-source Large Language Models specifically fine-tuned for Ethiopian local languages.",
     status: "Active",
-    interestTags: ["Machine Learning / AI", "Education", "Beginner Friendly"],
+    interestTags: ["AI", "Open Source", "Data Science"],
     length: "Week",
     hostType: "OpenToAll",
+    openTo: ["ALL"],
     hostName: "AAU AI Hub",
-    location: "Virtual / Global",
+    location: "Online / Virtual",
     dates: "Oct 05 - Oct 10, 2024",
-    prizePool: "850k ETB",
+    prizePool: "850,000 ETB",
     imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "egov-ethiopia-hack",
     slug: "egov-ethiopia-hack-2024",
     title: "e-Gov Ethiopia Hack",
-    category: "GovTech",
+    category: "Government",
+    field: "Government",
     description: "Streamlining municipal service delivery through unified citizen-facing portals and identity systems.",
     status: "Active",
-    interestTags: ["GovTech", "Social Good", "Education"],
+    interestTags: ["Government", "Web Development", "Cybersecurity"],
     length: "Sprint",
     hostType: "Students",
+    openTo: ["UNIVERSITY_STUDENT"],
     hostName: "Bahir Dar University",
-    location: "Bahir Dar University",
+    location: "Bahir Dar, Ethiopia",
+    venue: "Bahir Dar University ICT Center",
     dates: "Nov 20 - Nov 22, 2024",
-    prizePool: "400k ETB",
+    prizePool: "400,000 ETB",
     imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
   },
   {
@@ -111,15 +128,17 @@ const MOCK_HACKATHONS_LIST: HackathonItem[] = [
     slug: "ethio-health-ai-2024",
     title: "Ethio-Health AI Challenge",
     category: "HealthTech",
+    field: "HealthTech",
     description: "Leveraging AI and computer vision for early diagnosis of maternal health complications in remote clinics.",
     status: "Upcoming",
-    interestTags: ["Machine Learning / AI", "Social Good", "Beginner Friendly"],
+    interestTags: ["HealthTech", "AI", "Machine Learning"],
     length: "Month",
     hostType: "OpenToAll",
+    openTo: ["ALL"],
     hostName: "Ministry of Health",
-    location: "Addis Ababa",
+    location: "Addis Ababa, Ethiopia",
     dates: "Dec 01 - Dec 15, 2024",
-    prizePool: "1.0M ETB",
+    prizePool: "1,000,000 ETB",
     imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
   },
 ];
@@ -133,34 +152,51 @@ export default function HackathonsDiscoveryPage() {
   const [selectedStatus, setSelectedStatus] = useState<"Active" | "Upcoming" | "Ended" | "All">("Active");
   const [selectedTag, setSelectedTag] = useState("All");
   const [selectedLength, setSelectedLength] = useState("All");
-  const [selectedHost, setSelectedHost] = useState("All");
+  const [selectedOpenTo, setSelectedOpenTo] = useState("All");
   const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
   const [dynamicItems, setDynamicItems] = useState<HackathonItem[]>(MOCK_HACKATHONS_LIST);
+  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
 
   useEffect(() => {
     async function loadDynamicHackathons() {
       try {
-        const res = await hackathonsClient.listHackathons();
-        if (res?.data && Array.isArray(res.data)) {
-          const mapped: HackathonItem[] = res.data.map((h, idx) => ({
-            id: h.id,
-            slug: h.slug,
-            title: h.title,
-            isFeatured: idx === 0,
-            category: h.tags?.[0] || "AgriTech",
-            description: h.description || "Exciting hackathon challenge open for innovation.",
-            status: (h.status === "published" || h.status === ("active" as any)) ? "Active" : "Upcoming",
-            interestTags: h.tags && h.tags.length > 0 ? h.tags : ["Innovation", "Technology"],
-            length: "Sprint",
-            hostType: "OpenToAll",
-            hostName: "HODANA Portal",
-            location: h.locationMode || "Addis Ababa / Hybrid",
-            dates: "Active Now",
-            prizePool: h.prizeInfo || "1.0M ETB",
-            daysRemaining: 14,
-            imageUrl: h.bannerUrl || "/futuristic_city_banner.png",
-          }));
+        const [res, stats] = await Promise.allSettled([
+          hackathonsClient.listHackathons(),
+          getPlatformStats(),
+        ]);
+
+        if (res.status === "fulfilled" && res.value?.data && Array.isArray(res.value.data)) {
+          const mapped: HackathonItem[] = res.value.data.map((h, idx) => {
+            const resolvedLocation = h.locationName || (h.locationMode === "online" ? "Online / Virtual" : "Addis Ababa, Ethiopia");
+            const resolvedField = h.field || h.tags?.[0] || "Technology";
+            const resolvedOpenTo = Array.isArray(h.openTo) && h.openTo.length > 0 ? h.openTo : ["ALL"];
+            return {
+              id: h.id,
+              slug: h.slug,
+              title: h.title,
+              isFeatured: idx === 0,
+              category: resolvedField,
+              field: resolvedField,
+              description: h.description || "Exciting hackathon challenge open for innovation.",
+              status: (h.status === "published" || h.status === ("active" as any)) ? "Active" : "Upcoming",
+              interestTags: h.tags && h.tags.length > 0 ? h.tags : ["Innovation", "Technology"],
+              length: "Sprint",
+              hostType: resolvedOpenTo.includes("UNIVERSITY_STUDENT") ? "Students" : resolvedOpenTo.includes("GOVERNMENT_PUBLIC_SECTOR") ? "Gov" : "OpenToAll",
+              openTo: resolvedOpenTo,
+              hostName: "HODANA Portal",
+              location: resolvedLocation,
+              venue: h.venue || "",
+              dates: "Active Now",
+              prizePool: formatHackathonPrize(h),
+              daysRemaining: 14,
+              imageUrl: h.bannerUrl || "/futuristic_city_banner.png",
+            };
+          });
           setDynamicItems(mapped);
+        }
+
+        if (stats.status === "fulfilled" && stats.value) {
+          setPlatformStats(stats.value);
         }
       } catch (err) {
         console.warn("Could not load dynamic catalog hackathons:", err);
@@ -184,16 +220,20 @@ export default function HackathonsDiscoveryPage() {
       }
 
       // Field Filter
-      if (selectedField !== "All" && h.category !== selectedField) return false;
+      if (selectedField !== "All" && h.field.toLowerCase() !== selectedField.toLowerCase()) return false;
 
       // Interest Tag Filter
-      if (selectedTag !== "All" && !h.interestTags.includes(selectedTag)) return false;
+      if (selectedTag !== "All" && !h.interestTags.some((t) => t.toLowerCase() === selectedTag.toLowerCase())) return false;
 
       // Length Filter
       if (selectedLength !== "All" && h.length !== selectedLength) return false;
 
-      // Host Filter
-      if (selectedHost !== "All" && h.hostType !== selectedHost) return false;
+      // Open To Filter
+      if (selectedOpenTo !== "All") {
+        if (selectedOpenTo === "ALL" && !h.openTo.includes("ALL")) return false;
+        if (selectedOpenTo === "UNIVERSITY_STUDENT" && !h.openTo.includes("UNIVERSITY_STUDENT") && !h.openTo.includes("ALL")) return false;
+        if (selectedOpenTo === "GOVERNMENT_PUBLIC_SECTOR" && !h.openTo.includes("GOVERNMENT_PUBLIC_SECTOR") && !h.openTo.includes("ALL")) return false;
+      }
 
       // Search Filter
       if (searchQuery.trim()) {
@@ -201,16 +241,29 @@ export default function HackathonsDiscoveryPage() {
         return (
           h.title.toLowerCase().includes(q) ||
           h.category.toLowerCase().includes(q) ||
+          h.field.toLowerCase().includes(q) ||
+          h.location.toLowerCase().includes(q) ||
           h.description.toLowerCase().includes(q) ||
-          h.hostName.toLowerCase().includes(q)
+          h.hostName.toLowerCase().includes(q) ||
+          h.interestTags.some((t) => t.toLowerCase().includes(q))
         );
       }
       return true;
     });
-  }, [dynamicItems, selectedStatus, selectedLocation, selectedField, selectedTag, selectedLength, selectedHost, searchQuery]);
+  }, [dynamicItems, selectedStatus, selectedLocation, selectedField, selectedTag, selectedLength, selectedOpenTo, searchQuery]);
 
   const featuredHackathon = filteredHackathons.find((h) => h.isFeatured) || filteredHackathons[0];
   const otherHackathons = filteredHackathons.filter((h) => h.id !== featuredHackathon?.id);
+
+  const formatOpenToBadge = (openTo: string[]) => {
+    if (openTo.includes("ALL") || openTo.length === 0) {
+      return "Everyone";
+    }
+    const badges: string[] = [];
+    if (openTo.includes("UNIVERSITY_STUDENT")) badges.push("Students");
+    if (openTo.includes("GOVERNMENT_PUBLIC_SECTOR")) badges.push("Gov Sector");
+    return badges.join(" & ");
+  };
 
   return (
     <div className="min-h-screen bg-[#f3f6f4] text-[#122622]">
@@ -242,7 +295,7 @@ export default function HackathonsDiscoveryPage() {
             </div>
 
             {/* Location Select */}
-            <div className="relative w-full lg:w-48">
+            <div className="relative w-full lg:w-52">
               <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <select
                 value={selectedLocation}
@@ -250,16 +303,16 @@ export default function HackathonsDiscoveryPage() {
                 className="w-full appearance-none rounded-xl bg-gray-50 py-2.5 pl-9 pr-8 text-xs font-semibold text-[#122622] focus:outline-none focus:ring-2 focus:ring-[#0f6b5c]"
               >
                 <option value="All">{t("allLocations")}</option>
-                <option value="Addis Ababa">Addis Ababa</option>
-                <option value="Jimma">Jimma</option>
-                <option value="Bahir Dar">Bahir Dar</option>
-                <option value="Virtual">Virtual / Global</option>
+                <option value="Addis Ababa">Addis Ababa, Ethiopia</option>
+                <option value="Jimma">Jimma, Ethiopia</option>
+                <option value="Bahir Dar">Bahir Dar, Ethiopia</option>
+                <option value="Online">Online / Virtual</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
             </div>
 
             {/* Field Select */}
-            <div className="relative w-full lg:w-48">
+            <div className="relative w-full lg:w-52">
               <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <select
                 value={selectedField}
@@ -267,11 +320,17 @@ export default function HackathonsDiscoveryPage() {
                 className="w-full appearance-none rounded-xl bg-gray-50 py-2.5 pl-9 pr-8 text-xs font-semibold text-[#122622] focus:outline-none focus:ring-2 focus:ring-[#0f6b5c]"
               >
                 <option value="All">{t("allFields")}</option>
-                <option value="FinTech & Blockchain">FinTech & Blockchain</option>
-                <option value="AgriTech">AgriTech</option>
-                <option value="AI & Data">AI & Data</option>
-                <option value="GovTech">GovTech</option>
+                <option value="Technology">Technology</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Software Development">Software Development</option>
+                <option value="FinTech">FinTech</option>
                 <option value="HealthTech">HealthTech</option>
+                <option value="EdTech">EdTech</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Climate & Environment">Climate & Environment</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Blockchain / Web3">Blockchain / Web3</option>
+                <option value="Government">Government</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
             </div>
@@ -312,10 +371,13 @@ export default function HackathonsDiscoveryPage() {
               <span className="text-[11px] font-bold text-[#57685f] uppercase tracking-wider mr-1">Tags:</span>
               {[
                 { key: "All", label: t("tagAll") },
-                { key: "Beginner Friendly", label: `🔰 ${t("tagBeginner")}` },
-                { key: "Machine Learning / AI", label: `🤖 ${t("tagAI")}` },
-                { key: "Education", label: `🎓 ${t("tagEdTech")}` },
-                { key: "Social Good", label: `🌱 ${t("tagSocialGood")}` },
+                { key: "AI", label: `🤖 AI` },
+                { key: "FinTech", label: `💳 FinTech` },
+                { key: "Agriculture", label: `🌾 Agriculture` },
+                { key: "EdTech", label: `🎓 EdTech` },
+                { key: "HealthTech", label: `🏥 HealthTech` },
+                { key: "Blockchain", label: `⛓️ Blockchain` },
+                { key: "IoT", label: `📡 IoT` },
               ].map((tagItem) => (
                 <button
                   key={tagItem.key}
@@ -333,8 +395,23 @@ export default function HackathonsDiscoveryPage() {
             </div>
           </div>
 
-          {/* Secondary Iteration Controls: Length & Host Open To */}
+          {/* Secondary Iteration Controls: Open To Eligibility & Length */}
           <div className="flex flex-wrap items-center gap-4 border-t border-[#d6e7e1] pt-3 text-xs">
+            {/* Open To Eligibility Filter */}
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#57685f]">Open To:</span>
+              <select
+                value={selectedOpenTo}
+                onChange={(e) => setSelectedOpenTo(e.target.value)}
+                className="rounded-lg border border-[#d6e7e1] bg-white px-2.5 py-1 text-xs font-medium text-[#122622] focus:outline-none focus:ring-1 focus:ring-[#0f6b5c]"
+              >
+                <option value="All">All Eligibility</option>
+                <option value="ALL">Everyone</option>
+                <option value="UNIVERSITY_STUDENT">University Students</option>
+                <option value="GOVERNMENT_PUBLIC_SECTOR">Government & Public Sector</option>
+              </select>
+            </div>
+
             {/* Length Filter */}
             <div className="flex items-center gap-2">
               <span className="font-bold text-[#57685f]">{t("lengthLabel")}:</span>
@@ -347,21 +424,6 @@ export default function HackathonsDiscoveryPage() {
                 <option value="Sprint">{t("lengthSprint")}</option>
                 <option value="Week">{t("lengthWeek")}</option>
                 <option value="Month">{t("lengthMonth")}</option>
-              </select>
-            </div>
-
-            {/* Host Filter */}
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#57685f]">{t("hostLabel")}:</span>
-              <select
-                value={selectedHost}
-                onChange={(e) => setSelectedHost(e.target.value)}
-                className="rounded-lg border border-[#d6e7e1] bg-white px-2.5 py-1 text-xs font-medium text-[#122622] focus:outline-none focus:ring-1 focus:ring-[#0f6b5c]"
-              >
-                <option value="All">{t("hostAll")}</option>
-                <option value="OpenToAll">{t("hostAll")}</option>
-                <option value="Students">{t("hostStudents")}</option>
-                <option value="Gov">{t("hostGov")}</option>
               </select>
             </div>
           </div>
@@ -380,7 +442,7 @@ export default function HackathonsDiscoveryPage() {
                     alt={featuredHackathon.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-3 left-3 flex flex-col gap-1.5">
                     <span className="rounded-md bg-[#b45309] px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-xs">
                       {t("featuredBadge")}
                     </span>
@@ -389,11 +451,17 @@ export default function HackathonsDiscoveryPage() {
 
                 {/* Card Content */}
                 <div className="p-6 md:col-span-7 flex flex-col justify-between gap-4">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#b45309]">
-                        {featuredHackathon.category}
-                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="rounded-md bg-[#e8f3f0] px-2.5 py-0.5 text-[11px] font-extrabold text-[#0f6b5c]">
+                          {featuredHackathon.field}
+                        </span>
+                        <span className="rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800 flex items-center gap-1">
+                          <ShieldCheck className="h-3 w-3" />
+                          <span>{formatOpenToBadge(featuredHackathon.openTo)}</span>
+                        </span>
+                      </div>
                       <button
                         type="button"
                         onClick={() => toggleBookmark(featuredHackathon.id)}
@@ -406,21 +474,35 @@ export default function HackathonsDiscoveryPage() {
                     <h3 className="font-display text-xl font-bold text-[#122622] group-hover:text-[#0f6b5c] transition-colors">
                       {featuredHackathon.title}
                     </h3>
-                    <p className="text-xs leading-relaxed text-[#57685f]">
+                    <p className="text-xs leading-relaxed text-[#57685f] line-clamp-2">
                       {featuredHackathon.description}
                     </p>
 
-                    {/* Metadata Grid */}
-                    <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
+                    {/* Metadata & Location Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
                       <div className="flex items-center gap-1.5 font-semibold text-[#122622]">
-                        <Building2 className="h-4 w-4 text-[#0f6b5c]" />
-                        <span className="truncate">{featuredHackathon.hostName}</span>
+                        <MapPin className="h-3.5 w-3.5 text-[#0f6b5c] shrink-0" />
+                        <span className="truncate">{featuredHackathon.location}</span>
                       </div>
                       <div className="flex items-center gap-1.5 font-extrabold text-[#b45309]">
-                        <Award className="h-4 w-4" />
+                        <Award className="h-4 w-4 shrink-0" />
                         <span>{featuredHackathon.prizePool}</span>
                       </div>
                     </div>
+
+                    {/* Tags */}
+                    {featuredHackathon.interestTags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {featuredHackathon.interestTags.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-lg bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-[#57685f]"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Footer & Action */}
@@ -450,9 +532,15 @@ export default function HackathonsDiscoveryPage() {
               >
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-[#e8f3f0] px-2.5 py-0.5 text-[11px] font-bold text-[#0f6b5c]">
-                      {h.category}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="rounded-md bg-[#e8f3f0] px-2.5 py-0.5 text-[11px] font-bold text-[#0f6b5c]">
+                        {h.field}
+                      </span>
+                      <span className="rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800 flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" />
+                        <span>{formatOpenToBadge(h.openTo)}</span>
+                      </span>
+                    </div>
                     <button
                       type="button"
                       onClick={() => toggleBookmark(h.id)}
@@ -471,14 +559,23 @@ export default function HackathonsDiscoveryPage() {
 
                   <div className="flex flex-col gap-1.5 pt-1 text-xs text-[#57685f] font-medium">
                     <div className="flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5 text-[#0f6b5c]" />
-                      <span>{h.dates}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
                       <MapPin className="h-3.5 w-3.5 text-[#0f6b5c]" />
                       <span>{h.location}</span>
                     </div>
                   </div>
+
+                  {h.interestTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {h.interestTags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-lg bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-[#57685f]"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-4">
@@ -506,9 +603,15 @@ export default function HackathonsDiscoveryPage() {
             >
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-[#e8f3f0] px-2.5 py-0.5 text-[11px] font-bold text-[#0f6b5c]">
-                    {h.category}
-                  </span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="rounded-md bg-[#e8f3f0] px-2.5 py-0.5 text-[11px] font-bold text-[#0f6b5c]">
+                      {h.field}
+                    </span>
+                    <span className="rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800 flex items-center gap-1">
+                      <ShieldCheck className="h-3 w-3" />
+                      <span>{formatOpenToBadge(h.openTo)}</span>
+                    </span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => toggleBookmark(h.id)}
@@ -527,14 +630,23 @@ export default function HackathonsDiscoveryPage() {
 
                 <div className="flex flex-col gap-1.5 pt-1 text-xs text-[#57685f] font-medium">
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-[#0f6b5c]" />
-                    <span>{h.dates}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5 text-[#0f6b5c]" />
                     <span>{h.location}</span>
                   </div>
                 </div>
+
+                {h.interestTags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {h.interestTags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-lg bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-[#57685f]"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-4">
@@ -576,23 +688,37 @@ export default function HackathonsDiscoveryPage() {
         {/* ================= ECOSYSTEM STATS COUNTER ROW ================= */}
         <section className="grid grid-cols-2 gap-6 sm:grid-cols-4 border-t border-[#d6e7e1] pt-10 pb-6 text-center">
           <div className="flex flex-col items-center gap-1">
-            <span className="font-display text-3xl font-extrabold text-[#0f6b5c]">128+</span>
+            <span className="font-display text-3xl font-extrabold text-[#0f6b5c]">
+              {platformStats ? `${platformStats.totalHackathons}+` : `${dynamicItems.length}+`}
+            </span>
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#57685f]">{t("annualEvents")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
-            <span className="font-display text-3xl font-extrabold text-[#0f6b5c]">15k</span>
+            <span className="font-display text-3xl font-extrabold text-[#0f6b5c]">
+              {platformStats
+                ? (platformStats.activeDevelopers >= 1000
+                    ? `${(platformStats.activeDevelopers / 1000).toFixed(1)}k`
+                    : `${platformStats.activeDevelopers}`)
+                : "8"}
+            </span>
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#57685f]">{t("activeDevs")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
-            <span className="font-display text-3xl font-extrabold text-[#b45309]">45M</span>
+            <span className="font-display text-3xl font-extrabold text-[#b45309]">
+              {platformStats
+                ? (platformStats.totalPrizeVolumeETB >= 1000000
+                    ? `${(platformStats.totalPrizeVolumeETB / 1000000).toFixed(1)}M`
+                    : `${Math.round(platformStats.totalPrizeVolumeETB / 1000)}k`)
+                : "3.1M"}
+            </span>
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#57685f]">{t("totalPrize")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
-            <span className="font-display text-3xl font-extrabold text-[#0f6b5c]">82%</span>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#57685f]">{t("projectMaturity")}</span>
+            <span className="font-display text-3xl font-extrabold text-[#0f6b5c]">98%</span>
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#57685f]">Project Completion</span>
           </div>
         </section>
       </main>

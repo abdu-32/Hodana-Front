@@ -28,6 +28,7 @@ interface SessionContextValue {
    * and any other consumer of `user` reflects the edit immediately, without
    * a full refetch. */
   updateUser: (user: UserProfile) => void;
+  refreshUser: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -73,6 +74,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     isLoading: snapshot.isLoading,
     logout: logoutRequest,
     updateUser: updateSessionUser,
+    refreshUser: async () => {
+      await restoreSession();
+    },
   };
 
   return (

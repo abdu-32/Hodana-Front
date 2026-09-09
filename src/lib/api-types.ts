@@ -1668,6 +1668,8 @@ export interface components {
             readonly submissionClosesAt: string;
             rules?: string;
             readonly prizeInfo: string;
+            readonly totalPrizeBudget: string;
+            readonly prizeDistribution?: unknown;
             readonly locationMode: string;
             readonly eligibilityRules: unknown;
             tags?: string[];
@@ -1710,6 +1712,9 @@ export interface components {
             rules: string;
             /** @default  */
             prizeInfo: string;
+            /** @default 0.00 */
+            totalPrizeBudget?: string;
+            prizeDistribution?: unknown;
             /** @default online */
             locationMode: components["schemas"]["LocationModeEnum"];
             eligibilityRules?: unknown;
@@ -1746,6 +1751,8 @@ export interface components {
             submissionClosesAt?: string;
             rules?: string;
             prizeInfo?: string;
+            totalPrizeBudget?: string;
+            prizeDistribution?: unknown;
             eligibilityRules?: unknown;
             tags?: string[];
             status?: components["schemas"]["HackathonUpdateStatusEnum"];

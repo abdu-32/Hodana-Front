@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { Button, ErrorBanner, StatusBadge, useToast } from "@/components/ui";
 import { useSession } from "@/features/auth";
 import { useHackathonBySlug } from "@/features/hackathons/hooks/useHackathonBySlug";
+import { formatHackathonPrize } from "@/features/hackathons";
 
 export default function HackathonDetailPage({
   params,
@@ -87,11 +88,21 @@ export default function HackathonDetailPage({
                   {hackathon.status}
                 </StatusBadge>
               )}
+              {hackathon.field && (
+                <span className="inline-flex items-center rounded-full bg-[#0f6b5c]/80 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
+                  {hackathon.field}
+                </span>
+              )}
               <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
-                {hackathon.locationMode || "HYBRID"}
+                📍 {hackathon.locationName || hackathon.locationMode || "Online / Virtual"}
               </span>
+              {hackathon.openTo && (
+                <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                  👥 {hackathon.openTo.includes("ALL") ? "Open to Everyone" : hackathon.openTo.includes("UNIVERSITY_STUDENT") ? "University Students Only" : "Gov / Public Sector"}
+                </span>
+              )}
               <span className="inline-flex items-center rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 text-xs font-bold backdrop-blur-md">
-                🏆 {hackathon.prizeInfo || "Prize Pool Available"}
+                🏆 {formatHackathonPrize(hackathon)}
               </span>
             </div>
 
@@ -311,11 +322,53 @@ export default function HackathonDetailPage({
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">🏆</span>
                     <div>
-                      <p className="text-xs font-semibold uppercase text-amber-600">Grand Winner Pool</p>
-                      <p className="font-display text-2xl font-extrabold text-text">{hackathon.prizeInfo}</p>
+                      <p className="text-xs font-semibold uppercase text-amber-600">Total Prize Pool</p>
+                      <p className="font-display text-2xl font-extrabold text-text">{formatHackathonPrize(hackathon)}</p>
                     </div>
                   </div>
                 </div>
+
+                {Boolean(
+                  (hackathon.prizeDistribution as any)?.firstPlaceAmount ||
+                  (hackathon.prizeDistribution as any)?.secondPlaceAmount ||
+                  (hackathon.prizeDistribution as any)?.thirdPlaceAmount
+                ) && (
+                  <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {(hackathon.prizeDistribution as any)?.firstPlaceAmount && (
+                      <div className="rounded-xl border border-amber-300 bg-amber-50/50 p-4 text-center">
+                        <span className="text-2xl">🥇</span>
+                        <p className="text-xs font-bold text-amber-800 uppercase mt-1">1st Place</p>
+                        <p className="font-display text-lg font-extrabold text-amber-900">
+                          {(hackathon.prizeDistribution as any)?.currency === "ETB"
+                            ? `${Number((hackathon.prizeDistribution as any).firstPlaceAmount).toLocaleString()} ETB`
+                            : `$${Number((hackathon.prizeDistribution as any).firstPlaceAmount).toLocaleString()} USD`}
+                        </p>
+                      </div>
+                    )}
+                    {(hackathon.prizeDistribution as any)?.secondPlaceAmount && (
+                      <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 text-center">
+                        <span className="text-2xl">🥈</span>
+                        <p className="text-xs font-bold text-slate-700 uppercase mt-1">2nd Place</p>
+                        <p className="font-display text-lg font-extrabold text-slate-900">
+                          {(hackathon.prizeDistribution as any)?.currency === "ETB"
+                            ? `${Number((hackathon.prizeDistribution as any).secondPlaceAmount).toLocaleString()} ETB`
+                            : `$${Number((hackathon.prizeDistribution as any).secondPlaceAmount).toLocaleString()} USD`}
+                        </p>
+                      </div>
+                    )}
+                    {(hackathon.prizeDistribution as any)?.thirdPlaceAmount && (
+                      <div className="rounded-xl border border-amber-200 bg-amber-50/30 p-4 text-center">
+                        <span className="text-2xl">🥉</span>
+                        <p className="text-xs font-bold text-amber-900 uppercase mt-1">3rd Place</p>
+                        <p className="font-display text-lg font-extrabold text-amber-950">
+                          {(hackathon.prizeDistribution as any)?.currency === "ETB"
+                            ? `${Number((hackathon.prizeDistribution as any).thirdPlaceAmount).toLocaleString()} ETB`
+                            : `$${Number((hackathon.prizeDistribution as any).thirdPlaceAmount).toLocaleString()} USD`}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </section>
             </div>
           )}
@@ -361,20 +414,59 @@ export default function HackathonDetailPage({
             <hr className="border-black/[0.06]" />
 
             <div className="flex flex-col gap-3 text-xs text-text-muted">
-              <div className="flex justify-between">
-                <span>Location Mode</span>
-                <span className="font-medium text-text">{hackathon.locationMode || "HYBRID"}</span>
+              <div className="flex justify-between items-start gap-2">
+                <span>Location</span>
+                <span className="font-semibold text-text text-right">
+                  {hackathon.locationName || hackathon.locationMode || "Online / Virtual"}
+                </span>
               </div>
-              <div className="flex justify-between">
+              {hackathon.venue && (
+                <div className="flex justify-between items-start gap-2">
+                  <span>Venue</span>
+                  <span className="font-medium text-text text-right">{hackathon.venue}</span>
+                </div>
+              )}
+              {hackathon.field && (
+                <div className="flex justify-between items-start gap-2">
+                  <span>Field / Industry</span>
+                  <span className="font-semibold text-[#0f6b5c] text-right">{hackathon.field}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-start gap-2">
+                <span>Eligibility</span>
+                <span className="font-medium text-amber-700 text-right">
+                  {hackathon.openTo?.includes("ALL") || !hackathon.openTo?.length
+                    ? "Everyone"
+                    : hackathon.openTo?.includes("UNIVERSITY_STUDENT")
+                    ? "University Students"
+                    : "Government & Public Sector"}
+                </span>
+              </div>
+              <div className="flex justify-between items-start gap-2">
                 <span>Status</span>
                 <span className="font-medium text-text">{hackathon.status || "PUBLISHED"}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-start gap-2">
                 <span>Registration Closes</span>
                 <span className="font-medium text-text">
                   {new Date(hackathon.registrationClosesAt).toLocaleDateString()}
                 </span>
               </div>
+              {hackathon.tags && hackathon.tags.length > 0 && (
+                <div className="flex flex-col gap-1.5 pt-2 border-t border-black/[0.06]">
+                  <span className="text-[11px] font-bold text-text-muted">Tags</span>
+                  <div className="flex flex-wrap gap-1">
+                    {hackathon.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-lg bg-surface-alt px-2 py-0.5 text-[10px] font-semibold text-text"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

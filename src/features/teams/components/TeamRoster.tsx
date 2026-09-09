@@ -127,8 +127,8 @@ export function TeamRoster({
 
   const { team, members } = rosterQuery.data!;
   const isLeader = user?.id === team.leaderUserId;
-  const pendingInvites = (invitationsQuery.data ?? []).filter(
-    (invite) => invite.joinStatus === "pending",
+  const pendingInvites = ((invitationsQuery.data as any[]) ?? []).filter(
+    (invite: any) => invite.joinStatus === "pending",
   );
 
   const remainingSlots = Math.max(0, team.maxSize - members.length);

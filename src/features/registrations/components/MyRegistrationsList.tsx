@@ -31,11 +31,13 @@ export function MyRegistrationsList() {
   const query = useQuery({
     queryKey: ["registrations", "me"],
     queryFn: listMyRegistrations,
+    refetchOnMount: "always",
+    staleTime: 0,
   });
 
   const hackathonsQuery = useQuery({
     queryKey: ["hackathons", "list"],
-    queryFn: listHackathons,
+    queryFn: () => listHackathons(),
   });
 
   const hackathonById = useMemo(() => {
@@ -83,18 +85,21 @@ export function MyRegistrationsList() {
     });
   }, [registrations, activeTab, searchQuery, hackathonById]);
 
-  if (query.isLoading || hackathonsQuery.isLoading) {
+  if (query.isLoading) {
     return (
-      <div className="flex flex-col gap-4" aria-hidden="true">
-        <div className="h-10 w-full animate-pulse rounded-xl bg-surface-alt" />
-        <div className="h-32 animate-pulse rounded-2xl bg-surface-alt" />
-        <div className="h-32 animate-pulse rounded-2xl bg-surface-alt" />
+      <div className="flex min-h-[250px] flex-col items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white p-12 text-center" aria-live="polite">
+        <div className="h-8 w-8 animate-spin rounded-full border-3 border-primary border-t-transparent" />
+        <p className="font-display text-sm font-semibold text-text">Loading your registrations...</p>
       </div>
     );
   }
 
   if (query.isError) {
-    return <ErrorBanner message={t("loadError")} />;
+    return (
+      <div className="rounded-2xl border border-danger/20 bg-danger/5 p-6 text-center text-sm font-medium text-danger">
+        Unable to load your registrations. Please try again.
+      </div>
+    );
   }
 
   if (registrations.length === 0) {
@@ -106,11 +111,11 @@ export function MyRegistrationsList() {
           </svg>
         </div>
         <div className="flex flex-col gap-1">
-          <p className="font-display text-base font-semibold text-text">{t("emptyState")}</p>
+          <p className="font-display text-base font-semibold text-text">No registered hackathons yet.</p>
           <p className="text-sm text-text-muted">Explore open hackathons and start building innovative solutions.</p>
         </div>
         <Link
-          href="/"
+          href="/hackathons"
           className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-primary px-5 text-sm font-medium tracking-tight text-white shadow-sm transition-all hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           {t("emptyStateCta")}
@@ -184,9 +189,17 @@ export function MyRegistrationsList() {
         <ul className="flex flex-col gap-4">
           {filteredRegistrations.map((registration) => {
             const hackathon = hackathonById.get(registration.hackathonId);
-            const title = hackathon?.title ?? t("hackathonIdLabel", { id: registration.hackathonId });
+            const title = registration.hackathonTitle || hackathon?.title || t("hackathonIdLabel", { id: registration.hackathonId });
+            const slug = registration.hackathonSlug || hackathon?.slug;
             const isWithdrawn = Boolean(registration.withdrawnAt);
             const rememberedTeamId = getRememberedTeamId(registration.hackathonId);
+            const teamLabel = registration.team?.name
+              ? `${registration.team.name} (${registration.team.role})`
+              : rememberedTeamId
+              ? "In Team"
+              : registration.registrationType === "looking_for_team"
+              ? "Looking for a Team"
+              : "Solo Participant";
 
             return (
               <li
@@ -195,9 +208,9 @@ export function MyRegistrationsList() {
               >
                 <div className="flex min-w-0 flex-col gap-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    {hackathon ? (
+                    {slug ? (
                       <Link
-                        href={`/hackathons/${hackathon.slug}`}
+                        href={`/hackathons/${slug}`}
                         className="truncate font-display text-lg font-semibold tracking-tight text-text hover:text-primary transition-colors"
                       >
                         {title}
@@ -231,26 +244,33 @@ export function MyRegistrationsList() {
                         <span className="h-1.5 w-1.5 rounded-full bg-text-muted/40" />
                         Team Status:{" "}
                         <span className="font-medium text-text">
-                          {rememberedTeamId ? "In Team" : "No Team"}
+                          {teamLabel}
                         </span>
+                      </span>
+                    )}
+
+                    {registration.hackathonLocation && (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-text-muted/40" />
+                        <span>{registration.hackathonLocation}</span>
                       </span>
                     )}
                   </div>
                 </div>
 
                 <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-black/[0.05] pt-4 sm:border-t-0 sm:pt-0">
-                  {hackathon && (
+                  {slug && (
                     <Link
-                      href={`/hackathons/${hackathon.slug}`}
+                      href={`/hackathons/${slug}`}
                       className="inline-flex min-h-[38px] items-center justify-center rounded-lg border border-black/10 bg-surface px-3.5 text-xs font-medium text-text shadow-sm transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                     >
                       View Hackathon
                     </Link>
                   )}
 
-                  {hackathon && !isWithdrawn && (
+                  {slug && !isWithdrawn && (
                     <Link
-                      href={`/hackathons/${hackathon.slug}/team`}
+                      href={`/hackathons/${slug}/team`}
                       className="inline-flex min-h-[38px] items-center justify-center rounded-lg bg-primary px-3.5 text-xs font-medium text-white shadow-sm transition-all hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                     >
                       {t("openTeamCta")} &rarr;

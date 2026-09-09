@@ -1,4 +1,21 @@
+import { authFetch } from "@/lib/api-client";
+
 export type WinnerRank = "FIRST" | "SECOND" | "THIRD" | "NONE";
+
+export type PayoutStatus = "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED" | "PAID";
+
+export interface PayoutDetails {
+  beneficiaryName?: string;
+  provider?: string;
+  accountNumber?: string;
+  phone?: string;
+  notes?: string;
+  submittedBy?: string;
+  requestedAt?: string;
+  submittedAt?: string;
+  paidAt?: string;
+  transactionRef?: string;
+}
 
 export interface ProjectSubmission {
   id: string;
@@ -17,128 +34,27 @@ export interface ProjectSubmission {
   rank: WinnerRank;
   prizeAwardedAt?: string;
   winnerNotes?: string;
+  payoutStatus?: PayoutStatus;
+  payoutDetails?: PayoutDetails;
+  deadlinePassed?: boolean;
   createdAt: string;
 }
 
 const SUBMISSIONS_STORAGE_KEY = "hodana_organizer_submissions_v1";
 
-const INITIAL_SUBMISSIONS: ProjectSubmission[] = [
-  {
-    id: "sub-101",
-    teamId: "team-agri-vision",
-    teamName: "CropShield AI",
-    teamMembersCount: 4,
-    projectTitle: "AI Satellite Crop Blight Detector",
-    tagline: "Early disease detection for Ethiopian smallholder farmers using computer vision.",
-    category: "AI/ML",
-    hackathonId: "hck-agritech",
-    hackathonName: "AgriTech Hack 2024",
-    averageScore: 9.6,
-    evaluationsCount: 5,
-    repoUrl: "https://github.com/cropshield/crop-vision-ai",
-    demoUrl: "https://cropshield-ethiopia.vercel.app",
-    rank: "FIRST",
-    prizeAwardedAt: new Date(Date.now() - 86400000).toISOString(),
-    winnerNotes: "Outstanding technical depth and direct agricultural impact.",
-    createdAt: "2024-08-10T14:30:00Z",
-  },
-  {
-    id: "sub-102",
-    teamId: "team-irrigate-smart",
-    teamName: "HydroFlow IoT",
-    teamMembersCount: 3,
-    projectTitle: "Solar-Powered Smart Irrigation Valve",
-    tagline: "Automated moisture sensors connected to mobile USSD alerts.",
-    category: "AgriTech",
-    hackathonId: "hck-agritech",
-    hackathonName: "AgriTech Hack 2024",
-    averageScore: 9.1,
-    evaluationsCount: 5,
-    repoUrl: "https://github.com/hydroflow/smart-valve",
-    demoUrl: "https://hydroflow.et",
-    rank: "SECOND",
-    prizeAwardedAt: new Date(Date.now() - 43200000).toISOString(),
-    winnerNotes: "Great hardware prototype and working mobile integration.",
-    createdAt: "2024-08-10T16:15:00Z",
-  },
-  {
-    id: "sub-103",
-    teamId: "team-coffee-chain",
-    teamName: "OriginTrace",
-    teamMembersCount: 5,
-    projectTitle: "Coffee Export Traceability Protocol",
-    tagline: "Transparent supply chain ledger from Yirgacheffe to international buyers.",
-    category: "Blockchain",
-    hackathonId: "hck-agritech",
-    hackathonName: "AgriTech Hack 2024",
-    averageScore: 8.7,
-    evaluationsCount: 4,
-    repoUrl: "https://github.com/origintrace/coffee-ledger",
-    rank: "THIRD",
-    prizeAwardedAt: new Date().toISOString(),
-    winnerNotes: "Well architected smart contract for export compliance.",
-    createdAt: "2024-08-11T09:00:00Z",
-  },
-  {
-    id: "sub-104",
-    teamId: "team-soil-check",
-    teamName: "SoilScan Pro",
-    teamMembersCount: 3,
-    projectTitle: "Portable Soil NPK Analyzer App",
-    tagline: "Instant soil nutrient diagnostics via mobile camera sensor processing.",
-    category: "AI/ML",
-    hackathonId: "hck-agritech",
-    hackathonName: "AgriTech Hack 2024",
-    averageScore: 8.3,
-    evaluationsCount: 4,
-    repoUrl: "https://github.com/soilscan/mobile-npk",
-    rank: "NONE",
-    createdAt: "2024-08-11T11:20:00Z",
-  },
-  {
-    id: "sub-105",
-    teamId: "team-chapa-micro",
-    teamName: "BirrPay Wallet",
-    teamMembersCount: 4,
-    projectTitle: "Offline Merchant Micro-Payments",
-    tagline: "NFC and soundwave offline digital wallet for rural trade.",
-    category: "FinTech",
-    hackathonId: "hck-fintech",
-    hackathonName: "FinTech Frontier",
-    averageScore: 9.5,
-    evaluationsCount: 6,
-    repoUrl: "https://github.com/birrpay/offline-nfc",
-    demoUrl: "https://birrpay.et",
-    rank: "FIRST",
-    prizeAwardedAt: new Date().toISOString(),
-    winnerNotes: "Solved offline connectivity gracefully for rural merchants.",
-    createdAt: "2024-08-09T18:00:00Z",
-  },
-  {
-    id: "sub-106",
-    teamId: "team-credit-score",
-    teamName: "EthioScore AI",
-    teamMembersCount: 3,
-    projectTitle: "Alternative Micro-Credit Scoring API",
-    tagline: "Machine learning creditworthiness model built on mobile airtime history.",
-    category: "AI/ML",
-    hackathonId: "hck-fintech",
-    hackathonName: "FinTech Frontier",
-    averageScore: 8.9,
-    evaluationsCount: 5,
-    repoUrl: "https://github.com/ethioscore/ai-credit-model",
-    rank: "NONE",
-    createdAt: "2024-08-10T10:00:00Z",
-  },
-];
-
 function getStoredSubmissions(): ProjectSubmission[] {
-  if (typeof window === "undefined") return INITIAL_SUBMISSIONS;
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : INITIAL_SUBMISSIONS;
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const legacyMockIds = new Set(["sub-101", "sub-102", "sub-103", "sub-104", "sub-105", "sub-106"]);
+      return parsed.filter((item: ProjectSubmission) => !legacyMockIds.has(item.id));
+    }
+    return [];
   } catch {
-    return INITIAL_SUBMISSIONS;
+    return [];
   }
 }
 
@@ -153,13 +69,46 @@ function saveStoredSubmissions(items: ProjectSubmission[]) {
 }
 
 export const submissionsClient = {
-  // GET /api/organizer/submissions?hackathonId={id}&minScore={score}
+  // GET /api/v1/submissions/organizer?hackathonId={id}&minScore={score}&category={category}
   async getSubmissions(
     hackathonId: string = "all",
     minScore: number = 0,
-    category: string = "all"
+    category: string = "all",
+    validHackathonIds?: string[]
   ): Promise<ProjectSubmission[]> {
-    let list = getStoredSubmissions();
+    let list: ProjectSubmission[] = [];
+    let backendSuccess = false;
+
+    try {
+      const params = new URLSearchParams();
+      if (hackathonId && hackathonId !== "all") {
+        params.set("hackathonId", hackathonId);
+      }
+      if (minScore > 0) {
+        params.set("minScore", minScore.toString());
+      }
+      if (category && category !== "all") {
+        params.set("category", category);
+      }
+      const qs = params.toString() ? `?${params.toString()}` : "";
+      const apiData = await authFetch<ProjectSubmission[]>(`/submissions/organizer${qs}`);
+      if (Array.isArray(apiData)) {
+        list = apiData;
+        backendSuccess = true;
+        saveStoredSubmissions(list);
+      }
+    } catch (err) {
+      console.warn("Could not fetch organizer submissions from backend, falling back to local cache:", err);
+    }
+
+    if (!backendSuccess) {
+      list = getStoredSubmissions();
+    }
+
+    if (validHackathonIds !== undefined && validHackathonIds.length > 0) {
+      const allowedSet = new Set(validHackathonIds);
+      list = list.filter((s) => allowedSet.has(s.hackathonId));
+    }
 
     if (hackathonId !== "all") {
       list = list.filter((s) => s.hackathonId === hackathonId);
@@ -178,39 +127,197 @@ export const submissionsClient = {
     return list;
   },
 
-  // POST /api/organizer/hackathons/:id/winners
+  // POST /api/v1/submissions/organizer/winner
   async assignWinnerRank(
     submissionId: string,
     rank: WinnerRank,
     winnerNotes?: string
   ): Promise<{ success: boolean; submission: ProjectSubmission }> {
+    try {
+      await authFetch(`/submissions/organizer/winner`, {
+        method: "POST",
+        body: JSON.stringify({
+          submissionId,
+          rank,
+          winnerNotes: winnerNotes || "",
+        }),
+      });
+    } catch (err) {
+      console.warn("Failed to persist winner assignment to backend:", err);
+    }
+
     const list = getStoredSubmissions();
     const index = list.findIndex((s) => s.id === submissionId);
 
-    if (index === -1) {
-      throw new Error("Submission not found");
+    if (index !== -1) {
+      // If another team was assigned this same rank for the same hackathon, reset theirs to NONE
+      const targetHackathonId = list[index].hackathonId;
+      if (rank !== "NONE") {
+        list.forEach((s) => {
+          if (s.hackathonId === targetHackathonId && s.rank === rank) {
+            s.rank = "NONE";
+            s.prizeAwardedAt = undefined;
+          }
+        });
+      }
+
+      list[index] = {
+        ...list[index],
+        rank,
+        winnerNotes,
+        prizeAwardedAt: rank !== "NONE" ? new Date().toISOString() : undefined,
+      };
+
+      saveStoredSubmissions(list);
+      return { success: true, submission: list[index] };
     }
 
-    // If another team was assigned this same rank for the same hackathon, reset theirs to NONE
-    const targetHackathonId = list[index].hackathonId;
-    if (rank !== "NONE") {
-      list.forEach((s) => {
-        if (s.hackathonId === targetHackathonId && s.rank === rank) {
-          s.rank = "NONE";
-          s.prizeAwardedAt = undefined;
-        }
-      });
-    }
-
-    list[index] = {
-      ...list[index],
-      rank,
-      winnerNotes,
-      prizeAwardedAt: rank !== "NONE" ? new Date().toISOString() : undefined,
+    return {
+      success: true,
+      submission: {
+        id: submissionId,
+        teamId: "",
+        teamName: "",
+        teamMembersCount: 1,
+        projectTitle: "",
+        tagline: "",
+        category: "",
+        hackathonId: "",
+        hackathonName: "",
+        averageScore: 0,
+        evaluationsCount: 0,
+        rank,
+        winnerNotes,
+        prizeAwardedAt: rank !== "NONE" ? new Date().toISOString() : undefined,
+        createdAt: new Date().toISOString(),
+      },
     };
+  },
 
+  // POST /api/v1/submissions/organizer/request-payout
+  async requestPayout(
+    submissionId: string,
+    message?: string
+  ): Promise<{ success: boolean; submissionId: string; payoutStatus: PayoutStatus }> {
+    try {
+      await authFetch(`/submissions/organizer/request-payout`, {
+        method: "POST",
+        body: JSON.stringify({ submissionId, message: message || "" }),
+      });
+    } catch (err) {
+      console.warn("Failed to request payout via backend API:", err);
+    }
+
+    // Update local cache
+    const list = getStoredSubmissions();
+    const idx = list.findIndex((s) => s.id === submissionId);
+    if (idx !== -1) {
+      list[idx].payoutStatus = "REQUESTED";
+      list[idx].payoutDetails = {
+        ...list[idx].payoutDetails,
+        requestedAt: new Date().toISOString(),
+      };
+      saveStoredSubmissions(list);
+    }
+
+    return { success: true, submissionId, payoutStatus: "REQUESTED" };
+  },
+
+  // POST /api/v1/submissions/organizer/request-top-3-payouts
+  async requestTop3Payouts(
+    hackathonId: string,
+    message?: string
+  ): Promise<{ success: boolean; updatedCount: number; updatedIds: string[] }> {
+    let result = { success: true, updatedCount: 0, updatedIds: [] as string[] };
+    try {
+      const res = await authFetch<{ success: boolean; updatedCount: number; updatedIds: string[] }>(
+        `/submissions/organizer/request-top-3-payouts`,
+        {
+          method: "POST",
+          body: JSON.stringify({ hackathonId, message: message || "" }),
+        }
+      );
+      if (res && res.updatedIds) {
+        result = res;
+      }
+    } catch (err) {
+      console.warn("Failed to request Top 3 payouts via backend API:", err);
+    }
+
+    // Update local cache
+    const list = getStoredSubmissions();
+    list.forEach((s) => {
+      if (s.hackathonId === hackathonId && (s.rank === "FIRST" || s.rank === "SECOND" || s.rank === "THIRD")) {
+        s.payoutStatus = "REQUESTED";
+        s.payoutDetails = {
+          ...s.payoutDetails,
+          requestedAt: new Date().toISOString(),
+        };
+      }
+    });
     saveStoredSubmissions(list);
-    return { success: true, submission: list[index] };
+
+    return result;
+  },
+
+  // POST /api/v1/submissions/:id/payout-details
+  async submitPayoutDetails(
+    submissionId: string,
+    details: PayoutDetails
+  ): Promise<{ success: boolean; details: PayoutDetails }> {
+    try {
+      await authFetch(`/submissions/${submissionId}/payout-details`, {
+        method: "POST",
+        body: JSON.stringify(details),
+      });
+    } catch (err) {
+      console.warn("Failed to submit payout details to backend API:", err);
+    }
+
+    // Update local cache
+    const list = getStoredSubmissions();
+    const idx = list.findIndex((s) => s.id === submissionId);
+    if (idx !== -1) {
+      list[idx].payoutStatus = "SUBMITTED";
+      list[idx].payoutDetails = {
+        ...details,
+        submittedAt: new Date().toISOString(),
+      };
+      saveStoredSubmissions(list);
+    }
+
+    return { success: true, details };
+  },
+
+  // POST /api/v1/submissions/organizer/mark-payout-paid
+  async markPayoutPaid(
+    submissionId: string,
+    transactionRef?: string
+  ): Promise<{ success: boolean }> {
+    try {
+      await authFetch(`/submissions/organizer/mark-payout-paid`, {
+        method: "POST",
+        body: JSON.stringify({ submissionId, transactionRef: transactionRef || "" }),
+      });
+    } catch (err) {
+      console.warn("Failed to mark payout paid via backend API:", err);
+    }
+
+    const list = getStoredSubmissions();
+    const idx = list.findIndex((s) => s.id === submissionId);
+    if (idx !== -1) {
+      list[idx].payoutStatus = "PAID";
+      if (list[idx].payoutDetails) {
+        list[idx].payoutDetails = {
+          ...list[idx].payoutDetails,
+          paidAt: new Date().toISOString(),
+          transactionRef,
+        };
+      }
+      saveStoredSubmissions(list);
+    }
+
+    return { success: true };
   },
 
   // GET /api/organizer/hackathons/:id/leaderboard
@@ -219,3 +326,4 @@ export const submissionsClient = {
     return list.sort((a, b) => b.averageScore - a.averageScore);
   },
 };
+

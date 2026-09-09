@@ -40,16 +40,14 @@ import {
   type AnnouncementStatus,
 } from "@/features/announcements/lib/announcements-client";
 
+import { hackathonsClient } from "@/features/hackathons";
+import { NotificationBellDropdown } from "@/features/notifications/components/NotificationBellDropdown";
+import { PortalMobileNav } from "@/components/layout/PortalMobileNav";
+
 interface HackathonOption {
   id: string;
   title: string;
 }
-
-const MANAGED_HACKATHONS: HackathonOption[] = [
-  { id: "all", title: "All Hackathons" },
-  { id: "hck-agritech", title: "AgriTech Hack 2024" },
-  { id: "hck-fintech", title: "FinTech Frontier" },
-];
 
 export default function OrganizerAnnouncementsPage() {
   const t = useTranslations("Organizer");
@@ -57,6 +55,11 @@ export default function OrganizerAnnouncementsPage() {
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("announcements");
+
+  // Dynamic Hackathons
+  const [managedHackathons, setManagedHackathons] = useState<HackathonOption[]>([
+    { id: "all", title: "All Hackathons" },
+  ]);
 
   // Filters State
   const [selectedHackathonId, setSelectedHackathonId] = useState<string>("all");
@@ -72,7 +75,7 @@ export default function OrganizerAnnouncementsPage() {
 
   // Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [formHackathonId, setFormHackathonId] = useState<string>("hck-agritech");
+  const [formHackathonId, setFormHackathonId] = useState<string>("");
   const [formTitle, setFormTitle] = useState("");
   const [formContent, setFormContent] = useState("");
   const [formPriority, setFormPriority] = useState<AnnouncementPriority>("IMPORTANT");
@@ -84,9 +87,31 @@ export default function OrganizerAnnouncementsPage() {
   const [isSending, setIsSending] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const organizerName = user?.fullName || "Abeba Selassie";
-  const organizerTitle = "Lead Organizer";
+  const organizerName = user?.fullName || "Organizer";
+  const organizerTitle = (user as any)?.organization || "Innovation Hub";
   const userInitial = organizerName.charAt(0).toUpperCase();
+
+  // Load Managed Hackathons on Mount
+  useEffect(() => {
+    async function loadManaged() {
+      try {
+        const res = await hackathonsClient.listHackathons({ managed: true });
+        if (res && res.data) {
+          const list: HackathonOption[] = [
+            { id: "all", title: "All Hackathons" },
+            ...res.data.map((h: any) => ({ id: h.id, title: h.title })),
+          ];
+          setManagedHackathons(list);
+          if (res.data.length > 0) {
+            setFormHackathonId(res.data[0].id);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load managed hackathons in announcements page:", err);
+      }
+    }
+    loadManaged();
+  }, []);
 
   // Load Announcements
   const loadAnnouncements = async () => {
@@ -139,7 +164,7 @@ export default function OrganizerAnnouncementsPage() {
     setIsSending(true);
     try {
       const targetEventName =
-        MANAGED_HACKATHONS.find((h) => h.id === formHackathonId)?.title || "AgriTech Hack 2024";
+        managedHackathons.find((h) => h.id === formHackathonId)?.title || "Hackathon";
 
       const res = await announcementsClient.createAnnouncement({
         organizerId: "org-1",
@@ -184,27 +209,28 @@ export default function OrganizerAnnouncementsPage() {
   };
 
   const selectedHackathonTitle =
-    MANAGED_HACKATHONS.find((h) => h.id === selectedHackathonId)?.title || "All Hackathons";
+    managedHackathons.find((h) => h.id === selectedHackathonId)?.title || "All Hackathons";
 
   return (
-    <div className="min-h-screen bg-[#F4F3FF] text-[#1E1E38]">
+    <div className="min-h-screen bg-[#f3f6f4] text-[#122622]">
+      {/* Mobile Sticky Navigation Bar & Slide-Out Drawer */}
+      <PortalMobileNav portalType="organizer" activeItem="announcements" title="Announcements" />
+
       <div className="mx-auto flex w-full max-w-[1500px]">
         {/* ================= LEFT SIDEBAR (ORGANIZER CONTEXT) ================= */}
         <aside
-          className={`sticky top-0 hidden h-screen flex-col justify-between border-r border-indigo-100/80 bg-white p-5 lg:flex shadow-2xs transition-all duration-300 ease-in-out ${
+          className={`sticky top-0 hidden h-screen flex-col justify-between border-r border-[#d6e7e1] bg-white p-5 lg:flex shadow-2xs transition-all duration-300 ease-in-out ${
             isSidebarCollapsed ? "w-20 px-3" : "w-64 px-5"
           }`}
         >
           <div className="flex flex-col gap-8">
-            {/* Brand Logo & Portal Tag */}
-            <button
-              type="button"
-              onClick={() => setIsSidebarCollapsed((prev) => !prev)}
+            {/* Brand Logo & Portal Tag -> Navigates to Hero / Homepage */}
+            <Link
+              href="/"
               className="flex items-center gap-3 cursor-pointer text-left group focus:outline-none"
-              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-              aria-label="Toggle Sidebar"
+              title="Go to Home"
             >
-              <span className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-[#F9F8F3] border border-[#E2DFD8] shadow-xs overflow-hidden p-1 transition-transform group-hover:scale-105">
+              <span className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-[#e8f3f0] border border-[#d6e7e1] shadow-xs overflow-hidden p-1 transition-transform group-hover:scale-105">
                 <Logomark className="h-full w-full object-contain" />
               </span>
               <div
@@ -212,21 +238,21 @@ export default function OrganizerAnnouncementsPage() {
                   isSidebarCollapsed ? "max-w-0 opacity-0 pointer-events-none" : "max-w-xs opacity-100"
                 }`}
               >
-                <h1 className="font-display text-2xl font-extrabold tracking-tight text-[#3B34D2]">
+                <h1 className="font-display text-2xl font-extrabold tracking-tight text-[#0f6b5c]">
                   HODANA
                 </h1>
-                <p className="text-xs font-semibold text-[#6B6B80]">
+                <p className="text-xs font-semibold text-[#57685f]">
                   Ecosystem Portal
                 </p>
               </div>
-            </button>
+            </Link>
 
             {/* Sidebar Navigation */}
-            <nav className="flex flex-col gap-1 text-xs font-semibold text-[#52526B]">
+            <nav className="flex flex-col gap-1 text-xs font-semibold text-[#57685f]">
               <Link
                 href="/organizer/dashboard"
                 title={isSidebarCollapsed ? t("navOverview") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -237,7 +263,7 @@ export default function OrganizerAnnouncementsPage() {
               <Link
                 href="/organizer/hackathons"
                 title={isSidebarCollapsed ? t("navHackathons") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -248,7 +274,7 @@ export default function OrganizerAnnouncementsPage() {
               <Link
                 href="/organizer/registrations"
                 title={isSidebarCollapsed ? t("navRegistrations") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -259,7 +285,7 @@ export default function OrganizerAnnouncementsPage() {
               <Link
                 href="/organizer/judges"
                 title={isSidebarCollapsed ? t("navJudging") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -270,7 +296,7 @@ export default function OrganizerAnnouncementsPage() {
               <Link
                 href="/organizer/prizes"
                 title={isSidebarCollapsed ? t("navPrizes") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -281,7 +307,7 @@ export default function OrganizerAnnouncementsPage() {
               <Link
                 href="/organizer/submissions"
                 title={isSidebarCollapsed ? t("navAnalytics") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -294,7 +320,7 @@ export default function OrganizerAnnouncementsPage() {
                 title={isSidebarCollapsed ? t("navAnnouncements") : undefined}
                 className={`flex items-center gap-3 rounded-xl py-2.5 transition-all ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
-                } bg-[#3B34D2] text-white shadow-md font-bold`}
+                } bg-[#0f6b5c] text-white shadow-md font-bold`}
               >
                 <Megaphone className="h-4 w-4 shrink-0" />
                 {!isSidebarCollapsed && <span className="whitespace-nowrap">{t("navAnnouncements")}</span>}
@@ -303,7 +329,7 @@ export default function OrganizerAnnouncementsPage() {
               <Link
                 href="/dashboard/portfolio"
                 title={isSidebarCollapsed ? t("navPortfolio") : undefined}
-                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-indigo-50 hover:text-[#3B34D2] ${
+                className={`flex items-center gap-3 rounded-xl py-2.5 transition-all hover:bg-[#e8f3f0] hover:text-[#0f6b5c] ${
                   isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
                 }`}
               >
@@ -314,11 +340,11 @@ export default function OrganizerAnnouncementsPage() {
           </div>
 
           {/* Sidebar Bottom CTA & User Footer */}
-          <div className="flex flex-col gap-4 border-t border-indigo-100/80 pt-4">
+          <div className="flex flex-col gap-4 border-t border-[#d6e7e1] pt-4">
             <Link
               href="/organizer/hackathons"
               title={isSidebarCollapsed ? t("launchProject") : undefined}
-              className={`flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4F46E5] to-[#3B34D2] py-2.5 text-xs font-bold text-white shadow-md transition-all hover:shadow-lg hover:brightness-110 ${
+              className={`flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] hover:bg-[#0b5347] py-2.5 text-xs font-bold text-white shadow-md transition-all ${
                 isSidebarCollapsed ? "px-0" : "px-4"
               }`}
             >
@@ -333,15 +359,15 @@ export default function OrganizerAnnouncementsPage() {
                 isSidebarCollapsed ? "justify-center p-1" : ""
               }`}
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#3B34D2] text-xs font-extrabold text-white shadow-xs">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0f6b5c] text-xs font-extrabold text-white shadow-xs">
                 {userInitial}
               </span>
               {!isSidebarCollapsed && (
                 <div className="flex min-w-0 flex-1 flex-col whitespace-nowrap overflow-hidden">
-                  <p className="truncate text-xs font-bold text-[#1E1E38]">
+                  <p className="truncate text-xs font-bold text-[#122622]">
                     {organizerName}
                   </p>
-                  <p className="truncate text-[11px] font-medium text-[#6B6B80]">
+                  <p className="truncate text-[11px] font-medium text-[#57685f]">
                     {organizerTitle}
                   </p>
                 </div>
@@ -355,22 +381,25 @@ export default function OrganizerAnnouncementsPage() {
           {/* Header Title Bar */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-6">
             <div>
-              <h1 className="font-display text-3xl font-extrabold tracking-tight text-[#1E1E38]">
+              <h1 className="font-display text-3xl font-extrabold tracking-tight text-[#122622]">
                 Announcements & Broadcast Engine
               </h1>
-              <p className="text-xs text-[#6B6B80] mt-1">
+              <p className="text-xs text-[#57685f] mt-1">
                 Broadcast updates, schedule changes, and alerts to hackathon participants.
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 rounded-2xl bg-[#3B34D2] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#322BB8] transition-all cursor-pointer"
-            >
-              <Plus className="h-4 w-4" />
-              <span>+ Create Announcement</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+              >
+                <Plus className="h-4 w-4" />
+                <span>+ Create Announcement</span>
+              </button>
+              <NotificationBellDropdown />
+            </div>
           </div>
 
           {/* Success Toast Banner */}
@@ -382,7 +411,7 @@ export default function OrganizerAnnouncementsPage() {
           )}
 
           {/* 1. Target Filter Bar */}
-          <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-indigo-100/80 bg-white p-5 shadow-2xs sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs sm:flex-row sm:items-center sm:justify-between">
             {/* Search Input */}
             <div className="relative flex-1 min-w-[240px]">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -391,7 +420,7 @@ export default function OrganizerAnnouncementsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search announcement subject or text..."
-                className="h-10 w-full rounded-2xl border border-indigo-100/80 bg-[#F9F8FE] pl-10 pr-4 text-xs font-medium text-[#1E1E38] outline-none focus:border-[#3B34D2] focus:bg-white"
+                className="h-10 w-full rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/40 pl-10 pr-4 text-xs font-medium text-[#122622] outline-none focus:border-[#0f6b5c] focus:bg-white"
               />
             </div>
 
@@ -401,17 +430,17 @@ export default function OrganizerAnnouncementsPage() {
                 <button
                   type="button"
                   onClick={() => setIsEventDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-2xl border border-indigo-100 bg-[#F9F8FE] px-3.5 py-2.5 text-xs font-bold text-[#1E1E38] shadow-2xs hover:bg-white transition-all cursor-pointer"
+                  className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
                 >
-                  <Layers className="h-3.5 w-3.5 text-[#3B34D2]" />
-                  <span className="text-[#6B6B80]">Event:</span>
+                  <Layers className="h-3.5 w-3.5 text-[#0f6b5c]" />
+                  <span className="text-[#57685f]">Event:</span>
                   <span>{selectedHackathonTitle}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
                 </button>
 
                 {isEventDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-indigo-100 bg-white p-2 shadow-xl z-30">
-                    {MANAGED_HACKATHONS.map((hck) => (
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30">
+                    {managedHackathons.map((hck) => (
                       <button
                         key={hck.id}
                         type="button"
@@ -421,8 +450,8 @@ export default function OrganizerAnnouncementsPage() {
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
                           selectedHackathonId === hck.id
-                            ? "bg-[#3B34D2] text-white"
-                            : "text-[#1E1E38] hover:bg-indigo-50"
+                            ? "bg-[#0f6b5c] text-white"
+                            : "text-[#122622] hover:bg-[#e8f3f0]"
                         }`}
                       >
                         <span>{hck.title}</span>
@@ -438,15 +467,15 @@ export default function OrganizerAnnouncementsPage() {
                 <button
                   type="button"
                   onClick={() => setIsStatusDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-2xl border border-indigo-100 bg-[#F9F8FE] px-3.5 py-2.5 text-xs font-bold text-[#1E1E38] shadow-2xs hover:bg-white transition-all cursor-pointer"
+                  className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
                 >
-                  <Filter className="h-3.5 w-3.5 text-[#3B34D2]" />
+                  <Filter className="h-3.5 w-3.5 text-[#0f6b5c]" />
                   <span className="capitalize">{selectedStatus === "all" ? "All Statuses" : selectedStatus}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
                 </button>
 
                 {isStatusDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-44 rounded-2xl border border-indigo-100 bg-white p-2 shadow-xl z-30">
+                  <div className="absolute right-0 top-full mt-2 w-44 rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30">
                     {["all", "PUBLISHED", "DRAFT"].map((st) => (
                       <button
                         key={st}
@@ -457,8 +486,8 @@ export default function OrganizerAnnouncementsPage() {
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
                           selectedStatus === st
-                            ? "bg-[#3B34D2] text-white"
-                            : "text-[#1E1E38] hover:bg-indigo-50"
+                            ? "bg-[#0f6b5c] text-white"
+                            : "text-[#122622] hover:bg-[#e8f3f0]"
                         }`}
                       >
                         <span className="capitalize">{st === "all" ? "All Statuses" : st}</span>
@@ -474,15 +503,15 @@ export default function OrganizerAnnouncementsPage() {
           {/* 1. Announcements Feed / History List */}
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#3B34D2] border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0f6b5c] border-t-transparent" />
             </div>
           ) : filteredAnnouncements.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-3xl border border-indigo-100 bg-white p-12 text-center">
-              <Megaphone className="h-10 w-10 text-indigo-300 mb-3" />
-              <h3 className="font-display text-lg font-bold text-[#1E1E38]">
+            <div className="flex flex-col items-center justify-center rounded-3xl border border-[#d6e7e1] bg-white p-12 text-center">
+              <Megaphone className="h-10 w-10 text-[#0f6b5c]/40 mb-3" />
+              <h3 className="font-display text-lg font-bold text-[#122622]">
                 No Announcements Found
               </h3>
-              <p className="text-xs text-[#6B6B80] mt-1 max-w-sm">
+              <p className="text-xs text-[#57685f] mt-1 max-w-sm">
                 No announcements match the selected filter criteria. Click "+ Create Announcement" to broadcast your first update.
               </p>
             </div>
@@ -501,14 +530,14 @@ export default function OrganizerAnnouncementsPage() {
                         ? "border-red-200 bg-red-50/30"
                         : isImportant
                         ? "border-amber-200 bg-amber-50/20"
-                        : "border-indigo-100 bg-white"
+                        : "border-[#d6e7e1] bg-white"
                     }`}
                   >
                     {/* Card Top Meta */}
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-indigo-100/60">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-[#d6e7e1]/60">
                       <div className="flex flex-wrap items-center gap-2">
                         {/* Event Tag */}
-                        <span className="rounded-lg bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 text-[10px] font-bold text-[#3B34D2]">
+                        <span className="rounded-lg bg-[#e8f3f0] border border-[#d6e7e1] px-2.5 py-0.5 text-[10px] font-bold text-[#0f6b5c]">
                           {item.hackathonName}
                         </span>
 
@@ -519,7 +548,7 @@ export default function OrganizerAnnouncementsPage() {
                               ? "bg-red-500 text-white"
                               : isImportant
                               ? "bg-amber-500 text-white"
-                              : "bg-indigo-600 text-white"
+                              : "bg-[#0f6b5c] text-white"
                           }`}
                         >
                           {item.priority}
@@ -538,9 +567,9 @@ export default function OrganizerAnnouncementsPage() {
                       </div>
 
                       {/* Channels Indicator Icons & Recipient Count */}
-                      <div className="flex items-center gap-3 text-xs text-[#6B6B80]">
+                      <div className="flex items-center gap-3 text-xs text-[#57685f]">
                         {isPublished && (
-                          <div className="flex items-center gap-1 font-bold text-[#3B34D2]">
+                          <div className="flex items-center gap-1 font-bold text-[#0f6b5c]">
                             <Users className="h-3.5 w-3.5" />
                             <span>{item.recipientCount} Recipients</span>
                           </div>
@@ -549,7 +578,7 @@ export default function OrganizerAnnouncementsPage() {
                         <div className="flex items-center gap-1.5 text-gray-400">
                           {item.channels.includes("IN_APP") && (
                             <span title="In-App Bell Alert">
-                              <Bell className="h-4 w-4 text-[#3B34D2]" />
+                              <Bell className="h-4 w-4 text-[#0f6b5c]" />
                             </span>
                           )}
                           {item.channels.includes("EMAIL") && (
@@ -568,16 +597,16 @@ export default function OrganizerAnnouncementsPage() {
 
                     {/* Announcement Content */}
                     <div className="py-4">
-                      <h3 className="font-display text-base font-extrabold text-[#1E1E38]">
+                      <h3 className="font-display text-base font-extrabold text-[#122622]">
                         {item.title}
                       </h3>
-                      <p className="text-xs text-[#52526B] leading-relaxed mt-1.5 whitespace-pre-line">
+                      <p className="text-xs text-[#57685f] leading-relaxed mt-1.5 whitespace-pre-line">
                         {item.content}
                       </p>
                     </div>
 
                     {/* Card Footer Actions & Timestamp */}
-                    <div className="flex items-center justify-between border-t border-indigo-100/60 pt-3 text-[11px] text-[#6B6B80]">
+                    <div className="flex items-center justify-between border-t border-[#d6e7e1]/60 pt-3 text-[11px] text-[#57685f]">
                       <div className="flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-gray-400" />
                         <span>
@@ -607,18 +636,18 @@ export default function OrganizerAnnouncementsPage() {
       {/* 2. Create Announcement Modal Component */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-          <div className="w-full max-w-lg rounded-3xl border border-indigo-100 bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
+          <div className="w-full max-w-lg rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-indigo-100/80 pb-4">
+            <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-100 text-[#3B34D2] shadow-2xs font-bold">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] shadow-2xs font-bold">
                   <Megaphone className="h-5 w-5" />
                 </span>
                 <div>
-                  <h3 className="font-display text-base font-extrabold text-[#1E1E38]">
+                  <h3 className="font-display text-base font-extrabold text-[#122622]">
                     Create & Broadcast Announcement
                   </h3>
-                  <p className="text-[11px] font-semibold text-[#6B6B80]">
+                  <p className="text-[11px] font-semibold text-[#57685f]">
                     Send updates directly to participants' bells and inbox
                   </p>
                 </div>
@@ -635,22 +664,25 @@ export default function OrganizerAnnouncementsPage() {
 
             {/* Target Hackathon Selector */}
             <div>
-              <label className="block text-xs font-extrabold text-[#1E1E38] mb-1">
+              <label className="block text-xs font-extrabold text-[#122622] mb-1">
                 Target Hackathon Registered Participants *
               </label>
               <select
                 value={formHackathonId}
                 onChange={(e) => setFormHackathonId(e.target.value)}
-                className="h-10 w-full rounded-2xl border border-indigo-100 bg-[#F9F8FE] px-4 text-xs font-bold text-[#1E1E38] outline-none focus:border-[#3B34D2]"
+                className="h-10 w-full rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/30 px-4 text-xs font-bold text-[#122622] outline-none focus:border-[#0f6b5c]"
               >
-                <option value="hck-agritech">AgriTech Hack 2024 (412 Registered Participants)</option>
-                <option value="hck-fintech">FinTech Frontier (285 Registered Participants)</option>
+                {managedHackathons.filter((h) => h.id !== "all").map((hck) => (
+                  <option key={hck.id} value={hck.id}>
+                    {hck.title}
+                  </option>
+                ))}
               </select>
             </div>
 
             {/* Title / Subject Line */}
             <div>
-              <label className="block text-xs font-extrabold text-[#1E1E38] mb-1">
+              <label className="block text-xs font-extrabold text-[#122622] mb-1">
                 Announcement Subject / Title *
               </label>
               <input
@@ -658,13 +690,13 @@ export default function OrganizerAnnouncementsPage() {
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="e.g. Submission Deadline Extended by 2 Hours!"
-                className="h-10 w-full rounded-2xl border border-indigo-100 bg-[#F9F8FE] px-4 text-xs font-bold text-[#1E1E38] outline-none focus:border-[#3B34D2]"
+                className="h-10 w-full rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/30 px-4 text-xs font-bold text-[#122622] outline-none focus:border-[#0f6b5c]"
               />
             </div>
 
             {/* Priority Level Radio Group */}
             <div>
-              <label className="block text-xs font-extrabold text-[#1E1E38] mb-1.5">
+              <label className="block text-xs font-extrabold text-[#122622] mb-1.5">
                 Priority & Alert Level
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -673,8 +705,8 @@ export default function OrganizerAnnouncementsPage() {
                   onClick={() => setFormPriority("INFO")}
                   className={`flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer ${
                     formPriority === "INFO"
-                      ? "bg-indigo-600 text-white shadow-xs"
-                      : "bg-[#F9F8FE] border border-indigo-100 text-[#52526B]"
+                      ? "bg-[#0f6b5c] text-white shadow-xs"
+                      : "bg-[#e8f3f0]/40 border border-[#d6e7e1] text-[#57685f]"
                   }`}
                 >
                   <Info className="h-3.5 w-3.5" />
@@ -687,7 +719,7 @@ export default function OrganizerAnnouncementsPage() {
                   className={`flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer ${
                     formPriority === "IMPORTANT"
                       ? "bg-amber-500 text-white shadow-xs"
-                      : "bg-[#F9F8FE] border border-indigo-100 text-[#52526B]"
+                      : "bg-[#e8f3f0]/40 border border-[#d6e7e1] text-[#57685f]"
                   }`}
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
@@ -700,7 +732,7 @@ export default function OrganizerAnnouncementsPage() {
                   className={`flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer ${
                     formPriority === "URGENT"
                       ? "bg-red-500 text-white shadow-xs"
-                      : "bg-[#F9F8FE] border border-indigo-100 text-[#52526B]"
+                      : "bg-[#e8f3f0]/40 border border-[#d6e7e1] text-[#57685f]"
                   }`}
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
@@ -711,7 +743,7 @@ export default function OrganizerAnnouncementsPage() {
 
             {/* Message Content (Rich Text / Markdown area) */}
             <div>
-              <label className="block text-xs font-extrabold text-[#1E1E38] mb-1">
+              <label className="block text-xs font-extrabold text-[#122622] mb-1">
                 Announcement Message Content *
               </label>
               <textarea
@@ -719,24 +751,24 @@ export default function OrganizerAnnouncementsPage() {
                 value={formContent}
                 onChange={(e) => setFormContent(e.target.value)}
                 placeholder="Write message details (supports bold, links, code snippets)..."
-                className="w-full rounded-2xl border border-indigo-100 bg-[#F9F8FE] p-3 text-xs font-medium text-[#1E1E38] outline-none focus:border-[#3B34D2] focus:bg-white"
+                className="w-full rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/30 p-3 text-xs font-medium text-[#122622] outline-none focus:border-[#0f6b5c] focus:bg-white"
               />
             </div>
 
             {/* Delivery Channels Checkboxes */}
             <div>
-              <label className="block text-xs font-extrabold text-[#1E1E38] mb-1.5">
+              <label className="block text-xs font-extrabold text-[#122622] mb-1.5">
                 Delivery Channels
               </label>
-              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[#52526B]">
+              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[#57685f]">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formChannels.includes("IN_APP")}
                     onChange={() => handleToggleChannel("IN_APP")}
-                    className="h-4 w-4 rounded border-gray-300 text-[#3B34D2]"
+                    className="h-4 w-4 rounded border-gray-300 text-[#0f6b5c]"
                   />
-                  <Bell className="h-3.5 w-3.5 text-[#3B34D2]" />
+                  <Bell className="h-3.5 w-3.5 text-[#0f6b5c]" />
                   <span>In-App Bell</span>
                 </label>
 
@@ -745,7 +777,7 @@ export default function OrganizerAnnouncementsPage() {
                     type="checkbox"
                     checked={formChannels.includes("EMAIL")}
                     onChange={() => handleToggleChannel("EMAIL")}
-                    className="h-4 w-4 rounded border-gray-300 text-[#3B34D2]"
+                    className="h-4 w-4 rounded border-gray-300 text-[#0f6b5c]"
                   />
                   <Mail className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Email Broadcast</span>
@@ -756,7 +788,7 @@ export default function OrganizerAnnouncementsPage() {
                     type="checkbox"
                     checked={formChannels.includes("PUSH")}
                     onChange={() => handleToggleChannel("PUSH")}
-                    className="h-4 w-4 rounded border-gray-300 text-[#3B34D2]"
+                    className="h-4 w-4 rounded border-gray-300 text-[#0f6b5c]"
                   />
                   <Smartphone className="h-3.5 w-3.5 text-amber-600" />
                   <span>Push Alert</span>
@@ -765,12 +797,12 @@ export default function OrganizerAnnouncementsPage() {
             </div>
 
             {/* Publish Actions Footer */}
-            <div className="flex items-center justify-between border-t border-indigo-100/80 pt-3">
+            <div className="flex items-center justify-between border-t border-[#d6e7e1] pt-3">
               <button
                 type="button"
                 onClick={() => handleSaveAnnouncement("DRAFT")}
                 disabled={isSending}
-                className="rounded-xl border border-indigo-100 bg-white px-4 py-2.5 text-xs font-bold text-[#52526B] hover:bg-gray-50 transition-all cursor-pointer"
+                className="rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
               >
                 Save as Draft
               </button>
@@ -779,7 +811,7 @@ export default function OrganizerAnnouncementsPage() {
                 type="button"
                 onClick={() => handleSaveAnnouncement("PUBLISHED")}
                 disabled={isSending || !formTitle.trim() || !formContent.trim()}
-                className="flex items-center gap-2 rounded-xl bg-[#3B34D2] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#322BB8] transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
                 <span>{isSending ? "Broadcasting..." : "Send Announcement Now"}</span>

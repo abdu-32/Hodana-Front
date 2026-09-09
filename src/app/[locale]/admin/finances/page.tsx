@@ -12,6 +12,8 @@ import {
   Download,
   DollarSign,
   Lock,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { AdminShell } from "@/features/admin/components/AdminShell";
 import { AdminFinancialRecord, adminClient } from "@/features/admin/lib/admin-client";
@@ -20,12 +22,21 @@ export default function AdminFinancesPage() {
   const [financials, setFinancials] = useState<AdminFinancialRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [recordToDelete, setRecordToDelete] = useState<AdminFinancialRecord | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const loadFinancials = async () => {
+    setIsLoading(true);
+    try {
+      const list = await adminClient.getFinancials();
+      setFinancials(list);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    adminClient.getFinancials().then((list) => {
-      setFinancials(list);
-      setIsLoading(false);
-    });
+    loadFinancials();
   }, []);
 
   const totalVolume = financials.reduce((acc, f) => acc + f.totalPrizePoolETB, 0);
@@ -33,9 +44,31 @@ export default function AdminFinancesPage() {
     .filter((f) => f.escrowStatus === "ESCROWED")
     .reduce((acc, f) => acc + f.totalPrizePoolETB, 0);
 
-  const handleReleaseEscrow = (id: string, title: string) => {
-    setToastMessage(`Disbursement release authorization initiated for "${title}".`);
+  const handleReleaseEscrow = async (id: string, title: string) => {
+    try {
+      await adminClient.authorizeEscrowRelease(id);
+      await loadFinancials();
+      setToastMessage(`Disbursement release authorization granted for "${title}".`);
+    } catch (e) {
+      console.error(e);
+      setToastMessage(`Failed to authorize release for "${title}".`);
+    }
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleDeleteRecord = async (id: string, title: string) => {
+    setIsProcessing(true);
+    try {
+      await adminClient.deleteFinancialRecord(id);
+      setRecordToDelete(null);
+      await loadFinancials();
+      setToastMessage(`Financial record for "${title}" has been deleted.`);
+      setTimeout(() => setToastMessage(null), 4000);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -126,6 +159,14 @@ export default function AdminFinancesPage() {
             <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#0f6b5c] border-t-transparent" />
             <p className="text-xs font-bold text-[#57685f]">Loading escrow data...</p>
           </div>
+        ) : financials.length === 0 ? (
+          <div className="flex min-h-[300px] flex-col items-center justify-center gap-3 p-8 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#e8f3f0] text-[#0f6b5c]">
+              <CreditCard className="h-7 w-7" />
+            </div>
+            <p className="text-sm font-extrabold text-[#122622]">No Escrow Records Found</p>
+            <p className="text-xs text-[#57685f]">No hackathon prize pools or escrow deposits are currently active in the system.</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
@@ -167,25 +208,46 @@ export default function AdminFinancesPage() {
                           <span>Pending Bank Deposit</span>
                         </span>
                       )}
+                      {fin.escrowStatus === "DISBURSED" && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-extrabold text-blue-700 border border-blue-200">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>Released & Disbursed</span>
+                        </span>
+                      )}
                     </td>
                     <td className="py-4 px-6 text-[#57685f]">
                       {fin.disbursedAmountETB.toLocaleString()} ETB
                     </td>
                     <td className="py-4 px-6 text-right">
-                      {fin.escrowStatus === "ESCROWED" ? (
+                      <div className="flex items-center justify-end gap-2">
+                        {fin.escrowStatus === "ESCROWED" ? (
+                          <button
+                            type="button"
+                            onClick={() => handleReleaseEscrow(fin.hackathonId || fin.id, fin.hackathonTitle)}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-[#0f6b5c] px-3 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-[#0b5347] transition-colors cursor-pointer"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <span>Authorize Release</span>
+                          </button>
+                        ) : fin.escrowStatus === "DISBURSED" ? (
+                          <span className="text-[11px] font-bold text-blue-700">
+                            Completed
+                          </span>
+                        ) : (
+                          <span className="text-[11px] font-bold text-gray-400">
+                            Awaiting Funds
+                          </span>
+                        )}
+
                         <button
                           type="button"
-                          onClick={() => handleReleaseEscrow(fin.id, fin.hackathonTitle)}
-                          className="inline-flex items-center gap-1 rounded-xl bg-[#0f6b5c] px-3 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-[#0b5347] transition-colors cursor-pointer"
+                          onClick={() => setRecordToDelete(fin)}
+                          title={`Delete record for ${fin.hackathonTitle}`}
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors cursor-pointer shadow-2xs"
                         >
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span>Authorize Release</span>
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
-                      ) : (
-                        <span className="text-[11px] font-bold text-gray-400">
-                          Awaiting Funds
-                        </span>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -194,6 +256,53 @@ export default function AdminFinancesPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Financial Record Confirmation Modal */}
+      {recordToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="flex w-full max-w-md flex-col gap-5 rounded-3xl bg-white p-6 sm:p-7 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-red-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#122622]">Delete Financial Record</h3>
+                <p className="text-xs font-medium text-[#57685f]">Remove prize pool & escrow tracking</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-red-50/70 border border-red-200/60 p-4 text-xs text-red-950">
+              <p className="font-semibold">
+                Are you sure you want to delete the financial record for{" "}
+                <span className="font-bold underline">{recordToDelete.hackathonTitle}</span>?
+              </p>
+              <p className="mt-1.5 text-[11px] text-red-700">
+                This will clear the prize budget ({recordToDelete.totalPrizePoolETB.toLocaleString()} ETB) and remove this escrow schedule from the audit ledger.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setRecordToDelete(null)}
+                disabled={isProcessing}
+                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isProcessing}
+                onClick={() => handleDeleteRecord(recordToDelete.hackathonId || recordToDelete.id, recordToDelete.hackathonTitle)}
+                className="inline-flex items-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isProcessing ? "Deleting..." : "Delete Record"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShell>
   );
 }

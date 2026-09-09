@@ -6,10 +6,14 @@
  * avoids that import ever happening by accident.
  */
 export const API_BASE_URL =
-  process.env.BACKEND_INTERNAL_URL ?? "http://localhost:4010";
+  process.env.BACKEND_INTERNAL_URL ?? "http://localhost:8000";
 
 export function backendFetch(path: string, init?: RequestInit): Promise<Response> {
-  return fetch(`${API_BASE_URL}/api/v1${path}`, {
+  const base = API_BASE_URL.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
+  const normalizedPath = path.startsWith("/api/v1")
+    ? path
+    : `/api/v1${path.startsWith("/") ? path : `/${path}`}`;
+  return fetch(`${base}${normalizedPath}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",

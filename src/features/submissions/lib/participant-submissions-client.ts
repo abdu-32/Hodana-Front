@@ -1,6 +1,7 @@
 "use client";
 
 import { authFetch } from "@/lib/api-client";
+import { listMyRegistrations } from "@/features/registrations/lib/registrations-client";
 
 export type SubmissionStatus = "NOT_SUBMITTED" | "DRAFT" | "SUBMITTED" | "EVALUATED";
 
@@ -10,6 +11,7 @@ export interface TeamMemberAttribution {
   role: string;
   email: string;
   avatar?: string;
+  isCollaborator?: boolean;
 }
 
 export interface PitchDeckFile {
@@ -68,9 +70,10 @@ export const DEFAULT_REGISTERED_HACKATHONS: RegisteredHackathonOption[] = [
     locationMode: "hybrid",
     tracks: ["Clean Energy & IoT", "Smart Agriculture", "Circular Economy"],
     teamMembers: [
-      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Team Lead & ML Engineer", email: "abebe@hodana.et" },
-      { id: "usr-2", fullName: "Bethlehem Tadesse", role: "Full-Stack Developer", email: "bethlehem.t@gmail.com" },
-      { id: "usr-3", fullName: "Dawit Haile", role: "Hardware / IoT Specialist", email: "dawit.haile@aau.edu.et" },
+      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Team Lead & ML Engineer", email: "abebe@hodana.et", isCollaborator: false },
+      { id: "usr-2", fullName: "Bethlehem Tadesse", role: "Full-Stack Developer", email: "bethlehem.t@gmail.com", isCollaborator: false },
+      { id: "usr-3", fullName: "Dawit Haile", role: "Hardware / IoT Specialist", email: "dawit.haile@aau.edu.et", isCollaborator: false },
+      { id: "usr-collab-1", fullName: "Dr. Aster Senait", role: "Renewables Research Advisor", email: "aster.senait@aau.edu.et", isCollaborator: true },
     ],
   },
   {
@@ -83,10 +86,11 @@ export const DEFAULT_REGISTERED_HACKATHONS: RegisteredHackathonOption[] = [
     locationMode: "hybrid",
     tracks: ["Computer Vision & AI", "Supply Chain", "USSD Diagnostics"],
     teamMembers: [
-      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Lead AI Engineer", email: "abebe@hodana.et" },
-      { id: "usr-4", fullName: "Selamawit Kebede", role: "Backend Architect", email: "selam.kebede@tech.et" },
-      { id: "usr-5", fullName: "Yonas Alemu", role: "UI/UX Designer", email: "yonas.alemu@design.et" },
-      { id: "usr-6", fullName: "Kidus Melaku", role: "Agronomy Data Specialist", email: "kidus.m@agri.gov.et" },
+      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Lead AI Engineer", email: "abebe@hodana.et", isCollaborator: false },
+      { id: "usr-4", fullName: "Selamawit Kebede", role: "Backend Architect", email: "selam.kebede@tech.et", isCollaborator: false },
+      { id: "usr-5", fullName: "Yonas Alemu", role: "UI/UX Designer", email: "yonas.alemu@design.et", isCollaborator: false },
+      { id: "usr-6", fullName: "Kidus Melaku", role: "Agronomy Data Specialist", email: "kidus.m@agri.gov.et", isCollaborator: false },
+      { id: "usr-collab-2", fullName: "Prof. Getachew Zeleke", role: "Plant Pathology Collaborator", email: "getachew.z@eiarc.gov.et", isCollaborator: true },
     ],
   },
   {
@@ -99,8 +103,9 @@ export const DEFAULT_REGISTERED_HACKATHONS: RegisteredHackathonOption[] = [
     locationMode: "online",
     tracks: ["Micro-Payments", "Offline NFC", "Digital Lending"],
     teamMembers: [
-      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Smart Contracts & Backend", email: "abebe@hodana.et" },
-      { id: "usr-7", fullName: "Hanna Worku", role: "Mobile App Engineer", email: "hanna.w@gmail.com" },
+      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Smart Contracts & Backend", email: "abebe@hodana.et", isCollaborator: false },
+      { id: "usr-7", fullName: "Hanna Worku", role: "Mobile App Engineer", email: "hanna.w@gmail.com", isCollaborator: false },
+      { id: "usr-collab-3", fullName: "Ermias Girma", role: "Financial Regulations Advisor", email: "ermias.g@nbe.gov.et", isCollaborator: true },
     ],
   },
 ];
@@ -145,10 +150,11 @@ CropShield AI combines multispectral satellite imagery with offline-capable mobi
     evaluationsCount: 4,
     feedbackNotes: "Impressive edge-AI implementation and practical rural connectivity focus.",
     teamMembers: [
-      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Lead AI Engineer", email: "abebe@hodana.et" },
-      { id: "usr-4", fullName: "Selamawit Kebede", role: "Backend Architect", email: "selam.kebede@tech.et" },
-      { id: "usr-5", fullName: "Yonas Alemu", role: "UI/UX Designer", email: "yonas.alemu@design.et" },
-      { id: "usr-6", fullName: "Kidus Melaku", role: "Agronomy Data Specialist", email: "kidus.m@agri.gov.et" },
+      { id: "usr-me", fullName: "Abebe Bekele (You)", role: "Lead AI Engineer", email: "abebe@hodana.et", isCollaborator: false },
+      { id: "usr-4", fullName: "Selamawit Kebede", role: "Backend Architect", email: "selam.kebede@tech.et", isCollaborator: false },
+      { id: "usr-5", fullName: "Yonas Alemu", role: "UI/UX Designer", email: "yonas.alemu@design.et", isCollaborator: false },
+      { id: "usr-6", fullName: "Kidus Melaku", role: "Agronomy Data Specialist", email: "kidus.m@agri.gov.et", isCollaborator: false },
+      { id: "usr-collab-2", fullName: "Prof. Getachew Zeleke", role: "Plant Pathology Collaborator", email: "getachew.z@eiarc.gov.et", isCollaborator: true },
     ],
     submittedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
     updatedAt: new Date(Date.now() - 86400000).toISOString(),
@@ -178,6 +184,49 @@ function saveStoredSubmissionsMap(map: Record<string, ParticipantSubmission>) {
 export const participantSubmissionsClient = {
   // 1. Get List of Registered Hackathons for this Participant
   async getRegisteredHackathons(): Promise<RegisteredHackathonOption[]> {
+    try {
+      const myRegs = await listMyRegistrations();
+      const activeRegs = myRegs.filter((r) => !r.withdrawnAt);
+      if (activeRegs.length > 0) {
+        return activeRegs.map((reg) => {
+          const h = (reg as any).hackathon;
+          return {
+            id: reg.hackathonId,
+            title: reg.hackathonTitle || h?.title || "Hackathon",
+            slug: reg.hackathonSlug || h?.slug || reg.hackathonId,
+            teamId: reg.team?.id || (reg as any).teamId || `team-${reg.hackathonId}`,
+            teamName: reg.team?.name || (reg as any).teamName || "My Squad",
+            teamMembers: [],
+            submissionDeadline: reg.hackathonEndDate || h?.submissionClosesAt || new Date(Date.now() + 14 * 86400000).toISOString(),
+            locationMode: ((reg.hackathonLocation || "").toLowerCase().includes("online") ? "online" : "hybrid") as any,
+          };
+        });
+      }
+    } catch {
+      // fallback
+    }
+
+    try {
+      const { listHackathons } = await import("@/features/hackathons/lib/hackathons-client");
+      const live = await listHackathons().catch(() => null);
+      const list = live?.data || (Array.isArray(live) ? live : []);
+      if (list.length > 0) {
+        return list.map((h: any) => ({
+          id: h.id,
+          title: h.title,
+          slug: h.slug,
+          teamId: `team-${h.id}`,
+          teamName: "My Squad",
+          teamMembers: [],
+          submissionDeadline: h.endDate || h.submissionClosesAt || new Date(Date.now() + 14 * 86400000).toISOString(),
+          locationMode: "hybrid",
+          tracks: h.tags || ["General"],
+        }));
+      }
+    } catch {
+      // fallback
+    }
+
     return DEFAULT_REGISTERED_HACKATHONS;
   },
 
@@ -286,11 +335,16 @@ export const participantSubmissionsClient = {
           description: updated.description,
           technologies: updated.techStack,
           repo_link: updated.githubUrl,
+          repoLink: updated.githubUrl,
           demo_video_url: updated.videoDemoUrl,
-          attachment_urls: updated.pitchDeckPdf ? [updated.pitchDeckPdf.url] : [],
+          demoVideoUrl: updated.videoDemoUrl,
+          attachment_urls: updated.pitchDeckPdf ? [updated.pitchDeckPdf.url] : (updated.liveDemoUrl ? [updated.liveDemoUrl] : []),
+          attachmentUrls: updated.pitchDeckPdf ? [updated.pitchDeckPdf.url] : (updated.liveDemoUrl ? [updated.liveDemoUrl] : []),
         }),
       });
-    } catch {}
+    } catch (err) {
+      console.warn("Backend draft sync issue:", err);
+    }
 
     return updated;
   },
@@ -327,7 +381,16 @@ export const participantSubmissionsClient = {
 
     // Attempt backend upsert & finalize
     try {
-      const res = await authFetch<any>(`/submissions/hackathons/${hackathonId}`, {
+      let targetHid = hackathonId;
+      if (targetHid.startsWith("hck-")) {
+        const myRegs = await listMyRegistrations().catch(() => []);
+        const activeRegs = myRegs.filter((r) => !r.withdrawnAt);
+        if (activeRegs.length > 0) {
+          targetHid = activeRegs[0].hackathonId;
+        }
+      }
+
+      const res = await authFetch<any>(`/submissions/hackathons/${targetHid}`, {
         method: "POST",
         body: JSON.stringify({
           title: finalSubmission.title,
@@ -335,14 +398,23 @@ export const participantSubmissionsClient = {
           description: finalSubmission.description,
           technologies: finalSubmission.techStack,
           repo_link: finalSubmission.githubUrl,
+          repoLink: finalSubmission.githubUrl,
           demo_video_url: finalSubmission.videoDemoUrl,
-          attachment_urls: finalSubmission.pitchDeckPdf ? [finalSubmission.pitchDeckPdf.url] : [],
+          demoVideoUrl: finalSubmission.videoDemoUrl,
+          attachment_urls: finalSubmission.pitchDeckPdf ? [finalSubmission.pitchDeckPdf.url] : (finalSubmission.liveDemoUrl ? [finalSubmission.liveDemoUrl] : []),
+          attachmentUrls: finalSubmission.pitchDeckPdf ? [finalSubmission.pitchDeckPdf.url] : (finalSubmission.liveDemoUrl ? [finalSubmission.liveDemoUrl] : []),
         }),
       });
       if (res && res.id) {
         await authFetch(`/submissions/${res.id}/finalize`, { method: "POST" });
+        finalSubmission.id = res.id;
+        finalSubmission.hackathonId = targetHid;
+        map[hackathonId] = finalSubmission;
+        saveStoredSubmissionsMap(map);
       }
-    } catch {}
+    } catch (err) {
+      console.warn("Backend final submission sync issue:", err);
+    }
 
     return finalSubmission;
   },

@@ -17,11 +17,14 @@ import {
   ExternalLink,
   ShieldCheck,
   Zap,
+  Menu,
+  X,
 } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Logomark } from "@/components/ui/Logomark";
 import { useSession } from "@/features/auth";
 import { adminClient } from "../lib/admin-client";
+import { NotificationBellDropdown } from "@/features/notifications/components/NotificationBellDropdown";
 
 interface AdminShellProps {
   children: ReactNode;
@@ -35,6 +38,7 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
   const { user } = useSession();
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [globalSearchQuery, setGlobalSearchQuery] = useState("");
   const [livePendingCount, setLivePendingCount] = useState(pendingOrgCount);
 
@@ -208,13 +212,13 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
           {/* Sidebar Bottom Status & Admin Badge */}
           <div className="flex flex-col gap-4 border-t border-[#d6e7e1] pt-5">
             <div className="flex items-center gap-3 rounded-2xl bg-[#e8f3f0] p-3 border border-[#d6e7e1]">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0f6b5c] to-[#16793d] font-display text-xs font-bold text-white shadow-sm">
-                SA
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0f6b5c] to-[#16793d] font-display text-xs font-bold text-white shadow-sm uppercase">
+                {user?.fullName ? user.fullName[0] : "A"}
               </div>
               {!isSidebarCollapsed && (
                 <div className="flex flex-col overflow-hidden text-left">
                   <span className="truncate text-xs font-extrabold text-[#122622]">
-                    {user?.fullName || "Kidus Worku"}
+                    {user?.fullName || "Platform Admin"}
                   </span>
                   <span className="text-[10px] text-[#0f6b5c] font-black uppercase tracking-wider">
                     Superuser Admin
@@ -239,37 +243,131 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
         {/* Right Main Admin Content */}
         <div className="flex-1 min-w-0 flex flex-col">
           {/* Top Admin Status & Search Bar */}
-          <header className="sticky top-0 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#d6e7e1] bg-[#f3f6f4]/90 backdrop-blur-md px-6 py-4">
-            {/* Global Search Bar */}
-            <form onSubmit={handleGlobalSearch} className="relative flex-1 max-w-md">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                value={globalSearchQuery}
-                onChange={(e) => setGlobalSearchQuery(e.target.value)}
-                placeholder="Global search (users, organizations, hackathons)..."
-                className="h-10 w-full rounded-2xl border border-[#d6e7e1] bg-white pl-10 pr-4 text-xs font-medium text-[#122622] shadow-xs outline-none focus:border-[#0f6b5c] focus:ring-2 focus:ring-[#0f6b5c]/20 transition-all placeholder:text-gray-400"
-              />
-            </form>
+          <header className="sticky top-0 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#d6e7e1] bg-[#f3f6f4]/90 backdrop-blur-md px-4 sm:px-6 py-4">
+            <div className="flex items-center gap-3 flex-1">
+              {/* Mobile Hamburger Menu Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="flex lg:hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#d6e7e1] bg-white text-[#122622] hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-colors cursor-pointer"
+                aria-label="Open Admin Menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+
+              {/* Global Search Bar */}
+              <form onSubmit={handleGlobalSearch} className="relative flex-1 max-w-md">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={globalSearchQuery}
+                  onChange={(e) => setGlobalSearchQuery(e.target.value)}
+                  placeholder="Search users, orgs, hackathons..."
+                  className="h-10 w-full rounded-2xl border border-[#d6e7e1] bg-white pl-10 pr-4 text-xs font-medium text-[#122622] shadow-xs outline-none focus:border-[#0f6b5c] focus:ring-2 focus:ring-[#0f6b5c]/20 transition-all placeholder:text-gray-400"
+                />
+              </form>
+            </div>
 
             {/* Right Status Badges */}
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 self-end sm:self-auto">
               {/* System Health Status Indicator */}
-              <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 text-[11px] font-bold text-emerald-800 shadow-xs">
+              <div className="hidden sm:flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 text-[11px] font-bold text-emerald-800 shadow-xs">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span>System Healthy • 99.98% Uptime</span>
+                <span>Healthy • 99.98%</span>
               </div>
 
               {/* Superuser Mode Pill */}
               <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#0e2b25] text-white px-3.5 py-1.5 text-[11px] font-black tracking-wide shadow-xs">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                <span>ROOT ADMIN</span>
+                <span>ROOT</span>
               </div>
+
+              <NotificationBellDropdown />
             </div>
           </header>
+
+          {/* Admin Mobile Slide-out Drawer */}
+          {isMobileMenuOpen && (
+            <div className="fixed inset-0 z-50 flex lg:hidden">
+              <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-xs animate-in fade-in-50"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-hidden="true"
+              />
+              <div className="relative flex w-[280px] max-w-[85vw] flex-col justify-between bg-white p-5 shadow-2xl z-50 animate-in slide-in-from-left duration-200">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F9F8F3] border border-[#E2DFD8] p-0.5">
+                        <Logomark className="h-full w-full object-contain" />
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-display text-base font-extrabold text-[#0f6b5c]">HODANA</span>
+                        <span className="text-[10px] font-bold text-red-700 uppercase tracking-wider">Superuser Admin</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#d6e7e1] text-gray-500 hover:bg-gray-100"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  <nav className="flex flex-col gap-1.5">
+                    {[
+                      { key: "dashboard", label: "Overview", icon: LayoutDashboard, href: "/admin" },
+                      { key: "organizations", label: "Organizations", icon: Building2, href: "/admin/organizations", badge: livePendingCount > 0 ? livePendingCount : undefined },
+                      { key: "hackathons", label: "Hackathons", icon: Trophy, href: "/admin/hackathons" },
+                      { key: "users", label: "Users Directory", icon: Users, href: "/admin/users" },
+                      { key: "finances", label: "Finances & Billing", icon: CreditCard, href: "/admin/finances" },
+                      { key: "audit", label: "Security Audit", icon: ShieldAlert, href: "/admin/audit" },
+                    ].map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeMenu === item.key;
+                      return (
+                        <Link
+                          key={item.key}
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center justify-between rounded-xl px-3.5 py-3 text-xs font-bold transition-all ${
+                            isActive
+                              ? "bg-[#0f6b5c] text-white shadow-xs"
+                              : "text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#0f6b5c]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-4 w-4 shrink-0" />
+                            <span>{item.label}</span>
+                          </div>
+                          {item.badge && (
+                            <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-extrabold text-white">
+                              {item.badge}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </div>
+
+                <div className="flex flex-col gap-3 border-t border-[#d6e7e1] pt-4">
+                  <Link
+                    href="/"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2 text-xs font-bold text-gray-700 hover:bg-gray-50"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    <span>Exit to Public Portal</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Page Body Content */}
           <main className="flex-1 p-5 lg:p-8 flex flex-col gap-6">

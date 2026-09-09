@@ -31,6 +31,8 @@ export const PROTECTED_PATH_PREFIXES = [
   "/orgs",
   "/admin",
   "/dashboard",
+  "/onboarding",
+  "/organizer",
 ];
 
 /** `/hackathons/{slug}/register` and `/hackathons/{slug}/team` (FR-REG / FR-TEAM). */

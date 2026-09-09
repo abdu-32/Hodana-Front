@@ -149,9 +149,21 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
                       <p className="text-[10px] text-[#57685f]">{doc.type} • {doc.size}</p>
                     </div>
                   </div>
-                  <span className="rounded-xl bg-[#e8f3f0] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold">
-                    Verified PDF
-                  </span>
+                  {doc.url && doc.url !== "#" ? (
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-xl bg-[#e8f3f0] hover:bg-[#d6e7e1] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold transition-colors"
+                    >
+                      <span>View File</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  ) : (
+                    <span className="rounded-xl bg-[#e8f3f0] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold">
+                      Document on File
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

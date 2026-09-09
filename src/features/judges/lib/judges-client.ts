@@ -1,15 +1,19 @@
+import { apiFetch, authFetch } from "@/lib/api-client";
+
 export interface JudgeInvitation {
   id: string;
   email: string;
   name?: string;
-  organizerId: string;
+  organizerId?: string;
   hackathonId: string;
   hackathonTitle: string;
   token: string;
-  status: "INVITED" | "ACCEPTED" | "EXPIRED" | "REVOKED";
+  status: "INVITED" | "ACCEPTED" | "EXPIRED" | "REVOKED" | "DECLINED";
   note?: string;
   createdAt: string;
-  expiresAt: string;
+  expiresAt?: string;
+  assignmentsCount?: number;
+  scoredCount?: number;
 }
 
 export interface HackathonJudge {
@@ -19,175 +23,152 @@ export interface HackathonJudge {
   createdAt: string;
 }
 
-const STORAGE_KEY = "hodana_judge_invitations_v1";
-
-const INITIAL_INVITATIONS: JudgeInvitation[] = [
-  {
-    id: "inv-1",
-    email: "dr.tadesse@aau.edu.et",
-    name: "Dr. Tadesse Worku",
-    organizerId: "org-1",
-    hackathonId: "hck-agritech",
-    hackathonTitle: "AgriTech Hack 2024",
-    token: "token_agri_tadesse_101",
-    status: "ACCEPTED",
-    note: "Looking forward to your guidance on agricultural AI models.",
-    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() + 4 * 86400000).toISOString(),
-  },
-  {
-    id: "inv-2",
-    email: "sara.kifle@fintech.et",
-    name: "Sara Kifle",
-    organizerId: "org-1",
-    hackathonId: "hck-fintech",
-    hackathonTitle: "FinTech Frontier",
-    token: "token_fintech_sara_202",
-    status: "INVITED",
-    note: "We would love your expertise on digital wallets and micro-payments.",
-    createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() + 6 * 86400000).toISOString(),
-  },
-  {
-    id: "inv-3",
-    email: "prof.getachew@mit.edu",
-    name: "Prof. Getachew Redda",
-    organizerId: "org-1",
-    hackathonId: "hck-ai-sprint",
-    hackathonTitle: "Amharic NLP Sprint",
-    token: "token_nlp_getachew_303",
-    status: "INVITED",
-    note: "Please evaluate LLM fine-tuning submissions for local Ethiopian languages.",
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() + 5 * 86400000).toISOString(),
-  },
-  {
-    id: "inv-4",
-    email: "old.judge@expired.org",
-    organizerId: "org-1",
-    hackathonId: "hck-agritech",
-    hackathonTitle: "AgriTech Hack 2024",
-    token: "token_expired_999",
-    status: "EXPIRED",
-    createdAt: new Date(Date.now() - 15 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() - 8 * 86400000).toISOString(),
-  },
-];
-
-function getStoredInvitations(): JudgeInvitation[] {
-  if (typeof window === "undefined") return INITIAL_INVITATIONS;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_INVITATIONS));
-      return INITIAL_INVITATIONS;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_INVITATIONS;
-  }
-}
-
-function saveStoredInvitations(invites: JudgeInvitation[]) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(invites));
-  } catch (err) {
-    console.error("Failed to persist invitations:", err);
-  }
+function normalizeStatus(backendStatus: string): "INVITED" | "ACCEPTED" | "EXPIRED" | "REVOKED" | "DECLINED" {
+  const upper = (backendStatus || "").toUpperCase();
+  if (upper === "SENT") return "INVITED";
+  if (upper === "ACCEPTED") return "ACCEPTED";
+  if (upper === "REVOKED") return "REVOKED";
+  if (upper === "DECLINED") return "DECLINED";
+  if (upper === "EXPIRED") return "EXPIRED";
+  return "INVITED";
 }
 
 export const judgesClient = {
-  // POST /api/organizer/judges/invite
+  // POST /api/v1/judging/judge/invitations
   async inviteJudge(data: {
     email: string;
     hackathonId: string;
-    hackathonTitle: string;
+    hackathonTitle?: string;
     note?: string;
   }): Promise<{ data: JudgeInvitation }> {
-    const current = getStoredInvitations();
-    const token = `token_${Math.random().toString(36).substring(2, 10)}_${Date.now()}`;
-    const newInvite: JudgeInvitation = {
-      id: `inv-${Date.now()}`,
-      email: data.email.trim().toLowerCase(),
-      organizerId: "usr-org",
-      hackathonId: data.hackathonId,
-      hackathonTitle: data.hackathonTitle,
-      token,
-      status: "INVITED",
-      note: data.note,
-      createdAt: new Date().toISOString(),
+    const res = await authFetch<any>("/judging/judge/invitations", {
+      method: "POST",
+      body: JSON.stringify({
+        email: data.email.trim().toLowerCase(),
+        hackathonId: data.hackathonId,
+        note: data.note || "",
+      }),
+    });
+
+    const item: JudgeInvitation = {
+      id: res.id,
+      email: res.email,
+      name: res.name || res.email.split("@")[0],
+      hackathonId: res.hackathonId || data.hackathonId,
+      hackathonTitle: res.hackathonTitle || data.hackathonTitle || "Hackathon",
+      token: res.id,
+      status: normalizeStatus(res.status),
+      note: res.note,
+      createdAt: res.invitedAt || new Date().toISOString(),
       expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
     };
-    const updated = [newInvite, ...current];
-    saveStoredInvitations(updated);
-    return { data: newInvite };
+
+    return { data: item };
   },
 
-  // GET /api/organizer/judges?hackathonId={id}&status={status}
+  // GET /api/v1/judging/organizer/judges
   async listJudges(params?: {
     hackathonId?: string;
     status?: string;
+    validHackathonIds?: string[];
+    organizerId?: string;
   }): Promise<{ data: JudgeInvitation[] }> {
-    let list = getStoredInvitations();
+    const qp = new URLSearchParams();
     if (params?.hackathonId && params.hackathonId !== "All") {
-      list = list.filter((i) => i.hackathonId === params.hackathonId);
+      qp.append("hackathonId", params.hackathonId);
     }
     if (params?.status && params.status !== "All") {
-      list = list.filter((i) => i.status === params.status);
+      qp.append("status", params.status.toLowerCase());
     }
-    return { data: list };
+
+    const queryStr = qp.toString() ? `?${qp.toString()}` : "";
+    const list = await authFetch<any[]>(`/judging/organizer/judges${queryStr}`);
+
+    const mapped: JudgeInvitation[] = list.map((item) => ({
+      id: item.id,
+      email: item.email,
+      name: item.name || item.email.split("@")[0],
+      hackathonId: item.hackathonId,
+      hackathonTitle: item.hackathonTitle,
+      token: item.id,
+      status: normalizeStatus(item.status),
+      note: item.note,
+      createdAt: item.invitedAt || new Date().toISOString(),
+      assignmentsCount: item.assignmentsCount,
+      scoredCount: item.scoredCount,
+    }));
+
+    return { data: mapped };
   },
 
-  // DELETE /api/organizer/judges/:id
+  // POST /api/v1/judging/judge/invitations/:id/revoke
   async revokeInvitation(id: string): Promise<{ success: boolean }> {
-    const current = getStoredInvitations();
-    const updated = current.map((item) =>
-      item.id === id ? { ...item, status: "REVOKED" as const } : item
-    );
-    saveStoredInvitations(updated);
+    await authFetch(`/judging/judge/invitations/${id}/revoke`, {
+      method: "POST",
+    });
     return { success: true };
   },
 
-  // GET /api/judges/invitation/:token
-  async validateToken(token: string): Promise<{ data: JudgeInvitation | null }> {
-    const current = getStoredInvitations();
-    const found = current.find((i) => i.token === token);
-    if (!found) return { data: null };
-
-    // Check expiration
-    if (new Date(found.expiresAt) < new Date() && found.status === "INVITED") {
-      found.status = "EXPIRED";
-      saveStoredInvitations(current);
+  // DELETE /api/organizer/judges/:id/permanent -> Revoke on backend
+  async deleteInvitation(id: string): Promise<{ success: boolean }> {
+    try {
+      await authFetch(`/judging/judge/invitations/${id}/revoke`, {
+        method: "POST",
+      });
+    } catch {
+      // If already revoked, pass through
     }
-    return { data: found };
+    return { success: true };
   },
 
-  // POST /api/judges/accept-invite
+  // GET /api/v1/judging/judge/invitations/:token
+  async validateToken(token: string): Promise<{ data: JudgeInvitation | null }> {
+    try {
+      const res = await apiFetch<any>(`/judging/judge/invitations/${token}`);
+      if (!res || !res.id) return { data: null };
+
+      const item: JudgeInvitation = {
+        id: res.id,
+        email: res.email,
+        name: res.name || res.email.split("@")[0],
+        hackathonId: res.hackathonId,
+        hackathonTitle: res.hackathonTitle,
+        token: res.id,
+        status: normalizeStatus(res.status),
+        note: res.note,
+        createdAt: res.invitedAt,
+      };
+      return { data: item };
+    } catch {
+      return { data: null };
+    }
+  },
+
+  // POST /api/v1/judging/judge/invitations/:token/accept
   async acceptInvite(data: {
     token: string;
     fullName?: string;
-    password?: string;
-    bio?: string;
   }): Promise<{ success: boolean; hackathonJudge: HackathonJudge }> {
-    const current = getStoredInvitations();
-    const index = current.findIndex((i) => i.token === data.token);
-    if (index === -1) {
-      throw new Error("Invalid or expired invitation token.");
-    }
-    current[index].status = "ACCEPTED";
-    if (data.fullName) {
-      current[index].name = data.fullName;
-    }
-    saveStoredInvitations(current);
+    const res = await authFetch<any>(`/judging/judge/invitations/${data.token}/accept`, {
+      method: "POST",
+    });
 
     const judgeRecord: HackathonJudge = {
-      id: `hj-${Date.now()}`,
-      userId: `usr-judge-${Date.now()}`,
-      hackathonId: current[index].hackathonId,
-      createdAt: new Date().toISOString(),
+      id: res.id,
+      userId: res.email,
+      hackathonId: res.hackathonId,
+      createdAt: res.respondedAt || new Date().toISOString(),
     };
 
     return { success: true, hackathonJudge: judgeRecord };
   },
+
+  // POST /api/v1/judging/judge/invitations/:token/decline
+  async declineInvite(token: string): Promise<{ success: boolean }> {
+    await authFetch(`/judging/judge/invitations/${token}/decline`, {
+      method: "POST",
+    });
+    return { success: true };
+  },
 };
+

@@ -236,27 +236,50 @@ export function SubmissionSummaryView({
             </div>
           )}
 
-          {/* Team Attribution Card */}
-          <div className="rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs">
-            <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#122622] mb-4">
-              <Users className="h-4 w-4 text-[#0f6b5c]" />
-              Team: {submission.teamName || "Registered Squad"}
-            </h3>
+          {/* Team & Collaborators Attribution Card */}
+          <div className="rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-3">
+              <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#122622]">
+                <Users className="h-4 w-4 text-[#0f6b5c]" />
+                {submission.teamName || "Project Squad"}
+              </h3>
+              <span className="text-[11px] font-extrabold text-[#0f6b5c] bg-[#e8f3f0] px-2.5 py-1 rounded-xl border border-[#d6e7e1]">
+                {submission.teamMembers?.length || 0} Attributed
+              </span>
+            </div>
 
             <div className="flex flex-col gap-3">
               {submission.teamMembers && submission.teamMembers.length > 0 ? (
                 submission.teamMembers.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between gap-3 rounded-2xl bg-[#f3f6f4] p-3 border border-[#d6e7e1]"
+                    className="flex items-start justify-between gap-3 rounded-2xl bg-[#f3f6f4] p-3 border border-[#d6e7e1]"
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0f6b5c] text-xs font-extrabold text-white">
-                        {member.fullName[0]}
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      <div
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold text-white shadow-xs ${
+                          member.isCollaborator ? "bg-indigo-600" : "bg-[#0f6b5c]"
+                        }`}
+                      >
+                        {member.fullName[0]?.toUpperCase() || "U"}
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <p className="text-xs font-bold text-[#122622] truncate">{member.fullName}</p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-xs font-bold text-[#122622] truncate">{member.fullName}</p>
+                          <span
+                            className={`rounded-md px-1.5 py-0.5 text-[9px] font-extrabold border ${
+                              member.isCollaborator
+                                ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                : "bg-[#e8f3f0] text-[#0f6b5c] border-[#d6e7e1]"
+                            }`}
+                          >
+                            {member.isCollaborator ? "Collaborator" : "Member"}
+                          </span>
+                        </div>
                         <p className="text-[11px] font-medium text-[#57685f] truncate">{member.role}</p>
+                        {member.email && (
+                          <p className="text-[10px] text-gray-400 truncate">{member.email}</p>
+                        )}
                       </div>
                     </div>
                   </div>

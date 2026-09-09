@@ -3,6 +3,7 @@ import type {
   RegisterForHackathonRequest,
   Registration,
 } from "@/lib/api-types-helpers";
+export type { Registration, RegisterForHackathonRequest };
 
 /**
  * Doc 06 Sec 5.4: Registration & Team Formation.
@@ -13,86 +14,118 @@ export async function registerForHackathon(
   hackathonId: string,
   payload: RegisterForHackathonRequest,
 ): Promise<Registration> {
-  try {
-    return await authFetch<Registration>(`/registrations/hackathons/${hackathonId}`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-  } catch (err) {
-    console.warn("Backend registerForHackathon failed, using mock fallback registration:", err);
-    const mockReg: Registration = {
-      id: `reg-${Date.now()}`,
-      hackathonId,
-      userId: "usr-me",
-      eligibilityConfirmed: payload.eligibilityConfirmed,
-      customAnswers: payload.customAnswers ?? null,
-      verificationStatus: "VERIFIED",
-      registeredAt: new Date().toISOString(),
-      withdrawnAt: null,
-      status: "CONFIRMED",
-    };
-    try {
-      const stored: Registration[] = JSON.parse(
-        localStorage.getItem("mock_registrations") || "[]"
-      );
-      const filtered = stored.filter((r) => r.hackathonId !== hackathonId);
-      filtered.push(mockReg);
-      localStorage.setItem("mock_registrations", JSON.stringify(filtered));
-    } catch {}
-    return mockReg;
-  }
+  return await authFetch<Registration>(`/registrations/hackathons/${hackathonId}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export async function withdrawRegistration(hackathonId: string): Promise<Registration> {
-  try {
-    return await authFetch<Registration>(
-      `/registrations/hackathons/${hackathonId}/withdraw`,
-      { method: "POST" },
-    );
-  } catch (err) {
-    console.warn("Backend withdrawRegistration failed, updating mock registration:", err);
-    let mockReg: Registration = {
-      id: `reg-${Date.now()}`,
-      hackathonId,
-      userId: "usr-me",
-      eligibilityConfirmed: true,
-      customAnswers: null,
-      verificationStatus: "VERIFIED",
-      registeredAt: new Date().toISOString(),
-      withdrawnAt: new Date().toISOString(),
-      status: "WITHDRAWN",
-    };
-    try {
-      const stored: Registration[] = JSON.parse(
-        localStorage.getItem("mock_registrations") || "[]"
-      );
-      const index = stored.findIndex((r) => r.hackathonId === hackathonId);
-      if (index !== -1) {
-        mockReg = {
-          ...stored[index],
-          withdrawnAt: new Date().toISOString(),
-          status: "WITHDRAWN",
-        };
-        stored[index] = mockReg;
-      } else {
-        stored.push(mockReg);
-      }
-      localStorage.setItem("mock_registrations", JSON.stringify(stored));
-    } catch {}
-    return mockReg;
-  }
+  return await authFetch<Registration>(
+    `/registrations/hackathons/${hackathonId}/withdraw`,
+    { method: "POST" },
+  );
 }
 
 export async function listMyRegistrations(): Promise<Registration[]> {
-  try {
-    const data = await authFetch<Registration[]>("/registrations/me");
-    if (Array.isArray(data)) return data;
-  } catch (err) {
-    console.warn("Backend listMyRegistrations failed, returning mock registrations:", err);
+  const res = await authFetch<any>("/registrations/me");
+  if (res && Array.isArray(res.data)) return res.data;
+  if (Array.isArray(res)) return res;
+  return [];
+}
+
+export interface OrganizerRegistration {
+  id: string;
+  hackathonId: string;
+  hackathonTitle: string;
+  hackathonSlug: string;
+  userId: string;
+  participantName: string;
+  email: string;
+  phoneNumber?: string | null;
+  country?: string | null;
+  city?: string | null;
+  avatarUrl?: string | null;
+  university?: string | null;
+  organization?: string | null;
+  department?: string | null;
+  fieldOfStudy?: string | null;
+  profession?: string | null;
+  role: string;
+  professionalTitle?: string | null;
+  experienceLevel?: string | null;
+  yearsOfExperience?: number | null;
+  skills: string[];
+  bio?: string | null;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+  websiteUrl?: string | null;
+  twitterUrl?: string | null;
+  instagramUrl?: string | null;
+  interestedInTeams?: string | null;
+  lookingForTeammates?: boolean;
+  teamSeekingDescription?: string | null;
+  preferredTeamRoles?: string[];
+  team?: {
+    id: string;
+    name: string;
+    isLeader: boolean;
+    role: string;
+  } | null;
+  eligibilityConfirmed: boolean;
+  verificationStatus: string;
+  customAnswers?: Record<string, any> | null;
+  registeredAt: string;
+  withdrawnAt?: string | null;
+  status: string;
+}
+
+export interface OrganizerRegistrationsStats {
+  totalRegistrations: number;
+  registeredCount: number;
+  withdrawnCount: number;
+  uniqueParticipants: number;
+  managedHackathonsCount: number;
+}
+
+export interface OrganizerRegistrationsResponse {
+  data: OrganizerRegistration[];
+  meta: {
+    limit: number;
+    offset: number;
+    total: number;
+    stats: OrganizerRegistrationsStats;
+  };
+}
+
+export interface FetchOrganizerRegistrationsParams {
+  hackathonId?: string;
+  status?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export async function fetchOrganizerRegistrations(
+  params: FetchOrganizerRegistrationsParams = {}
+): Promise<OrganizerRegistrationsResponse> {
+  const q = new URLSearchParams();
+  if (params.hackathonId && params.hackathonId !== "All" && params.hackathonId !== "all") {
+    q.set("hackathonId", params.hackathonId);
   }
-  try {
-    return JSON.parse(localStorage.getItem("mock_registrations") || "[]");
-  } catch {
-    return [];
+  if (params.status && params.status !== "All" && params.status !== "all") {
+    q.set("status", params.status);
   }
+  if (params.search && params.search.trim()) {
+    q.set("search", params.search.trim());
+  }
+  if (params.limit !== undefined) {
+    q.set("limit", String(params.limit));
+  }
+  if (params.offset !== undefined) {
+    q.set("offset", String(params.offset));
+  }
+
+  const queryStr = q.toString() ? `?${q.toString()}` : "";
+  return authFetch<OrganizerRegistrationsResponse>(`/registrations/organizer${queryStr}`);
 }

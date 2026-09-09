@@ -9,7 +9,29 @@ import type { components } from "./api-types";
  * `components["schemas"]["UserProfile"]` everywhere. Add to this file as
  * more features need named schema types.
  */
-export type UserProfile = components["schemas"]["UserProfile"];
+export type UserProfile = components["schemas"]["UserProfile"] & {
+  phoneNumber?: string;
+  city?: string;
+  organization?: string;
+  department?: string;
+  fieldOfStudy?: string;
+  role?: string;
+  profession?: string;
+  experienceLevel?: string;
+  professionalTitle?: string;
+  yearsOfExperience?: number | null;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
+  interestedInTeams?: string;
+  lookingForTeammates?: boolean;
+  teamSeekingDescription?: string;
+  preferredTeamRoles?: string[];
+  profileVisibility?: "public" | "private";
+};
+
 export type AuthResponse = components["schemas"]["AuthResponse"];
 /**
  * What the browser actually gets back from `/api/auth/login|refresh` --
@@ -17,7 +39,9 @@ export type AuthResponse = components["schemas"]["AuthResponse"];
  * it ever reaches client JS (see app/api/auth/*\/route.ts); it's set as an
  * httpOnly cookie instead. Client-side code should never expect this field.
  */
-export type SessionResponse = Omit<AuthResponse, "refreshToken">;
+export type SessionResponse = Omit<AuthResponse, "refreshToken"> & {
+  user?: UserProfile;
+};
 export type LoginRequest = components["schemas"]["Login"];
 export type SignupRequest = components["schemas"]["Signup"];
 export type RefreshRequest = components["schemas"]["Refresh"];
@@ -29,8 +53,40 @@ export type PasswordResetRequest =
 export type PasswordResetConfirmRequest =
   components["schemas"]["PasswordResetConfirm"];
 
-export type PublicProfile = components["schemas"]["PublicProfile"];
-export type UserUpdateRequest = components["schemas"]["UserUpdate"];
+export type PublicProfile = components["schemas"]["PublicProfile"] & {
+  organization?: string;
+  role?: string;
+  professionalTitle?: string;
+  experienceLevel?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  websiteUrl?: string;
+};
+
+export type UserUpdateRequest = components["schemas"]["UserUpdate"] & {
+  country?: string | null;
+  phoneNumber?: string;
+  city?: string;
+  organization?: string;
+  department?: string;
+  fieldOfStudy?: string;
+  role?: string;
+  profession?: string;
+  experienceLevel?: string;
+  professionalTitle?: string;
+  yearsOfExperience?: number | null;
+  portfolioUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
+  interestedInTeams?: string;
+  lookingForTeammates?: boolean;
+  teamSeekingDescription?: string;
+  preferredTeamRoles?: string[];
+  profileVisibility?: "public" | "private";
+};
 
 
 // Doc 06 Sec 5.2 (organization registration & verification, FR-ORG-001 --
@@ -51,9 +107,46 @@ export type OrgVerificationReview =
   components["schemas"]["OrgVerificationReview"];
 
 // Doc 06 Sec 5.4 (registration & team formation).
-export type Hackathon = components["schemas"]["Hackathon"];
-export type PaginatedHackathons = components["schemas"]["PaginatedHackathons"];
-export type Registration = components["schemas"]["Registration"];
+export type Hackathon = components["schemas"]["Hackathon"] & {
+  locationName?: string;
+  venue?: string;
+  field?: string;
+  openTo?: string[];
+  totalPrizeBudget?: string | number;
+  prizeDistribution?: Record<string, any> | null;
+};
+export type PaginatedHackathons = Omit<components["schemas"]["PaginatedHackathons"], "data"> & {
+  data?: Hackathon[];
+};
+export type Registration = components["schemas"]["Registration"] & {
+  hackathonTitle?: string;
+  hackathonSlug?: string;
+  hackathonBannerUrl?: string;
+  hackathonLocation?: string;
+  hackathonStartDate?: string;
+  hackathonEndDate?: string;
+  registrationType?: string;
+  team?: {
+    id: string;
+    name: string;
+    isLeader: boolean;
+    role: string;
+  } | null;
+  hackathon?: {
+    id: string;
+    title: string;
+    slug: string;
+    bannerUrl?: string;
+    status?: string;
+    locationMode?: string;
+    locationName?: string;
+    venue?: string;
+    registrationOpensAt?: string;
+    registrationClosesAt?: string;
+    submissionOpensAt?: string;
+    submissionClosesAt?: string;
+  } | null;
+};
 export type RegisterForHackathonRequest =
   components["schemas"]["RegisterForHackathon"];
 export type Team = components["schemas"]["Team"];

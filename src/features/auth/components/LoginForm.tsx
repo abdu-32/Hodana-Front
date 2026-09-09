@@ -39,8 +39,63 @@ export function LoginForm({ next }: { next?: string }) {
 
   const mutation = useMutation({
     mutationFn: () => login({ email, password }),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Check if there is a pending judge invitation
+      const pendingToken = typeof window !== "undefined" ? localStorage.getItem("hodana_pending_judge_token") : null;
+      if (pendingToken || next?.includes("/judge/dashboard")) {
+        if (pendingToken) {
+          localStorage.removeItem("hodana_pending_judge_token");
+        }
+        showToast("Judge Invitation Accepted! Welcome to your Judge Portal.", "success");
+        router.push("/judge/dashboard");
+        return;
+      }
+
+      // Check if user is Platform Admin (Abdulhalim Aliye Ahmed / abdulhalimaliyi54@gmail.com)
+      const isAdmin =
+        data.email?.toLowerCase() === "abdulhalimaliyi54@gmail.com" ||
+        data.roles?.some((r: string) => r.toLowerCase() === "admin" || r.toLowerCase() === "platform_admin") ||
+        (data as any).role === "admin";
+
       showToast(t("loginSuccess"), "success");
+
+      if (isAdmin) {
+        if (next && next.startsWith("/admin")) {
+          router.push(safeNextPath(next));
+        } else {
+          router.push("/admin/dashboard");
+        }
+        return;
+      }
+
+      // Check if user is an Organizer
+      const isOrganizer =
+        data.roles?.some((r: string) => r.toLowerCase() === "organizer") ||
+        (data as any).role === "organizer";
+
+      if (isOrganizer) {
+        if (next && (next.startsWith("/organizer") || next.startsWith("/dashboard/organizer"))) {
+          router.push(safeNextPath(next));
+        } else {
+          router.push("/organizer/dashboard");
+        }
+        return;
+      }
+
+      // Check if user is a Judge
+      const isJudge =
+        data.roles?.some((r: string) => r.toLowerCase() === "judge") ||
+        (data as any).role === "judge";
+
+      if (isJudge) {
+        if (next && next.startsWith("/judge")) {
+          router.push(safeNextPath(next));
+        } else {
+          router.push("/judge/dashboard");
+        }
+        return;
+      }
+
       router.push(safeNextPath(next));
     },
     onError: (error: unknown) => {

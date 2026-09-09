@@ -1,4 +1,4 @@
-import { apiFetch, ApiError } from "@/lib/api-client";
+import { apiFetch, ApiError, silentRefresh } from "@/lib/api-client";
 import type {
   LoginRequest,
   PasswordResetConfirmRequest,
@@ -63,20 +63,12 @@ export async function logout(): Promise<void> {
 }
 
 /** Called once on app mount by SessionProvider to turn a surviving httpOnly
- * refresh cookie back into a usable in-memory access token. */
+ * refresh cookie back into a usable in-memory access token. Uses silentRefresh
+ * so any concurrent requests coalesce on the same in-flight refresh promise. */
 export async function restoreSession(): Promise<void> {
   setSessionLoading(true);
   try {
-    const res = await fetch("/api/auth/refresh", {
-      method: "POST",
-      credentials: "include",
-    });
-    if (!res.ok) {
-      clearSession();
-      return;
-    }
-    const data: SessionResponse = await res.json();
-    setSession(data.accessToken, data.user);
+    await silentRefresh();
   } catch {
     clearSession();
   }

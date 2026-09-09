@@ -25,14 +25,21 @@ import {
 import { Link } from "@/i18n/navigation";
 import { useSession } from "@/features/auth";
 import { Logomark } from "@/components/ui/Logomark";
-import { CreateHackathonModal } from "@/features/hackathons";
+import { CreateHackathonModal, formatHackathonPrize } from "@/features/hackathons";
 import { hackathonsClient } from "@/features/hackathons";
 import type { Hackathon } from "@/lib/api-types-helpers";
+import {
+  fetchMyOrganizations,
+  getCachedActiveOrganization,
+  type MyOrganization,
+} from "@/features/organizer-onboarding";
+import { PortalMobileNav } from "@/components/layout/PortalMobileNav";
 
 export default function OrganizerHackathonsPage() {
   const t = useTranslations("Organizer");
   const { user } = useSession();
 
+  const [activeOrg, setActiveOrg] = useState<MyOrganization | null>(getCachedActiveOrganization());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("hackathons");
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
@@ -44,14 +51,31 @@ export default function OrganizerHackathonsPage() {
   const [hackathonToDelete, setHackathonToDelete] = useState<Hackathon | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const organizerName = user?.fullName || "Abeba Selassie";
-  const organizerTitle = "Lead Organizer";
+  const organizerName = user?.fullName || "Organizer";
+  const organizerTitle = activeOrg?.name || (user as any)?.organization || "Innovation Hub";
   const userInitial = organizerName.charAt(0).toUpperCase();
+
+  // Load Organization
+  useEffect(() => {
+    fetchMyOrganizations()
+      .then((orgs) => {
+        if (orgs.length > 0) {
+          const approved =
+            orgs.find(
+              (o) =>
+                o.verificationStatus === "verified" ||
+                (o as any).status?.toUpperCase() === "APPROVED"
+            ) || orgs[0];
+          setActiveOrg(approved);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const loadOrganizerHackathons = async () => {
     setIsLoading(true);
     try {
-      const res = await hackathonsClient.listHackathons();
+      const res = await hackathonsClient.listHackathons({ managed: true });
       if (res.data) {
         setHackathons(res.data);
       }
@@ -64,7 +88,7 @@ export default function OrganizerHackathonsPage() {
 
   useEffect(() => {
     loadOrganizerHackathons();
-  }, []);
+  }, [user]);
 
   const handleModalSuccess = (saved: Hackathon) => {
     setHackathons((prev) => {
@@ -106,6 +130,9 @@ export default function OrganizerHackathonsPage() {
 
   return (
     <div className="min-h-screen bg-[#f3f6f4] text-[#122622]">
+      {/* Mobile Sticky Navigation Bar & Slide-Out Drawer */}
+      <PortalMobileNav portalType="organizer" activeItem="hackathons" title="Hackathons" />
+
       <div className="mx-auto flex w-full max-w-[1500px]">
         {/* ================= LEFT SIDEBAR (ORGANIZER CONTEXT) ================= */}
         <aside
@@ -114,13 +141,11 @@ export default function OrganizerHackathonsPage() {
           }`}
         >
           <div className="flex flex-col gap-8">
-            {/* Brand Logo & Ecosystem Portal Tag */}
-            <button
-              type="button"
-              onClick={() => setIsSidebarCollapsed((prev) => !prev)}
+            {/* Brand Logo & Ecosystem Portal Tag -> Navigates to Hero / Homepage */}
+            <Link
+              href="/"
               className="flex items-center gap-3 cursor-pointer text-left group focus:outline-none"
-              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-              aria-label="Toggle Sidebar"
+              title="Go to Home"
             >
               <span className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-[#F9F8F3] border border-[#E2DFD8] shadow-xs overflow-hidden p-1 transition-transform group-hover:scale-105">
                 <Logomark className="h-full w-full object-contain" />
@@ -137,7 +162,7 @@ export default function OrganizerHackathonsPage() {
                   Ecosystem Portal
                 </p>
               </div>
-            </button>
+            </Link>
 
             {/* Sidebar Navigation */}
             <nav className="flex flex-col gap-1 text-xs font-semibold text-[#57685f]">
@@ -342,8 +367,11 @@ export default function OrganizerHackathonsPage() {
                         {hackathon.description}
                       </p>
 
-                      {/* Tags */}
-                      <div className="mt-3 flex flex-wrap gap-1.5">
+                      {/* Prize Badge & Tags */}
+                      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                        <span className="rounded-lg bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
+                          🏆 {formatHackathonPrize(hackathon)}
+                        </span>
                         {hackathon.tags?.map((tag) => (
                           <span
                             key={tag}
@@ -481,6 +509,7 @@ export default function OrganizerHackathonsPage() {
         onSuccess={handleModalSuccess}
         onDelete={handleDeleteHackathon}
         initialData={selectedHackathonToEdit}
+        hostOrgId={activeOrg?.id}
       />
     </div>
   );

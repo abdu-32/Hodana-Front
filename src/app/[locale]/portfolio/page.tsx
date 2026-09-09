@@ -1,3 +1,3 @@
-import PortfolioPage from "../dashboard/portfolio/page";
+import ProfilePage from "../profile/page";
 
-export default PortfolioPage;
+export default ProfilePage;

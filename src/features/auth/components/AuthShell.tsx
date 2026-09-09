@@ -29,7 +29,7 @@ export function AuthShell({
   children,
 }: AuthShellProps) {
   return (
-    <div className="grid lg:min-h-[calc(100dvh-64px)] lg:grid-cols-2">
+    <div className="grid min-h-dvh lg:grid-cols-2">
       <aside className="relative hidden overflow-hidden bg-ink lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-14">
         <div className="bg-hub-pattern pointer-events-none absolute inset-0" />
         <div

@@ -15,6 +15,8 @@ import {
   Ban,
   Clock,
   KeyRound,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { AdminShell } from "@/features/admin/components/AdminShell";
 import { UserEditModal } from "@/features/admin/components/UserEditModal";
@@ -28,7 +30,9 @@ function AdminUsersContent() {
   const [activeRole, setActiveRole] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const loadUsers = async () => {
@@ -53,6 +57,25 @@ function AdminUsersContent() {
       setTimeout(() => setToastMessage(null), 4000);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleDeleteUser = async (id: string, name?: string) => {
+    setIsDeleting(true);
+    try {
+      await adminClient.deleteUser(id);
+      setUserToDelete(null);
+      if (selectedUser?.id === id) {
+        setSelectedUser(null);
+      }
+      await loadUsers();
+      setToastMessage(`User account for "${name || "User"}" has been permanently deleted.`);
+      setTimeout(() => setToastMessage(null), 4000);
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+      alert("Failed to delete user account. You cannot delete your own account or unauthorized users.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -218,14 +241,24 @@ function AdminUsersContent() {
 
                     {/* Actions */}
                     <td className="py-4 px-6 text-right">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedUser(u)}
-                        className="inline-flex items-center gap-1 rounded-xl bg-[#0f6b5c] px-3 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-[#0b5347] transition-colors cursor-pointer"
-                      >
-                        <Edit3 className="h-3.5 w-3.5" />
-                        <span>Manage User</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUser(u)}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-[#0f6b5c] px-3 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-[#0b5347] transition-colors cursor-pointer"
+                        >
+                          <Edit3 className="h-3.5 w-3.5" />
+                          <span>Manage</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setUserToDelete(u)}
+                          title={`Delete ${u.fullName}`}
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors cursor-pointer shadow-2xs"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -241,7 +274,55 @@ function AdminUsersContent() {
           user={selectedUser}
           onClose={() => setSelectedUser(null)}
           onUpdate={handleUpdateUser}
+          onDelete={handleDeleteUser}
         />
+      )}
+
+      {/* Delete User Confirmation Modal */}
+      {userToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="flex w-full max-w-md flex-col gap-5 rounded-3xl bg-white p-6 sm:p-7 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-red-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#122622]">Delete User Account</h3>
+                <p className="text-xs font-medium text-[#57685f]">This action is irreversible</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-red-50/70 border border-red-200/60 p-4 text-xs text-red-950">
+              <p className="font-semibold">
+                Are you sure you want to permanently delete account{" "}
+                <span className="font-bold underline">{userToDelete.fullName}</span> ({userToDelete.email})?
+              </p>
+              <p className="mt-1.5 text-[11px] text-red-700">
+                All login tokens and sessions will be revoked and this account will be permanently removed.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setUserToDelete(null)}
+                disabled={isDeleting}
+                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => handleDeleteUser(userToDelete.id, userToDelete.fullName)}
+                className="inline-flex items-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isDeleting ? "Deleting..." : "Delete User"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </AdminShell>
   );

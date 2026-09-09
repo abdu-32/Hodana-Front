@@ -1,7 +1,13 @@
+import {
+  getHackathon,
+  updateHackathon,
+} from "@/features/hackathons/lib/hackathons-client";
+
 export interface PrizePool {
   id: string;
   hackathonId: string;
   currency: "ETB" | "USD";
+  totalPrizeBudget?: number;
   firstPlaceAmount: number;
   firstPlacePerks?: string;
   firstPlaceBadge?: string;
@@ -35,6 +41,7 @@ const INITIAL_PRIZE_POOLS: Record<string, PrizePool> = {
     id: "prz-agritech",
     hackathonId: "hck-agritech",
     currency: "ETB",
+    totalPrizeBudget: 1750000,
     firstPlaceAmount: 1000000,
     firstPlacePerks: "Incubation at AAU Tech Hub + AWS Cloud Credits $10k",
     firstPlaceBadge: "Golden Harvester Trophy 🏆",
@@ -52,6 +59,7 @@ const INITIAL_PRIZE_POOLS: Record<string, PrizePool> = {
     id: "prz-fintech",
     hackathonId: "hck-fintech",
     currency: "USD",
+    totalPrizeBudget: 27000,
     firstPlaceAmount: 15000,
     firstPlacePerks: "Fast-track consideration for National Bank FinTech Sandbox + $20k Grant",
     firstPlaceBadge: "FinTech Pioneer Trophy 🏆",
@@ -158,7 +166,7 @@ function getStoredPayments(): Record<string, PaymentMethodConfig[]> {
 }
 
 export const prizesClient = {
-  // GET /api/organizer/hackathons/:id/prizes or public GET /api/hackathons/:id/prizes
+  // GET prize details for a specific hackathon
   async getPrizeDetails(hackathonId: string): Promise<{
     prizePool: PrizePool;
     paymentMethods: PaymentMethodConfig[];
@@ -166,17 +174,25 @@ export const prizesClient = {
     const prizes = getStoredPrizes();
     const payments = getStoredPayments();
 
+    let hackathonData = null;
+    try {
+      hackathonData = await getHackathon(hackathonId);
+    } catch (err) {
+      console.warn("Failed to load hackathon for prize details:", err);
+    }
+
     const fallbackPrize: PrizePool = {
       id: `prz-${hackathonId}`,
       hackathonId,
       currency: "ETB",
-      firstPlaceAmount: 500000,
+      totalPrizeBudget: hackathonData?.totalPrizeBudget ? Number(hackathonData.totalPrizeBudget) : 0,
+      firstPlaceAmount: 0,
       firstPlacePerks: "Incubation support and trophy badge",
       firstPlaceBadge: "1st Place Winner Trophy 🏆",
-      secondPlaceAmount: 250000,
+      secondPlaceAmount: 0,
       secondPlacePerks: "Mentorship and certificate",
       secondPlaceBadge: "2nd Place Runner-Up Badge 🥈",
-      thirdPlaceAmount: 100000,
+      thirdPlaceAmount: 0,
       thirdPlacePerks: "Co-working membership",
       thirdPlaceBadge: "3rd Place Runner-Up Badge 🥉",
       payoutTerms: "Standard payout terms apply upon judging completion.",
@@ -184,7 +200,30 @@ export const prizesClient = {
       updatedAt: new Date().toISOString(),
     };
 
-    const prizePool = prizes[hackathonId] || fallbackPrize;
+    let prizePool = prizes[hackathonId] || fallbackPrize;
+
+    // If hackathon object has server-side prize_distribution or total_prize_budget, use it
+    if (hackathonData) {
+      const serverBudget = hackathonData.totalPrizeBudget ? Number(hackathonData.totalPrizeBudget) : undefined;
+      const serverDist = (hackathonData.prizeDistribution || {}) as any;
+
+      prizePool = {
+        ...prizePool,
+        totalPrizeBudget: serverBudget !== undefined ? serverBudget : prizePool.totalPrizeBudget,
+        currency: serverDist.currency || prizePool.currency || "ETB",
+        firstPlaceAmount: serverDist.firstPlaceAmount !== undefined ? Number(serverDist.firstPlaceAmount) : prizePool.firstPlaceAmount,
+        firstPlacePerks: serverDist.firstPlacePerks !== undefined ? serverDist.firstPlacePerks : prizePool.firstPlacePerks,
+        firstPlaceBadge: serverDist.firstPlaceBadge !== undefined ? serverDist.firstPlaceBadge : prizePool.firstPlaceBadge,
+        secondPlaceAmount: serverDist.secondPlaceAmount !== undefined ? Number(serverDist.secondPlaceAmount) : prizePool.secondPlaceAmount,
+        secondPlacePerks: serverDist.secondPlacePerks !== undefined ? serverDist.secondPlacePerks : prizePool.secondPlacePerks,
+        secondPlaceBadge: serverDist.secondPlaceBadge !== undefined ? serverDist.secondPlaceBadge : prizePool.secondPlaceBadge,
+        thirdPlaceAmount: serverDist.thirdPlaceAmount !== undefined ? Number(serverDist.thirdPlaceAmount) : prizePool.thirdPlaceAmount,
+        thirdPlacePerks: serverDist.thirdPlacePerks !== undefined ? serverDist.thirdPlacePerks : prizePool.thirdPlacePerks,
+        thirdPlaceBadge: serverDist.thirdPlaceBadge !== undefined ? serverDist.thirdPlaceBadge : prizePool.thirdPlaceBadge,
+        payoutTerms: serverDist.payoutTerms !== undefined ? serverDist.payoutTerms : prizePool.payoutTerms,
+      };
+    }
+
     const paymentMethods = payments[hackathonId] || [
       {
         id: `pm-default-1`,
@@ -209,7 +248,7 @@ export const prizesClient = {
     return { prizePool, paymentMethods };
   },
 
-  // POST /api/organizer/hackathons/:id/prizes
+  // POST / update prize details for a specific hackathon
   async savePrizeDetails(
     hackathonId: string,
     prizePoolData: Partial<PrizePool>,
@@ -222,6 +261,7 @@ export const prizesClient = {
       id: `prz-${hackathonId}`,
       hackathonId,
       currency: "ETB",
+      totalPrizeBudget: 0,
       firstPlaceAmount: 0,
       secondPlaceAmount: 0,
       thirdPlaceAmount: 0,
@@ -245,6 +285,28 @@ export const prizesClient = {
       } catch (err) {
         console.error("Failed to persist prizes:", err);
       }
+    }
+
+    // Persist to backend database via updateHackathon
+    try {
+      await updateHackathon(hackathonId, {
+        totalPrizeBudget: updatedPrizePool.totalPrizeBudget ?? 0,
+        prizeDistribution: {
+          currency: updatedPrizePool.currency,
+          firstPlaceAmount: updatedPrizePool.firstPlaceAmount,
+          firstPlacePerks: updatedPrizePool.firstPlacePerks,
+          firstPlaceBadge: updatedPrizePool.firstPlaceBadge,
+          secondPlaceAmount: updatedPrizePool.secondPlaceAmount,
+          secondPlacePerks: updatedPrizePool.secondPlacePerks,
+          secondPlaceBadge: updatedPrizePool.secondPlaceBadge,
+          thirdPlaceAmount: updatedPrizePool.thirdPlaceAmount,
+          thirdPlacePerks: updatedPrizePool.thirdPlacePerks,
+          thirdPlaceBadge: updatedPrizePool.thirdPlaceBadge,
+          payoutTerms: updatedPrizePool.payoutTerms,
+        },
+      });
+    } catch (err) {
+      console.warn("Failed saving prize pool to hackathon backend:", err);
     }
 
     return { success: true, prizePool: updatedPrizePool };

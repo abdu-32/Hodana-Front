@@ -31,12 +31,12 @@ export function InvitationInbox() {
 
   const query = useQuery({
     queryKey: ["teams", "invitations", "me"],
-    queryFn: listMyInvitations,
+    queryFn: () => listMyInvitations(),
   });
 
   const hackathonsQuery = useQuery({
     queryKey: ["hackathons", "list"],
-    queryFn: listHackathons,
+    queryFn: () => listHackathons(),
   });
 
   const hackathonById = useMemo(() => {
@@ -109,8 +109,8 @@ export function InvitationInbox() {
     return <ErrorBanner message={t("invitationsLoadError")} />;
   }
 
-  const invitations = (query.data ?? []).filter(
-    (member) => member.joinStatus === "pending",
+  const invitations = ((query.data as any[]) ?? []).filter(
+    (member: any) => member.joinStatus === "pending",
   );
 
   if (invitations.length === 0) {

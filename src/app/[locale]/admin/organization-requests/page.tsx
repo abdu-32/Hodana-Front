@@ -54,10 +54,13 @@ export default function AdminOrganizationRequestsPage() {
           : `Organization "${selectedRequest.name}" rejected with feedback.`
       );
       setTimeout(() => setToastMessage(null), 4500);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setToastMessage(err?.message || "Failed to submit verification decision.");
+      setTimeout(() => setToastMessage(null), 4500);
     }
   };
+
 
   const filteredRequests = requests.filter((r) => {
     const matchesFilter = activeFilter === "ALL" || r.status === activeFilter;
