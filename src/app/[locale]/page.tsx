@@ -64,7 +64,7 @@ export default function Home() {
       try {
         const [hackathonsRes, projectsRes, statsRes] = await Promise.allSettled([
           listHackathons(),
-          userProjectsClient.getUserProjects(),
+          isAuthenticated ? userProjectsClient.getUserProjects() : userProjectsClient.getShowcaseProjects(),
           getPlatformStats(),
         ]);
 
@@ -96,7 +96,7 @@ export default function Home() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [isAuthenticated]);
 
   // Compute dynamic next hackathon and remaining days
   const nextHackathonInfo = useMemo(() => {
@@ -126,12 +126,14 @@ export default function Home() {
     const candidate = activeOrUpcoming[0] || hackathons[0];
     const targetDate = new Date(candidate.registrationClosesAt || candidate.submissionClosesAt || now).getTime();
     const diffDays = Math.max(1, Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24)));
+    const rawSlug = candidate.slug || candidate.id;
+    const cleanSlug = rawSlug && rawSlug !== "string" ? rawSlug : "agristream-2024";
 
     return {
       item: candidate,
-      title: candidate.title,
+      title: candidate.title && candidate.title !== "string" ? candidate.title : tHero("nextHackathonTitle"),
       daysRemaining: `${diffDays} Days Remaining`,
-      slug: candidate.slug || candidate.id,
+      slug: cleanSlug,
     };
   }, [hackathons, tHero]);
 
@@ -435,7 +437,8 @@ export default function Home() {
                 const now = Date.now();
                 const isUpcoming = h.registrationOpensAt && new Date(h.registrationOpensAt).getTime() > now;
                 const isFeatured = h.tags?.some((t) => t.toLowerCase().includes("featured")) || true;
-                const slug = h.slug || h.id;
+                const rawSlug = h.slug || h.id;
+                const slug = rawSlug && rawSlug !== "string" ? rawSlug : "agristream-2024";
 
                 return (
                   <article
@@ -543,9 +546,13 @@ export default function Home() {
                   {spotlightProject ? spotlightProject.description : tCollaborate("spotlightDesc")}
                 </p>
 
-                {spotlightProject?.demoUrl && (
+                {spotlightProject?.demoUrl && spotlightProject.demoUrl !== "string" && (
                   <a
-                    href={spotlightProject.demoUrl}
+                    href={
+                      spotlightProject.demoUrl.startsWith("http://") || spotlightProject.demoUrl.startsWith("https://")
+                        ? spotlightProject.demoUrl
+                        : `https://${spotlightProject.demoUrl}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-1 inline-flex items-center gap-1.5 text-xs font-bold text-[#86efac] hover:underline"

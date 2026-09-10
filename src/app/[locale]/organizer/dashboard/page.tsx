@@ -1007,7 +1007,7 @@ function OrganizerDashboardContent() {
                   SUPPORT
                 </h5>
                 <ul className="mt-3 flex flex-col gap-2.5 text-xs text-[#57685f]">
-                  <li><a href="#" className="hover:text-[#0f6b5c]">Contact Support</a></li>
+                  <li><a href="/help" className="hover:text-[#0f6b5c]">Help Center</a></li>
                   <li><a href="#" className="hover:text-[#0f6b5c]">Terms of Service</a></li>
                   <li><a href="#" className="hover:text-[#0f6b5c]">Privacy Policy</a></li>
                 </ul>

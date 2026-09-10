@@ -24,6 +24,7 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:4010
       BACKEND_INTERNAL_URL: http://mock-api:4010
       WATCHPACK_POLLING: "true"
+      NODE_OPTIONS: "--max-old-space-size=4096"
     ports:
       - "3000:3000"
     depends_on:
