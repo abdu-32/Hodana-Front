@@ -2,10 +2,14 @@
 
 import React from "react";
 
-export const KBSkeleton: React.FC = () => {
+interface KBSkeletonProps {
+  count?: number;
+}
+
+export const KBSkeleton: React.FC<KBSkeletonProps> = ({ count = 5 }) => {
   return (
     <div className="space-y-3 animate-pulse">
-      {[1, 2, 3, 4, 5].map((i) => (
+      {Array.from({ length: count }, (_, i) => i + 1).map((i) => (
         <div
           key={i}
           className="p-5 rounded-xl bg-surface border border-black/10 space-y-3 shadow-xs"
