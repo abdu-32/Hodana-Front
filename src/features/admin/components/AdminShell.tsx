@@ -19,6 +19,7 @@ import {
   Zap,
   Menu,
   X,
+  LifeBuoy,
 } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Logomark } from "@/components/ui/Logomark";
@@ -28,7 +29,7 @@ import { NotificationBellDropdown } from "@/features/notifications/components/No
 
 interface AdminShellProps {
   children: ReactNode;
-  activeMenu: "dashboard" | "organizations" | "hackathons" | "users" | "finances" | "audit";
+  activeMenu: "dashboard" | "organizations" | "hackathons" | "users" | "finances" | "audit" | "support";
   pendingOrgCount?: number;
 }
 
@@ -206,6 +207,22 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
                 <ShieldAlert className="h-4 w-4 shrink-0" />
                 {!isSidebarCollapsed && <span className="whitespace-nowrap">Security Audit</span>}
               </Link>
+
+              {/* 7. Support Tickets */}
+              <Link
+                href="/admin/support"
+                title={isSidebarCollapsed ? "Support Tickets" : undefined}
+                className={`flex items-center gap-3 rounded-2xl py-3 transition-all ${
+                  isSidebarCollapsed ? "justify-center px-0" : "px-3.5"
+                } ${
+                  activeMenu === "support"
+                    ? "bg-[#0f6b5c] text-white shadow-md font-bold"
+                    : "hover:bg-[#e8f3f0] hover:text-[#0f6b5c]"
+                }`}
+              >
+                <LifeBuoy className="h-4 w-4 shrink-0" />
+                {!isSidebarCollapsed && <span className="whitespace-nowrap">Support Tickets</span>}
+              </Link>
             </nav>
           </div>
 
@@ -326,6 +343,7 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
                       { key: "users", label: "Users Directory", icon: Users, href: "/admin/users" },
                       { key: "finances", label: "Finances & Billing", icon: CreditCard, href: "/admin/finances" },
                       { key: "audit", label: "Security Audit", icon: ShieldAlert, href: "/admin/audit" },
+                      { key: "support", label: "Support Tickets", icon: LifeBuoy, href: "/admin/support" },
                     ].map((item) => {
                       const Icon = item.icon;
                       const isActive = activeMenu === item.key;
