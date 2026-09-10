@@ -1,4 +1,5 @@
 import { authFetch } from "@/lib/api-client";
+import { getAccessToken } from "@/features/auth/lib/session-store";
 import { listHackathons } from "@/features/hackathons/lib/hackathons-client";
 import {
   listMyRegistrations,
@@ -442,6 +443,10 @@ export const userProjectsClient = {
   // GET /api/v1/submissions/mine (Scoped strictly to submitted projects and reviews by this participant)
   async getUserProjects(userId?: string): Promise<UserProject[]> {
     let backendProjects: UserProject[] = [];
+    const token = getAccessToken();
+    if (!token && typeof window !== "undefined") {
+      return getStoredProjects(userId);
+    }
     try {
       const backendSubmissions = await authFetch<any[]>("/submissions/mine");
       if (Array.isArray(backendSubmissions) && backendSubmissions.length > 0) {
@@ -483,23 +488,29 @@ export const userProjectsClient = {
               projectStatus = "DRAFT";
             }
 
+            const rawDemo = sub.attachmentUrls?.[0] || sub.liveDemoUrl || "";
+            const cleanDemo = rawDemo && rawDemo !== "string" ? rawDemo : "";
+            const cleanRepo = sub.repoLink && sub.repoLink !== "string" ? sub.repoLink : "";
+            const cleanVideo = sub.demoVideoUrl && sub.demoVideoUrl !== "string" ? sub.demoVideoUrl : "";
+            const cleanDeck = sub.attachmentUrls?.[0] && sub.attachmentUrls[0] !== "string" ? sub.attachmentUrls[0] : "";
+
             return {
               id: sub.id,
-              title: sub.title || "Untitled Project",
-              tagline: sub.tagline || (sub.description ? sub.description.slice(0, 90) + "..." : "Submitted Hackathon Project"),
-              description: sub.description || "",
-              category: sub.hackathonCategory || "General",
+              title: sub.title && sub.title !== "string" ? sub.title : "Untitled Project",
+              tagline: sub.tagline && sub.tagline !== "string" ? sub.tagline : (sub.description ? sub.description.slice(0, 90) + "..." : "Submitted Hackathon Project"),
+              description: sub.description && sub.description !== "string" ? sub.description : "",
+              category: sub.hackathonCategory && sub.hackathonCategory !== "string" ? sub.hackathonCategory : "General",
               hackathonId: sub.hackathonId,
-              hackathonName: sub.hackathonTitle || "Hackathon",
-              teamName: sub.teamName || "My Squad",
+              hackathonName: sub.hackathonTitle && sub.hackathonTitle !== "string" ? sub.hackathonTitle : "Hackathon",
+              teamName: sub.teamName && sub.teamName !== "string" ? sub.teamName : "My Squad",
               teamMembersCount: 1,
               status: projectStatus,
               buildProgress: projectStatus === "COMPLETED" || projectStatus === "SUBMITTED" ? 100 : 45,
-              repoUrl: sub.repoLink || "",
-              demoUrl: sub.attachmentUrls?.[0] || "",
-              videoUrl: sub.demoVideoUrl || "",
-              pitchDeckUrl: sub.attachmentUrls?.[0] || "",
-              techStack: sub.technologies || [],
+              repoUrl: cleanRepo,
+              demoUrl: cleanDemo,
+              videoUrl: cleanVideo,
+              pitchDeckUrl: cleanDeck,
+              techStack: Array.isArray(sub.technologies) ? sub.technologies.filter((t: string) => t !== "string") : [],
               submittedAt: sub.submittedAt,
               evaluation: evalData,
               rank: sub.rank || "NONE",

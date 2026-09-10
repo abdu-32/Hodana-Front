@@ -96,18 +96,14 @@ export function Footer() {
                   </button>
                 </li>
                 <li>
-                  <button
-                    type="button"
-                    onClick={() => setActiveModal("terms")}
-                    className="hover:text-[#0f6b5c] transition-colors text-left cursor-pointer"
-                  >
+                  <Link href="/help" className="hover:text-[#0f6b5c] transition-colors">
                     {t("faq")}
-                  </button>
+                  </Link>
                 </li>
                 <li>
-                  <a href="mailto:support@hodana.et" className="hover:text-[#0f6b5c] transition-colors">
+                  <Link href="/help" className="hover:text-[#0f6b5c] transition-colors">
                     {t("support")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
