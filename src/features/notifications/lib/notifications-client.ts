@@ -51,15 +51,16 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
   let priority: "INFO" | "IMPORTANT" | "URGENT" = "INFO";
   let category = d.category || "general";
 
-  // Parse priority tags if present
-  if (rawMessage.startsWith("[URGENT]")) {
+  // Parse priority tags if present anywhere in the message (e.g. [URGENT] or trailing [URGENT].)
+  if (rawMessage.includes("[URGENT]")) {
     priority = "URGENT";
-    rawMessage = rawMessage.replace("[URGENT]", "").trim();
-  } else if (rawMessage.startsWith("[IMPORTANT]")) {
+    rawMessage = rawMessage.replace(/\[URGENT\]\.?/g, "").trim();
+  } else if (rawMessage.includes("[IMPORTANT]") || rawMessage.includes("[HIGH]")) {
     priority = "IMPORTANT";
-    rawMessage = rawMessage.replace("[IMPORTANT]", "").trim();
-  } else if (rawMessage.startsWith("[INFO]")) {
-    rawMessage = rawMessage.replace("[INFO]", "").trim();
+    rawMessage = rawMessage.replace(/\[IMPORTANT\]\.?/g, "").replace(/\[HIGH\]\.?/g, "").trim();
+  } else if (rawMessage.includes("[INFO]") || rawMessage.includes("[NORMAL]") || rawMessage.includes("[LOW]")) {
+    priority = "INFO";
+    rawMessage = rawMessage.replace(/\[INFO\]\.?/g, "").replace(/\[NORMAL\]\.?/g, "").replace(/\[LOW\]\.?/g, "").trim();
   }
 
   let title = (d.title || "").trim();
@@ -96,6 +97,7 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     lowerMsg.includes("ticket reference") ||
     lowerMsg.includes("support specialist") ||
     lowerMsg.includes("replied to ticket") ||
+    lowerMsg.includes("ticket:") ||
     lowerMsg.includes("category: technical") ||
     lowerMsg.includes("category: billing") ||
     lowerMsg.includes("category: general") ||
@@ -111,37 +113,53 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
 
     let inquiryTitle = "";
 
-    // 1. Resolve from category string
-    if (lowerCat.includes("technical")) {
-      inquiryTitle = INQUIRY_CATEGORIES.technical;
-    } else if (lowerCat.includes("billing")) {
+    // 1. Resolve from specific category string
+    if (lowerCat.includes("billing") || lowerCat.includes("payment")) {
       inquiryTitle = INQUIRY_CATEGORIES.billing;
     } else if (lowerCat.includes("hackathon")) {
       inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
-    } else if (lowerCat.includes("general")) {
-      inquiryTitle = INQUIRY_CATEGORIES.general;
+    } else if (lowerCat.includes("technical") || lowerCat.includes("bug")) {
+      inquiryTitle = INQUIRY_CATEGORIES.technical;
     }
 
     // 2. Check message tags
     if (!inquiryTitle) {
-      if (lowerMsg.includes("category: technical")) {
-        inquiryTitle = INQUIRY_CATEGORIES.technical;
-      } else if (lowerMsg.includes("category: billing")) {
+      if (lowerMsg.includes("category: billing") || lowerMsg.includes("category: payments")) {
         inquiryTitle = INQUIRY_CATEGORIES.billing;
       } else if (lowerMsg.includes("category: hackathon")) {
         inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
+      } else if (lowerMsg.includes("category: technical")) {
+        inquiryTitle = INQUIRY_CATEGORIES.technical;
       } else if (lowerMsg.includes("category: general")) {
         inquiryTitle = INQUIRY_CATEGORIES.general;
       }
     }
 
-    // 3. Heuristic matching from message content
+    // 3. Heuristic matching from message content (Billing first, Hackathon second, Technical third)
     if (!inquiryTitle) {
       if (
+        lowerMsg.includes("payment") ||
+        lowerMsg.includes("prize") ||
+        lowerMsg.includes("payout") ||
+        lowerMsg.includes("invoice") ||
+        lowerMsg.includes("billing") ||
+        lowerMsg.includes("refund") ||
+        lowerMsg.includes("deposit") ||
+        lowerMsg.includes("reward")
+      ) {
+        inquiryTitle = INQUIRY_CATEGORIES.billing;
+      } else if (
+        lowerMsg.includes("rules") ||
+        lowerMsg.includes("judging criteria") ||
+        lowerMsg.includes("judging") ||
+        lowerMsg.includes("submission requirement")
+      ) {
+        inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
+      } else if (
         lowerMsg.includes("bug") ||
         lowerMsg.includes("error") ||
         lowerMsg.includes("broken") ||
-        lowerMsg.includes("issue") ||
+        lowerMsg.includes("crash") ||
         lowerMsg.includes("technical") ||
         lowerMsg.includes("verification") ||
         lowerMsg.includes("login") ||
@@ -149,24 +167,12 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
         lowerMsg.includes("platform bug")
       ) {
         inquiryTitle = INQUIRY_CATEGORIES.technical;
-      } else if (
-        lowerMsg.includes("payment") ||
-        lowerMsg.includes("prize") ||
-        lowerMsg.includes("payout") ||
-        lowerMsg.includes("invoice") ||
-        lowerMsg.includes("billing") ||
-        lowerMsg.includes("reward")
-      ) {
-        inquiryTitle = INQUIRY_CATEGORIES.billing;
-      } else if (
-        lowerMsg.includes("rules") ||
-        lowerMsg.includes("judging criteria") ||
-        lowerMsg.includes("submission requirement")
-      ) {
-        inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
-      } else {
-        inquiryTitle = INQUIRY_CATEGORIES.general;
       }
+    }
+
+    // 4. Default to General Platform Question
+    if (!inquiryTitle) {
+      inquiryTitle = INQUIRY_CATEGORIES.general;
     }
 
     title = inquiryTitle;
@@ -340,8 +346,30 @@ export const notificationsClient = {
       console.warn("Could not reach backend /notifications/me, fallback to storage:", err);
     }
 
-    // Also pull local announcements broadcasted on this machine
-    const local = getLocalNotifications();
+    // Also pull local announcements broadcasted on this machine, repairing any stale generic titles
+    const rawLocal = getLocalNotifications();
+    const local = rawLocal.map((item) => {
+      if (!item.title || item.title === "Hackathon Announcement" || item.title === "Notification") {
+        const resolved = resolveNotificationDetails({
+          id: item.id,
+          notificationId: item.id,
+          title: "",
+          message: item.message,
+          category: item.category,
+          channel: "in_portal",
+          status: "sent",
+          createdAt: item.createdAt,
+        });
+        return {
+          ...item,
+          title: resolved.title,
+          priority: resolved.priority,
+          message: resolved.message,
+          category: resolved.category,
+        };
+      }
+      return item;
+    });
 
     // Deduplicate by ID
     const seenIds = new Set<string>();
