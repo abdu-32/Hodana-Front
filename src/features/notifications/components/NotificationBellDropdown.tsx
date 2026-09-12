@@ -204,9 +204,12 @@ export function NotificationBellDropdown({
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div className="flex items-center gap-1.5 flex-1 min-w-0">
                         {!item.read && (
-                          <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+                          <span className="h-2 w-2 rounded-full bg-red-500 shrink-0 mt-0.5" />
                         )}
-                        <span className="font-display font-extrabold text-xs text-[#122622] truncate">
+                        <span
+                          className="font-display font-extrabold text-xs text-[#122622] line-clamp-2 leading-snug"
+                          title={item.title}
+                        >
                           {item.title}
                         </span>
                       </div>
@@ -224,9 +227,11 @@ export function NotificationBellDropdown({
                       </span>
                     </div>
 
-                    <p className="text-[11px] text-[#57685f] leading-relaxed whitespace-pre-line mt-1">
-                      {item.message}
-                    </p>
+                    {item.message && item.message.trim() !== item.title.trim() && (
+                      <p className="text-[11px] text-[#57685f] leading-relaxed whitespace-pre-line mt-1">
+                        {item.message}
+                      </p>
+                    )}
 
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#d6e7e1]/50 text-[10px] text-gray-400">
                       <div className="flex items-center gap-1">
