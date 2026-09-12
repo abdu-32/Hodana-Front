@@ -28,6 +28,15 @@ export interface InAppNotification {
 
 const LOCAL_NOTIFS_STORAGE_KEY = "hodana_user_notifications_v1";
 
+export const INQUIRY_CATEGORIES: Record<string, string> = {
+  technical: "Technical & Platform Bug",
+  billing: "Payments, Prizes & Billing",
+  general: "General Platform Question",
+  hackathon_specific: "Hackathon Rules & Judging",
+};
+
+export const INQUIRY_HEADLINES = new Set(Object.values(INQUIRY_CATEGORIES));
+
 /**
  * Resolves contextually appropriate notification title and message based on
  * backend data, event categories, and content semantics.
@@ -77,29 +86,95 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     }
   }
 
-  // 2. If backend already returned a specific contextual title (not generic fallback)
-  if (title && title.toLowerCase() !== "hackathon announcement" && title.toLowerCase() !== "notification") {
-    return { title, message, priority, category };
-  }
-
   const lowerMsg = rawMessage.toLowerCase();
   const lowerCat = category.toLowerCase();
 
-  // 3. Support ticket notifications
-  if (lowerMsg.includes("support ticket") || lowerCat.includes("support")) {
+  // 2. Check if this is a support ticket / inquiry notification
+  const isSupport =
+    lowerCat.startsWith("support") ||
+    lowerMsg.includes("support ticket") ||
+    lowerMsg.includes("ticket reference") ||
+    lowerMsg.includes("support specialist") ||
+    lowerMsg.includes("replied to ticket") ||
+    lowerMsg.includes("category: technical") ||
+    lowerMsg.includes("category: billing") ||
+    lowerMsg.includes("category: general") ||
+    lowerMsg.includes("category: hackathon");
+
+  if (isSupport) {
     category = "support";
-    // Per Requirement 3: Use the actual notification message when descriptive
-    if (
-      lowerMsg.includes("status has been updated") ||
-      lowerMsg.includes("has been received") ||
-      lowerMsg.includes("ticket submitted")
-    ) {
-      title = rawMessage;
-    } else if (lowerMsg.includes("replied") || lowerMsg.includes("response") || lowerMsg.includes("reply")) {
-      title = "Support Ticket Reply";
-    } else if (!title || title.toLowerCase() === "hackathon announcement" || title.toLowerCase() === "notification") {
-      title = "Support Ticket Notice";
+
+    // If title is already an Inquiry Category headline, use it directly
+    if (title && INQUIRY_HEADLINES.has(title)) {
+      return { title, message, priority, category };
     }
+
+    let inquiryTitle = "";
+
+    // 1. Resolve from category string
+    if (lowerCat.includes("technical")) {
+      inquiryTitle = INQUIRY_CATEGORIES.technical;
+    } else if (lowerCat.includes("billing")) {
+      inquiryTitle = INQUIRY_CATEGORIES.billing;
+    } else if (lowerCat.includes("hackathon")) {
+      inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
+    } else if (lowerCat.includes("general")) {
+      inquiryTitle = INQUIRY_CATEGORIES.general;
+    }
+
+    // 2. Check message tags
+    if (!inquiryTitle) {
+      if (lowerMsg.includes("category: technical")) {
+        inquiryTitle = INQUIRY_CATEGORIES.technical;
+      } else if (lowerMsg.includes("category: billing")) {
+        inquiryTitle = INQUIRY_CATEGORIES.billing;
+      } else if (lowerMsg.includes("category: hackathon")) {
+        inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
+      } else if (lowerMsg.includes("category: general")) {
+        inquiryTitle = INQUIRY_CATEGORIES.general;
+      }
+    }
+
+    // 3. Heuristic matching from message content
+    if (!inquiryTitle) {
+      if (
+        lowerMsg.includes("bug") ||
+        lowerMsg.includes("error") ||
+        lowerMsg.includes("broken") ||
+        lowerMsg.includes("issue") ||
+        lowerMsg.includes("technical") ||
+        lowerMsg.includes("verification") ||
+        lowerMsg.includes("login") ||
+        lowerMsg.includes("fail") ||
+        lowerMsg.includes("platform bug")
+      ) {
+        inquiryTitle = INQUIRY_CATEGORIES.technical;
+      } else if (
+        lowerMsg.includes("payment") ||
+        lowerMsg.includes("prize") ||
+        lowerMsg.includes("payout") ||
+        lowerMsg.includes("invoice") ||
+        lowerMsg.includes("billing") ||
+        lowerMsg.includes("reward")
+      ) {
+        inquiryTitle = INQUIRY_CATEGORIES.billing;
+      } else if (
+        lowerMsg.includes("rules") ||
+        lowerMsg.includes("judging criteria") ||
+        lowerMsg.includes("submission requirement")
+      ) {
+        inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
+      } else {
+        inquiryTitle = INQUIRY_CATEGORIES.general;
+      }
+    }
+
+    title = inquiryTitle;
+    return { title, message, priority, category };
+  }
+
+  // 3. If backend already returned a specific contextual title (not generic fallback)
+  if (title && title.toLowerCase() !== "hackathon announcement" && title.toLowerCase() !== "notification") {
     return { title, message, priority, category };
   }
 
