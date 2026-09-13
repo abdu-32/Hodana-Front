@@ -5,6 +5,7 @@ export interface NotificationDeliveryItem {
   notificationId: string;
   hackathonId?: string | null;
   title?: string;
+  priority?: "INFO" | "IMPORTANT" | "URGENT";
   category?: string;
   message: string;
   channel: "in_portal" | "email" | "sms";
@@ -48,20 +49,31 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
   category: string;
 } {
   let rawMessage = (d.message || "").trim();
-  let priority: "INFO" | "IMPORTANT" | "URGENT" = "INFO";
+  let priority: "INFO" | "IMPORTANT" | "URGENT" = d.priority || "INFO";
   let category = d.category || "general";
 
-  // Parse priority tags if present anywhere in the message (e.g. [URGENT] or trailing [URGENT].)
-  if (rawMessage.includes("[URGENT]")) {
+  // Parse priority from tags or labeled text (e.g. [URGENT], [HIGH], Priority: URGENT)
+  if (/priority:\s*urgent/i.test(rawMessage) || rawMessage.includes("[URGENT]")) {
     priority = "URGENT";
-    rawMessage = rawMessage.replace(/\[URGENT\]\.?/g, "").trim();
-  } else if (rawMessage.includes("[IMPORTANT]") || rawMessage.includes("[HIGH]")) {
+  } else if (
+    /priority:\s*(high|important)/i.test(rawMessage) ||
+    rawMessage.includes("[IMPORTANT]") ||
+    rawMessage.includes("[HIGH]")
+  ) {
     priority = "IMPORTANT";
-    rawMessage = rawMessage.replace(/\[IMPORTANT\]\.?/g, "").replace(/\[HIGH\]\.?/g, "").trim();
-  } else if (rawMessage.includes("[INFO]") || rawMessage.includes("[NORMAL]") || rawMessage.includes("[LOW]")) {
+  } else if (
+    /priority:\s*(normal|low|info)/i.test(rawMessage) ||
+    rawMessage.includes("[INFO]") ||
+    rawMessage.includes("[NORMAL]") ||
+    rawMessage.includes("[LOW]")
+  ) {
     priority = "INFO";
-    rawMessage = rawMessage.replace(/\[INFO\]\.?/g, "").replace(/\[NORMAL\]\.?/g, "").replace(/\[LOW\]\.?/g, "").trim();
   }
+
+  // Clean brackets from rawMessage
+  rawMessage = rawMessage
+    .replace(/\[(URGENT|IMPORTANT|HIGH|NORMAL|INFO|LOW)\]\.?/gi, "")
+    .trim();
 
   let title = (d.title || "").trim();
   let message = rawMessage;
@@ -105,6 +117,18 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
 
   if (isSupport) {
     category = "support";
+
+    // Format message cleanly matching Platform Admin format if raw email template was received
+    if (
+      rawMessage.includes("Thank you for contacting") ||
+      rawMessage.includes("We have received your support ticket")
+    ) {
+      const subjMatch = rawMessage.match(/regarding '([^']+)'/i) || rawMessage.match(/ticket '([^']+)'/i);
+      message = `Your support ticket '${subjMatch ? subjMatch[1] : "Inquiry"}' has been received and is under review.`;
+    } else if (rawMessage.includes("A support specialist has replied to your ticket")) {
+      const subjMatch = rawMessage.match(/to your ticket '([^']+)'/i);
+      message = `Support specialist replied to ticket: '${subjMatch ? subjMatch[1] : "Inquiry"}'.`;
+    }
 
     // If title is already an Inquiry Category headline, use it directly
     if (title && INQUIRY_HEADLINES.has(title)) {
@@ -176,6 +200,19 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     }
 
     title = inquiryTitle;
+    return { title, message, priority, category };
+  }
+
+  // Platform-wide announcements & broadcasts
+  if (
+    lowerCat.includes("platform") ||
+    lowerCat.includes("broadcast") ||
+    (!d.hackathonId && (lowerCat.includes("announcement") || lowerMsg.includes("announcement")))
+  ) {
+    category = "broadcast";
+    if (!title || title.toLowerCase() === "hackathon announcement" || title.toLowerCase() === "notification") {
+      title = "Platform Announcement";
+    }
     return { title, message, priority, category };
   }
 

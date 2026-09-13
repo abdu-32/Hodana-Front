@@ -87,15 +87,18 @@ export const announcementsClient = {
     };
 
     // 1. Try dispatching to real backend notification broadcast
-    if (data.status === "PUBLISHED" && data.hackathonId && data.hackathonId !== "all") {
+    if (data.status === "PUBLISHED") {
       try {
         const priorityTag = data.priority !== "INFO" ? `[${data.priority}] ` : "";
         const formattedMessage = `${priorityTag}${data.title}:\n${data.content}`;
+        const targetHackathonId =
+          data.hackathonId && data.hackathonId !== "all" ? data.hackathonId : null;
 
         await authFetch("/notifications/", {
           method: "POST",
           body: JSON.stringify({
-            hackathonId: data.hackathonId,
+            hackathonId: targetHackathonId,
+            title: data.title,
             message: formattedMessage,
             channels: data.channels.map((c) => (c === "IN_APP" ? "in_portal" : c.toLowerCase())),
           }),

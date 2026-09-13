@@ -5,12 +5,14 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { Logomark } from "@/components/ui/Logomark";
 import { HeaderNavLinks } from "@/components/HeaderNavLinks";
 import { LanguageToggle } from "@/components/ui";
-import { HeaderAuthControl } from "@/features/auth";
+import { HeaderAuthControl, useSession } from "@/features/auth";
+import { NotificationBellDropdown } from "@/features/notifications/components/NotificationBellDropdown";
 import { Footer } from "@/components/ui/Footer";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const tNav = useTranslations("Nav");
   const pathname = usePathname();
+  const { user } = useSession();
 
   // Role dashboard, app workspace routes & auth pages: no public header, no footer
   const isDashboardRoute =
@@ -48,6 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           <HeaderNavLinks />
           <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+            {user && <NotificationBellDropdown />}
             <LanguageToggle />
             <div className="hidden h-5 w-px bg-black/10 sm:block" aria-hidden="true" />
             <HeaderAuthControl />
