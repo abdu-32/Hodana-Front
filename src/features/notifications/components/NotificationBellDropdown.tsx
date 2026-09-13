@@ -21,6 +21,27 @@ interface NotificationBellDropdownProps {
   className?: string;
 }
 
+function resolveDisplayTitle(item: InAppNotification): string {
+  const t = (item.title || "").trim();
+  if (t && !t.toLowerCase().includes("hackathon announcement") && t.toLowerCase() !== "notification") {
+    return t;
+  }
+  const m = (item.message || "").toLowerCase();
+  if (m.includes("payment") || m.includes("prize") || m.includes("billing") || m.includes("payout")) {
+    return "Payments, Prizes, Billing";
+  }
+  if (m.includes("rule") || m.includes("judg") || m.includes("criteria")) {
+    return "Hackathon Rules & Judging";
+  }
+  if (m.includes("bug") || m.includes("technical") || m.includes("error") || m.includes("fail")) {
+    return "Technical & Platform Bug";
+  }
+  if (m.includes("ticket") || m.includes("support") || m.includes("replied to") || m.includes("submitted by")) {
+    return "General Platform Questions";
+  }
+  return item.hackathonTitle ? `${item.hackathonTitle} Update` : "Platform Announcement";
+}
+
 export function NotificationBellDropdown({
   className = "",
 }: NotificationBellDropdownProps) {
@@ -208,9 +229,9 @@ export function NotificationBellDropdown({
                         )}
                         <span
                           className="font-display font-extrabold text-xs text-[#122622] line-clamp-2 leading-snug"
-                          title={item.title}
+                          title={resolveDisplayTitle(item)}
                         >
-                          {item.title}
+                          {resolveDisplayTitle(item)}
                         </span>
                       </div>
 
@@ -227,7 +248,7 @@ export function NotificationBellDropdown({
                       </span>
                     </div>
 
-                    {item.message && item.message.trim() !== item.title.trim() && (
+                    {item.message && item.message.trim() !== resolveDisplayTitle(item).trim() && (
                       <p className="text-[11px] text-[#57685f] leading-relaxed whitespace-pre-line mt-1">
                         {item.message}
                       </p>
