@@ -59,8 +59,16 @@ export function AuthShell({
         </p>
       </aside>
 
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-16">
+      <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:py-12 sm:px-6 lg:px-16">
         <div className="w-full max-w-sm">
+          <div className="mb-6 flex items-center gap-3 lg:hidden">
+            <a href="/" className="flex items-center gap-2.5">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#F9F8F3] border border-[#E2DFD8] p-1 shadow-xs">
+                <Logomark className="h-full w-full object-contain" />
+              </span>
+              <span className="font-display text-xl font-extrabold text-[#0f6b5c]">HODANA</span>
+            </a>
+          </div>
           
           <h1 className="font-display text-2xl font-semibold tracking-tight text-text">
             {title}

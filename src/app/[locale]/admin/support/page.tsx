@@ -309,8 +309,8 @@ export default function AdminSupportPage() {
       </div>
 
       {/* Summary KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-3xl bg-white p-5 border border-[#d6e7e1] shadow-xs flex flex-col gap-2">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="rounded-3xl bg-white p-4 sm:p-5 border border-[#d6e7e1] shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between text-[#57685f]">
             <span className="text-xs font-bold uppercase tracking-wider">Total Tickets</span>
             <LifeBuoy className="h-4 w-4 text-[#0f6b5c]" />
@@ -321,7 +321,7 @@ export default function AdminSupportPage() {
           <span className="text-[11px] text-[#57685f]">Platform-wide inquiries</span>
         </div>
 
-        <div className="rounded-3xl bg-rose-50/50 p-5 border border-rose-200 shadow-xs flex flex-col gap-2">
+        <div className="rounded-3xl bg-rose-50/50 p-4 sm:p-5 border border-rose-200 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between text-rose-700">
             <span className="text-xs font-bold uppercase tracking-wider">Needs Action</span>
             <AlertTriangle className="h-4 w-4 text-rose-600" />
@@ -332,7 +332,7 @@ export default function AdminSupportPage() {
           <span className="text-[11px] text-rose-700">Open or waiting on staff reply</span>
         </div>
 
-        <div className="rounded-3xl bg-blue-50/50 p-5 border border-blue-200 shadow-xs flex flex-col gap-2">
+        <div className="rounded-3xl bg-blue-50/50 p-4 sm:p-5 border border-blue-200 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between text-blue-700">
             <span className="text-xs font-bold uppercase tracking-wider">Awaiting User</span>
             <Clock className="h-4 w-4 text-blue-600" />
@@ -343,7 +343,7 @@ export default function AdminSupportPage() {
           <span className="text-[11px] text-blue-700">Staff reply provided</span>
         </div>
 
-        <div className="rounded-3xl bg-emerald-50/50 p-5 border border-emerald-200 shadow-xs flex flex-col gap-2">
+        <div className="rounded-3xl bg-emerald-50/50 p-4 sm:p-5 border border-emerald-200 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between text-emerald-700">
             <span className="text-xs font-bold uppercase tracking-wider">Resolved / Closed</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -390,7 +390,7 @@ export default function AdminSupportPage() {
             </div>
 
             {/* Search Input */}
-            <div className="relative flex items-center min-w-[220px]">
+            <div className="relative flex items-center w-full sm:w-auto sm:min-w-[220px]">
               <Search className="pointer-events-none absolute left-3.5 h-3.5 w-3.5 text-gray-400" />
               <input
                 type="text"
@@ -420,8 +420,8 @@ export default function AdminSupportPage() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto no-scrollbar">
+                <table className="w-full min-w-[680px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-[#d6e7e1] bg-[#f3f6f4] text-[#57685f] font-extrabold uppercase tracking-wider text-[10px]">
                       <th className="py-3.5 px-5">Ticket / Submitter</th>

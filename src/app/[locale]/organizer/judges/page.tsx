@@ -450,11 +450,11 @@ export default function OrganizerJudgesPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsInviteModalOpen(true)}
-                className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
                 <span>+ Invite Judge</span>
@@ -679,7 +679,7 @@ export default function OrganizerJudgesPage() {
                   type="button"
                   onClick={handleExportJudgingResults}
                   disabled={isExporting}
-                  className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
                   title="Export currently filtered judging results"
                 >
                   {isExporting ? (
@@ -693,7 +693,7 @@ export default function OrganizerJudgesPage() {
             </div>
 
             {/* Judges Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto no-scrollbar">
               <table className="w-full min-w-[650px] text-left text-xs">
                 <thead>
                   <tr className="border-b border-[#d6e7e1] text-[11px] font-extrabold uppercase tracking-wider text-[#57685f]">
@@ -864,34 +864,34 @@ export default function OrganizerJudgesPage() {
 
       {/* Invite Judge Modal */}
       {isInviteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#d6e7e1] text-[#122622]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4 backdrop-blur-sm animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-lg my-auto max-h-[92dvh] flex flex-col rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-[#d6e7e1] text-[#122622] overflow-hidden">
             {/* Close Button */}
             <button
               type="button"
               onClick={() => setIsInviteModalOpen(false)}
-              className="absolute top-6 right-6 flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all cursor-pointer"
+              className="absolute top-5 right-5 sm:top-6 sm:right-6 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all cursor-pointer z-10"
             >
               <X className="h-4 w-4" />
             </button>
 
             {/* Modal Title */}
-            <div className="flex items-center gap-3 pb-4 border-b border-[#d6e7e1]">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c]">
+            <div className="shrink-0 flex items-center gap-3 pb-4 border-b border-[#d6e7e1] pr-10">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c]">
                 <Send className="h-5 w-5" />
               </span>
-              <div>
-                <h2 className="font-display text-xl font-extrabold text-[#122622]">
+              <div className="min-w-0">
+                <h2 className="font-display text-lg sm:text-xl font-extrabold text-[#122622] truncate">
                   Invite Hackathon Judge
                 </h2>
-                <p className="text-xs text-[#57685f]">
+                <p className="text-xs text-[#57685f] truncate">
                   Send a magic onboarding link to a domain expert to judge your event.
                 </p>
               </div>
             </div>
 
             {sentInviteSuccess ? (
-              <div className="mt-6 flex flex-col gap-5 text-left">
+              <div className="flex-1 overflow-y-auto min-w-0 mt-5 sm:mt-6 flex flex-col gap-4 sm:gap-5 text-left">
                 <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-emerald-900">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
                     <Check className="h-6 w-6" />
@@ -918,32 +918,36 @@ export default function OrganizerJudgesPage() {
                     <button
                       type="button"
                       onClick={() => handleCopyMagicLink(sentInviteSuccess.token)}
-                      className="flex shrink-0 items-center gap-1 rounded-lg bg-[#0f6b5c] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#0b5347] transition-all cursor-pointer"
+                      className="shrink-0 flex items-center gap-1.5 rounded-lg bg-[#0f6b5c] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#0b5347] transition-all cursor-pointer"
                     >
                       <Copy className="h-3.5 w-3.5" />
                       <span>{copiedToken === sentInviteSuccess.token ? "Copied!" : "Copy Link"}</span>
                     </button>
                   </div>
+                  <p className="mt-2 text-[11px] text-[#57685f]">
+                    Share this link directly with the judge or ask them to check their inbox.
+                  </p>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <a
-                    href={`/accept-judge-invite?token=${sentInviteSuccess.token}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-3 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                <div className="flex flex-col gap-2 pt-2 border-t border-[#d6e7e1]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSentInviteSuccess(null);
+                      setInviteEmail("");
+                      setInviteNote("");
+                    }}
+                    className="rounded-2xl bg-[#0f6b5c] py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer text-center"
                   >
-                    <span>Test Recipient Email View (Accept/Decline)</span>
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-
+                    + Invite Another Judge
+                  </button>
                   <button
                     type="button"
                     onClick={() => {
                       setSentInviteSuccess(null);
                       setIsInviteModalOpen(false);
                     }}
-                    className="mt-1 rounded-2xl border border-[#d6e7e1] bg-white py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                    className="mt-1 rounded-2xl border border-[#d6e7e1] bg-white py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer text-center"
                   >
                     Done
                   </button>
@@ -951,7 +955,7 @@ export default function OrganizerJudgesPage() {
               </div>
             ) : (
               /* Invite Form */
-              <form onSubmit={handleSendInvite} className="mt-6 flex flex-col gap-4">
+              <form onSubmit={handleSendInvite} className="flex-1 overflow-y-auto min-w-0 mt-5 sm:mt-6 flex flex-col gap-4">
                 <div>
                   <label className="block text-xs font-bold text-[#122622] mb-1.5">
                     Judge Email Address *
@@ -1030,18 +1034,18 @@ export default function OrganizerJudgesPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="mt-2 flex items-center justify-end gap-3 border-t border-[#d6e7e1] pt-4">
+                <div className="shrink-0 mt-2 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-[#d6e7e1] pt-4">
                   <button
                     type="button"
                     onClick={() => setIsInviteModalOpen(false)}
-                    className="rounded-2xl border border-[#d6e7e1] px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                    className="w-full sm:w-auto rounded-2xl border border-[#d6e7e1] px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer text-center"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmittingInvite || managedHackathons.filter((h) => h.id !== "All").length === 0}
-                    className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isSubmittingInvite ? (
                       <span>Sending Invite...</span>
@@ -1061,8 +1065,8 @@ export default function OrganizerJudgesPage() {
 
       {/* Delete Confirmation Modal for Accepted / Selected Judge */}
       {judgeToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md rounded-3xl bg-white p-6 sm:p-7 shadow-2xl border border-red-100 text-[#122622]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-7 shadow-2xl border border-red-100 text-[#122622]">
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-[#c4211c]">
                 <AlertTriangle className="h-6 w-6" />
@@ -1081,12 +1085,12 @@ export default function OrganizerJudgesPage() {
               Are you sure you want to remove <strong className="text-[#122622]">&quot;{judgeToDelete.name || judgeToDelete.email}&quot;</strong> as an official judge for <strong className="text-[#122622]">&quot;{judgeToDelete.hackathonTitle}&quot;</strong>? They will lose access to score submissions for this hackathon.
             </p>
 
-            <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+            <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-gray-100 pt-4">
               <button
                 type="button"
                 disabled={isDeletingAcceptedJudge}
                 onClick={() => setJudgeToDelete(null)}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -1094,7 +1098,7 @@ export default function OrganizerJudgesPage() {
                 type="button"
                 disabled={isDeletingAcceptedJudge}
                 onClick={handleConfirmDeleteJudge}
-                className="flex items-center gap-1.5 rounded-2xl bg-[#c4211c] px-5 py-2 text-xs font-bold text-white shadow-md hover:bg-red-700 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-[#c4211c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-red-700 cursor-pointer disabled:opacity-50"
               >
                 <Trash2 className="h-4 w-4" />
                 <span>{isDeletingAcceptedJudge ? "Removing..." : "Yes, Remove Judge"}</span>

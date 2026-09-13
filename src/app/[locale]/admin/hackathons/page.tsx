@@ -175,7 +175,7 @@ export default function AdminHackathonsPage() {
         </div>
 
         {/* Search Field */}
-        <div className="relative flex items-center min-w-[260px]">
+        <div className="relative flex items-center w-full sm:w-auto sm:min-w-[260px]">
           <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
@@ -203,8 +203,8 @@ export default function AdminHackathonsPage() {
             <p className="text-xs text-[#57685f]">No events match the selected criteria.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full min-w-[760px] text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-[#d6e7e1] bg-[#f3f6f4] text-[#57685f] font-extrabold uppercase tracking-wider text-[11px]">
                   <th className="py-4 px-6">Hackathon</th>
@@ -347,12 +347,12 @@ export default function AdminHackathonsPage() {
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setHackathonToDelete(null)}
                 disabled={isDeleting}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -360,7 +360,7 @@ export default function AdminHackathonsPage() {
                 type="button"
                 disabled={isDeleting}
                 onClick={() => handleDeleteHackathon(hackathonToDelete.id, hackathonToDelete.title)}
-                className="inline-flex items-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>{isDeleting ? "Deleting..." : "Delete Hackathon"}</span>

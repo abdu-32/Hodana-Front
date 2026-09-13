@@ -286,9 +286,9 @@ export default function ParticipantSubmissionsPage() {
         </aside>
 
         {/* Right Main Content Area */}
-        <main className="flex-1 min-w-0 p-5 lg:p-8 flex flex-col gap-6">
+        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 flex flex-col gap-5 sm:gap-6">
           {/* Top Header & Hackathon Selector Bar */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl bg-white p-6 sm:p-7 border border-[#d6e7e1] shadow-xs">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl bg-white p-4 sm:p-7 border border-[#d6e7e1] shadow-xs">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-xs font-extrabold text-[#0f6b5c]">
                 <UploadCloud className="h-4 w-4" />
@@ -303,15 +303,15 @@ export default function ParticipantSubmissionsPage() {
             </div>
 
             {/* Hackathon Selector, Countdown Badge & Notifications */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0">
               {registeredHackathons.length > 0 && (
                 <>
                   {/* Active Hackathon Select Dropdown */}
-                  <div className="relative flex items-center">
+                  <div className="relative flex items-center w-full sm:w-auto">
                     <select
                       value={selectedHackathonId}
                       onChange={(e) => handleSelectHackathon(e.target.value)}
-                      className="h-11 appearance-none rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] pl-4 pr-10 text-xs font-extrabold text-[#122622] shadow-xs outline-none focus:border-[#0f6b5c] focus:ring-2 focus:ring-[#e8f3f0] transition-all cursor-pointer"
+                      className="h-11 w-full sm:w-auto appearance-none rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] pl-4 pr-10 text-xs font-extrabold text-[#122622] shadow-xs outline-none focus:border-[#0f6b5c] focus:ring-2 focus:ring-[#e8f3f0] transition-all cursor-pointer"
                     >
                       {registeredHackathons.map((h) => (
                         <option key={h.id} value={h.id}>
@@ -324,7 +324,7 @@ export default function ParticipantSubmissionsPage() {
 
                   {/* Deadline Countdown Badge */}
                   <div
-                    className={`flex items-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-xs font-extrabold shadow-xs ${
+                    className={`flex items-center justify-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-xs font-extrabold shadow-xs ${
                       deadlineInfo.isUrgent
                         ? "bg-amber-50 text-amber-900 border border-amber-200"
                         : "bg-emerald-50 text-emerald-800 border border-emerald-200"
@@ -335,7 +335,9 @@ export default function ParticipantSubmissionsPage() {
                   </div>
                 </>
               )}
-              <NotificationBellDropdown />
+              <div className="self-end sm:self-auto">
+                <NotificationBellDropdown />
+              </div>
             </div>
           </div>
 

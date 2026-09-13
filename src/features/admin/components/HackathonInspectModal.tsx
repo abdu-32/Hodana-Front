@@ -55,9 +55,9 @@ export function HackathonInspectModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="flex w-full max-w-2xl flex-col gap-6 rounded-3xl bg-white p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
+      <div className="flex w-full max-w-2xl flex-col rounded-3xl bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-auto max-h-[92dvh] overflow-hidden">
         {/* Header Bar */}
-        <div className="flex items-start justify-between gap-4 border-b border-[#d6e7e1] pb-4">
+        <div className="shrink-0 flex items-start justify-between gap-3 sm:gap-4 border-b border-[#d6e7e1] p-4 sm:p-6 pb-3 sm:pb-4">
           <div className="flex items-center gap-3.5">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] border border-[#d6e7e1] font-display font-extrabold text-base shadow-xs">
               <Trophy className="h-6 w-6" />
@@ -92,34 +92,34 @@ export function HackathonInspectModal({
         </div>
 
         {/* Modal Body */}
-        <div className="flex flex-col gap-5 text-xs">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4 sm:gap-5 text-xs">
           {/* Key Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3.5 border border-[#d6e7e1]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3 sm:p-3.5 border border-[#d6e7e1]">
               <span className="text-[11px] font-medium text-[#57685f]">Registered Devs</span>
               <span className="text-base font-extrabold text-[#122622]">{hackathon.participantsCount}</span>
             </div>
-            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3.5 border border-[#d6e7e1]">
+            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3 sm:p-3.5 border border-[#d6e7e1]">
               <span className="text-[11px] font-medium text-[#57685f]">Formed Squads</span>
               <span className="text-base font-extrabold text-[#122622]">{hackathon.teamsCount}</span>
             </div>
-            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3.5 border border-[#d6e7e1]">
+            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3 sm:p-3.5 border border-[#d6e7e1]">
               <span className="text-[11px] font-medium text-[#57685f]">Prize Pool</span>
               <span className="text-base font-extrabold text-[#0f6b5c]">{hackathon.prizePool}</span>
             </div>
-            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3.5 border border-[#d6e7e1]">
+            <div className="flex flex-col gap-1 rounded-2xl bg-[#f3f6f4] p-3 sm:p-3.5 border border-[#d6e7e1]">
               <span className="text-[11px] font-medium text-[#57685f]">Format</span>
               <span className="text-base font-extrabold text-[#122622] capitalize">{hackathon.locationMode}</span>
             </div>
           </div>
 
           {/* Schedule */}
-          <div className="flex items-center justify-between rounded-2xl bg-[#f3f6f4] p-4 border border-[#d6e7e1]">
-            <div className="flex items-center gap-2 text-[#57685f]">
-              <Calendar className="h-4 w-4 text-[#0f6b5c]" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-2xl bg-[#f3f6f4] p-4 border border-[#d6e7e1]">
+            <div className="flex items-center gap-2 text-[#57685f] text-xs">
+              <Calendar className="h-4 w-4 text-[#0f6b5c] shrink-0" />
               <span>Timeline: <strong>{new Date(hackathon.startDate).toLocaleDateString()}</strong> &mdash; <strong>{new Date(hackathon.endDate).toLocaleDateString()}</strong></span>
             </div>
-            <span className="rounded-xl bg-white px-3 py-1 font-bold text-[#122622] border border-[#d6e7e1]">
+            <span className="rounded-xl bg-white px-3 py-1 font-bold text-[#122622] border border-[#d6e7e1] self-start sm:self-auto">
               Status: {hackathon.status.toUpperCase()}
             </span>
           </div>
@@ -146,11 +146,11 @@ export function HackathonInspectModal({
                 placeholder="e.g. Terms violation or copyright issue..."
                 className="w-full rounded-xl border border-red-200 bg-white p-2.5 text-xs text-[#122622] outline-none"
               />
-              <div className="flex items-center justify-end gap-2 mt-1">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 mt-1">
                 <button
                   type="button"
                   onClick={() => setShowSuspendInput(false)}
-                  className="rounded-xl border border-gray-200 bg-white px-3 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
+                  className="w-full sm:w-auto rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50 text-center cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -158,7 +158,7 @@ export function HackathonInspectModal({
                   type="button"
                   onClick={handleSuspend}
                   disabled={isProcessing}
-                  className="rounded-xl bg-[#c4211c] px-3.5 py-1 text-xs font-bold text-white hover:bg-red-700"
+                  className="w-full sm:w-auto rounded-xl bg-[#c4211c] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-red-700 text-center cursor-pointer"
                 >
                   Confirm Suspension
                 </button>
@@ -168,22 +168,22 @@ export function HackathonInspectModal({
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d6e7e1] pt-4">
+        <div className="shrink-0 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t border-[#d6e7e1] p-4 sm:p-6 pt-3 sm:pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+            className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-center"
           >
             Close
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             {/* Featured toggle */}
             <button
               type="button"
               onClick={handleFeatured}
               disabled={isProcessing}
-              className={`inline-flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-xs font-extrabold transition-colors cursor-pointer ${
+              className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-xs font-extrabold transition-colors cursor-pointer ${
                 hackathon.isFeatured
                   ? "border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100"
                   : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
@@ -199,7 +199,7 @@ export function HackathonInspectModal({
                 type="button"
                 onClick={() => onToggleSuspend(hackathon.id)}
                 disabled={isProcessing}
-                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-colors cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-colors cursor-pointer"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Reactivate Event</span>
@@ -209,7 +209,7 @@ export function HackathonInspectModal({
                 type="button"
                 onClick={() => setShowSuspendInput(true)}
                 disabled={isProcessing}
-                className="inline-flex items-center gap-1.5 rounded-2xl border border-red-200 bg-white px-4 py-2.5 text-xs font-extrabold text-[#c4211c] hover:bg-red-50 transition-colors cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl border border-red-200 bg-white px-4 py-2.5 text-xs font-extrabold text-[#c4211c] hover:bg-red-50 transition-colors cursor-pointer"
               >
                 <ShieldAlert className="h-4 w-4" />
                 <span>Suspend Event</span>

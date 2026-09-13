@@ -109,7 +109,7 @@ export function SubmissionSummaryView({
               <button
                 type="button"
                 onClick={onEdit}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all hover:scale-[1.02] cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all hover:scale-[1.02] cursor-pointer"
               >
                 <Edit3 className="h-4 w-4" />
                 <span>Edit Deliverables</span>
@@ -124,7 +124,7 @@ export function SubmissionSummaryView({
                 href={submission.githubUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#0e2b25] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#123b32] transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#0e2b25] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#123b32] transition-all"
               >
                 <GithubIcon className="h-4 w-4" />
                 <span>View GitHub Repo</span>
@@ -137,7 +137,7 @@ export function SubmissionSummaryView({
                 href={submission.liveDemoUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#e8f3f0] text-[#0f6b5c] border border-[#d6e7e1] px-4 py-2.5 text-xs font-bold hover:bg-[#d6e7e1] transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#e8f3f0] text-[#0f6b5c] border border-[#d6e7e1] px-4 py-2.5 text-xs font-bold hover:bg-[#d6e7e1] transition-all"
               >
                 <Globe className="h-4 w-4" />
                 <span>Open Live App</span>
@@ -150,7 +150,7 @@ export function SubmissionSummaryView({
                 href={submission.videoDemoUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 px-4 py-2.5 text-xs font-bold hover:bg-amber-100 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 px-4 py-2.5 text-xs font-bold hover:bg-amber-100 transition-all"
               >
                 <Video className="h-4 w-4 text-[#c68a00]" />
                 <span>Watch Demo Video</span>
@@ -163,7 +163,7 @@ export function SubmissionSummaryView({
                 href={submission.pitchDeckPdf.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-2.5 text-xs font-bold hover:bg-red-100 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-50 text-red-700 border border-red-200 px-4 py-2.5 text-xs font-bold hover:bg-red-100 transition-all"
               >
                 <FileText className="h-4 w-4 text-[#c4211c]" />
                 <span>Download Pitch Deck ({submission.pitchDeckPdf.size})</span>

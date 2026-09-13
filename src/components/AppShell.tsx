@@ -27,7 +27,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/profile") ||
     pathname.startsWith("/portfolio") ||
     pathname.startsWith("/login") ||
-    pathname.startsWith("/signup");
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/verify-email");
 
   if (isDashboardRoute) {
     return <div className="min-h-dvh bg-[#f3f6f4]">{children}</div>;

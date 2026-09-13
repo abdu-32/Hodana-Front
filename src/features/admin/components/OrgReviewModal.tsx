@@ -54,9 +54,9 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="flex w-full max-w-2xl flex-col gap-6 rounded-3xl bg-white p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
+      <div className="flex w-full max-w-2xl flex-col rounded-3xl bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-auto max-h-[92dvh] overflow-hidden">
         {/* Header Bar */}
-        <div className="flex items-start justify-between gap-4 border-b border-[#d6e7e1] pb-4">
+        <div className="shrink-0 flex items-start justify-between gap-3 sm:gap-4 border-b border-[#d6e7e1] p-4 sm:p-6 pb-3 sm:pb-4">
           <div className="flex items-center gap-3.5">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] border border-[#d6e7e1] font-display font-extrabold text-base shadow-xs">
               {request.name[0]}
@@ -84,7 +84,7 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
         </div>
 
         {/* Modal Body Info Sections */}
-        <div className="flex flex-col gap-5 text-xs">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4 sm:gap-5 text-xs">
           {/* Contact Details Grid */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-2xl bg-[#f3f6f4] p-4 border border-[#d6e7e1]">
             <div className="flex items-center gap-2 text-[#57685f]">
@@ -102,7 +102,7 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
             {request.websiteUrl && (
               <div className="flex items-center gap-2 text-[#0f6b5c]">
                 <Globe className="h-4 w-4" />
-                <a href={request.websiteUrl} target="_blank" rel="noreferrer" className="underline font-bold">
+                <a href={request.websiteUrl} target="_blank" rel="noreferrer" className="underline font-bold truncate">
                   {request.websiteUrl}
                 </a>
               </div>
@@ -154,13 +154,13 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
                       href={doc.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-xl bg-[#e8f3f0] hover:bg-[#d6e7e1] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold transition-colors"
+                      className="inline-flex items-center gap-1 rounded-xl bg-[#e8f3f0] hover:bg-[#d6e7e1] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold transition-colors shrink-0"
                     >
                       <span>View File</span>
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   ) : (
-                    <span className="rounded-xl bg-[#e8f3f0] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold">
+                    <span className="rounded-xl bg-[#e8f3f0] text-[#0f6b5c] px-2.5 py-1 text-[11px] font-bold shrink-0">
                       Document on File
                     </span>
                   )}
@@ -184,18 +184,18 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
                 placeholder="e.g., Incomplete trade license documentation. Please re-upload verified Ministry credentials."
                 className="w-full rounded-xl border border-red-200 bg-white p-3 text-xs text-[#122622] outline-none focus:border-red-500"
               />
-              <div className="flex items-center justify-end gap-2">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowRejectForm(false)}
-                  className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50 cursor-pointer"
+                  className="w-full sm:w-auto rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50 cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#c4211c] px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#c4211c] px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition-colors cursor-pointer"
                 >
                   <XCircle className="h-4 w-4" />
                   <span>{isProcessing ? "Rejecting..." : "Confirm Rejection"}</span>
@@ -207,21 +207,21 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
 
         {/* Modal Footer Actions */}
         {!showRejectForm && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d6e7e1] pt-4">
+          <div className="shrink-0 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t border-[#d6e7e1] p-4 sm:p-6 pt-3 sm:pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-center"
             >
               Close
             </button>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setShowRejectForm(true)}
                 disabled={isProcessing}
-                className="inline-flex items-center gap-1.5 rounded-2xl border-2 border-red-200 bg-white px-4 py-2.5 text-xs font-extrabold text-[#c4211c] hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-red-200 bg-white px-4 py-2.5 text-xs font-extrabold text-[#c4211c] hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
               >
                 <XCircle className="h-4 w-4" />
                 <span>Reject Application</span>
@@ -231,7 +231,7 @@ export function OrgReviewModal({ request, onClose, onDecide }: OrgReviewModalPro
                 type="button"
                 onClick={handleApprove}
                 disabled={isProcessing}
-                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all hover:scale-[1.02] cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 <span>{isProcessing ? "Approving..." : "Approve & Grant Organizer Access"}</span>

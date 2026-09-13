@@ -389,11 +389,11 @@ export default function OrganizerAnnouncementsPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
                 <span>+ Create Announcement</span>
@@ -635,8 +635,8 @@ export default function OrganizerAnnouncementsPage() {
 
       {/* 2. Create Announcement Modal Component */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-          <div className="w-full max-w-lg rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in-50">
+          <div className="w-full max-w-lg my-auto max-h-[92dvh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-5 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-4 sm:gap-5">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
               <div className="flex items-center gap-3">
@@ -797,12 +797,12 @@ export default function OrganizerAnnouncementsPage() {
             </div>
 
             {/* Publish Actions Footer */}
-            <div className="flex items-center justify-between border-t border-[#d6e7e1] pt-3">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t border-[#d6e7e1] pt-3">
               <button
                 type="button"
                 onClick={() => handleSaveAnnouncement("DRAFT")}
                 disabled={isSending}
-                className="rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                className="w-full sm:w-auto rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer text-center"
               >
                 Save as Draft
               </button>
@@ -811,7 +811,7 @@ export default function OrganizerAnnouncementsPage() {
                 type="button"
                 onClick={() => handleSaveAnnouncement("PUBLISHED")}
                 disabled={isSending || !formTitle.trim() || !formContent.trim()}
-                className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
                 <span>{isSending ? "Broadcasting..." : "Send Announcement Now"}</span>

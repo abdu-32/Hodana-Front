@@ -674,8 +674,8 @@ export function SubmissionForm({
 
       {/* ================= MODAL: ADD / EDIT CONTRIBUTOR ================= */}
       {isAddEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="flex w-full max-w-lg flex-col gap-5 rounded-3xl bg-white p-6 sm:p-7 shadow-2xl animate-in zoom-in-95 duration-200 border border-[#d6e7e1]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="flex w-full max-w-lg my-auto max-h-[92dvh] overflow-y-auto flex-col gap-5 rounded-3xl bg-white p-5 sm:p-7 shadow-2xl animate-in zoom-in-95 duration-200 border border-[#d6e7e1]">
             <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] border border-[#d6e7e1]">
@@ -813,18 +813,18 @@ export function SubmissionForm({
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 border-t border-[#d6e7e1] pt-4">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-[#d6e7e1] pt-4">
               <button
                 type="button"
                 onClick={() => setIsAddEditModalOpen(false)}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full sm:w-auto justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveMember}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
               >
                 <Check className="h-4 w-4" />
                 <span>{editingMember ? "Save Changes" : "Add Contributor"}</span>
@@ -836,8 +836,8 @@ export function SubmissionForm({
 
       {/* ================= MODAL: DELETE CONFIRMATION ================= */}
       {deleteTargetMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="flex w-full max-w-md flex-col gap-5 rounded-3xl bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-[#d6e7e1]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="flex w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto flex-col gap-5 rounded-3xl bg-white p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-[#d6e7e1]">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600 border border-red-200">
               <Trash2 className="h-6 w-6" />
             </div>
@@ -855,18 +855,18 @@ export function SubmissionForm({
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#d6e7e1]">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2 border-t border-[#d6e7e1]">
               <button
                 type="button"
                 onClick={() => setDeleteTargetMember(null)}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full sm:w-auto justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDeleteMember}
-                className="inline-flex items-center gap-2 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer"
               >
                 <Trash2 className="h-4 w-4" />
                 <span>Remove Contributor</span>
@@ -878,8 +878,8 @@ export function SubmissionForm({
 
       {/* ================= MODAL: FINAL SUBMISSION CONFIRMATION ================= */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="flex w-full max-w-md flex-col gap-5 rounded-3xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto">
+          <div className="flex w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto flex-col gap-5 rounded-3xl bg-white p-5 sm:p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 border border-[#d6e7e1]">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] border border-[#d6e7e1]">
               <Send className="h-6 w-6" />
             </div>
@@ -906,18 +906,18 @@ export function SubmissionForm({
               </ul>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full sm:w-auto justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmFinalSubmit}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Yes, Submit Deliverables</span>

@@ -185,11 +185,11 @@ export default function AdminDashboardPage() {
       ) : metrics ? (
         <div className="flex flex-col gap-7">
           {/* Key Metric Stats Grid - Interactive Cards */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Stat 1: Total Registered Users */}
             <Link
               href="/admin/users"
-              className="group flex flex-col gap-3 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs hover:border-[#0f6b5c] hover:shadow-md transition-all cursor-pointer"
+              className="group flex flex-col gap-3 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs hover:border-[#0f6b5c] hover:shadow-md transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#57685f] group-hover:text-[#0f6b5c] transition-colors">
@@ -200,7 +200,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-3xl font-extrabold text-[#122622]">
+                <span className="font-display text-2xl sm:text-3xl font-extrabold text-[#122622]">
                   {metrics.totalUsers.toLocaleString()}
                 </span>
                 <span className="text-[11px] font-bold text-[#16793d] flex items-center gap-0.5">
@@ -215,7 +215,7 @@ export default function AdminDashboardPage() {
             {/* Stat 2: Active Hackathons */}
             <Link
               href="/admin/hackathons"
-              className="group flex flex-col gap-3 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs hover:border-amber-500 hover:shadow-md transition-all cursor-pointer"
+              className="group flex flex-col gap-3 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs hover:border-amber-500 hover:shadow-md transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#57685f] group-hover:text-amber-700 transition-colors">
@@ -226,7 +226,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-3xl font-extrabold text-[#122622]">
+                <span className="font-display text-2xl sm:text-3xl font-extrabold text-[#122622]">
                   {metrics.activeHackathonsCount}
                 </span>
                 <span className="text-[11px] font-bold text-gray-500">
@@ -241,7 +241,7 @@ export default function AdminDashboardPage() {
             {/* Stat 3: Total Prize Pool Volume */}
             <Link
               href="/admin/finances"
-              className="group flex flex-col gap-3 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs hover:border-[#0f6b5c] hover:shadow-md transition-all cursor-pointer"
+              className="group flex flex-col gap-3 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs hover:border-[#0f6b5c] hover:shadow-md transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#57685f] group-hover:text-[#0f6b5c] transition-colors">
@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-2xl font-extrabold text-[#0f6b5c]">
+                <span className="font-display text-xl sm:text-2xl font-extrabold text-[#0f6b5c]">
                   {metrics.totalPrizePoolVolumeETB.toLocaleString()} ETB
                 </span>
               </div>
@@ -264,7 +264,7 @@ export default function AdminDashboardPage() {
             {/* Stat 4: Pending Verification Queue */}
             <Link
               href="/admin/organization-requests"
-              className="group flex flex-col gap-3 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs hover:border-amber-600 hover:shadow-md transition-all cursor-pointer"
+              className="group flex flex-col gap-3 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs hover:border-amber-600 hover:shadow-md transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#57685f] group-hover:text-amber-800 transition-colors">
@@ -275,7 +275,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-3xl font-extrabold text-amber-700">
+                <span className="font-display text-2xl sm:text-3xl font-extrabold text-amber-700">
                   {metrics.pendingOrgRequestsCount}
                 </span>
                 <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
@@ -290,10 +290,10 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Quick Action Navigation Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
             <Link
               href="/admin/organization-requests"
-              className="flex items-center justify-between rounded-2xl bg-white p-4 border border-[#d6e7e1] shadow-2xs hover:border-[#0f6b5c] transition-all"
+              className="flex items-center justify-between rounded-2xl bg-white p-3 sm:p-4 border border-[#d6e7e1] shadow-2xs hover:border-[#0f6b5c] transition-all"
             >
               <div className="flex items-center gap-2.5">
                 <Building2 className="h-4 w-4 text-[#0f6b5c]" />
@@ -345,10 +345,10 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Pending Organization Queue Snapshot with Direct Modal Review */}
-          <div className="rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-7 shadow-xs flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
+          <div className="rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-7 shadow-xs flex flex-col gap-4 sm:gap-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-[#d6e7e1] pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e8f3f0] text-[#0f6b5c]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e8f3f0] text-[#0f6b5c] shrink-0">
                   <Building2 className="h-4 w-4" />
                 </div>
                 <div>
@@ -362,7 +362,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link
                 href="/admin/organization-requests"
-                className="inline-flex items-center gap-1 text-xs font-extrabold text-[#0f6b5c] hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-extrabold text-[#0f6b5c] hover:underline shrink-0"
               >
                 <span>View Full Queue ({pendingRequests.length})</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -388,21 +388,21 @@ export default function AdminDashboardPage() {
                       <div className="flex flex-col min-w-0">
                         <div className="flex items-center gap-2">
                           <h4 className="text-xs font-bold text-[#122622] truncate">{req.name}</h4>
-                          <span className="rounded-md bg-[#e8f3f0] text-[#0f6b5c] px-2 py-0.5 text-[10px] font-extrabold">
+                          <span className="rounded-md bg-[#e8f3f0] text-[#0f6b5c] px-2 py-0.5 text-[10px] font-extrabold shrink-0">
                             {req.orgType}
                           </span>
                         </div>
-                        <p className="text-[11px] text-[#57685f]">
+                        <p className="text-[11px] text-[#57685f] truncate">
                           Applicant: {req.applicantName} ({req.email}) • {req.location}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                       <button
                         type="button"
                         onClick={() => setSelectedRequest(req)}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#0f6b5c] px-4 py-2 text-xs font-extrabold text-white shadow-xs hover:bg-[#0b5347] transition-colors cursor-pointer"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#0f6b5c] px-4 py-2 text-xs font-extrabold text-white shadow-xs hover:bg-[#0b5347] transition-colors cursor-pointer"
                       >
                         <Eye className="h-3.5 w-3.5" />
                         <span>Inspect & Review</span>
@@ -416,7 +416,7 @@ export default function AdminDashboardPage() {
 
           {/* System Services & Infrastructure Health + Live Hackathons */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-            <div className="lg:col-span-6 rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs flex flex-col gap-4">
+            <div className="lg:col-span-6 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-xs flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#122622]">
@@ -535,7 +535,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-6 rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs flex flex-col gap-4">
+            <div className="lg:col-span-6 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-xs flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#122622]">
                   <Activity className="h-4 w-4 text-[#0f6b5c]" />

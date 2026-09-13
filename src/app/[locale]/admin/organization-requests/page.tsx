@@ -138,7 +138,7 @@ export default function AdminOrganizationRequestsPage() {
         </div>
 
         {/* Search Field */}
-        <div className="relative flex items-center min-w-[260px]">
+        <div className="relative flex items-center w-full sm:w-auto sm:min-w-[260px]">
           <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
@@ -168,8 +168,8 @@ export default function AdminOrganizationRequestsPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full min-w-[760px] text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-[#d6e7e1] bg-[#f3f6f4] text-[#57685f] font-extrabold uppercase tracking-wider text-[11px]">
                   <th className="py-4 px-6">Organization</th>

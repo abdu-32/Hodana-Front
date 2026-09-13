@@ -458,18 +458,18 @@ export default function OrganizerPrizesPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               {/* Dynamic Hackathon Selector Dropdown */}
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={() => setIsEventDropdownOpen((prev) => !prev)}
                   disabled={isLoadingHackathons || hackathons.length === 0}
-                  className="flex items-center gap-2.5 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-extrabold text-[#122622] shadow-2xs hover:border-[#0f6b5c]/40 transition-all cursor-pointer disabled:opacity-60"
+                  className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2.5 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-extrabold text-[#122622] shadow-2xs hover:border-[#0f6b5c]/40 transition-all cursor-pointer disabled:opacity-60"
                 >
                   <Layers className="h-4 w-4 text-[#0f6b5c] shrink-0" />
                   <span className="text-[#57685f] font-semibold">Select Event:</span>
-                  <span className="max-w-[180px] truncate">{selectedHackathonTitle}</span>
+                  <span className="max-w-[140px] sm:max-w-[180px] truncate">{selectedHackathonTitle}</span>
                   <ChevronDown
                     className={`h-4 w-4 text-[#57685f] transition-transform duration-200 ${
                       isEventDropdownOpen ? "rotate-180 text-[#0f6b5c]" : ""
@@ -478,7 +478,7 @@ export default function OrganizerPrizesPage() {
                 </button>
 
               {isEventDropdownOpen && hackathons.length > 0 && (
-                <div className="absolute right-0 top-full mt-2 w-72 max-h-80 overflow-y-auto rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30 animate-in fade-in-50 zoom-in-95">
+                <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-full sm:w-72 max-h-80 overflow-y-auto rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30 animate-in fade-in-50 zoom-in-95">
                   <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#57685f]">
                     Managed Hackathons ({hackathons.length})
                   </div>
@@ -516,7 +516,7 @@ export default function OrganizerPrizesPage() {
                 type="button"
                 onClick={handleExportPrizes}
                 disabled={isExporting || isLoadingHackathons}
-                className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
                 title="Export prize allocations and winners"
               >
                 {isExporting ? (
@@ -898,7 +898,7 @@ export default function OrganizerPrizesPage() {
                 <button
                   type="button"
                   onClick={() => handleAddPaymentMethod("Chapa Gateway", "MOBILE_MONEY")}
-                  className="flex items-center gap-1.5 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0] px-3.5 py-2 text-xs font-extrabold text-[#0f6b5c] hover:bg-[#d6e7e1] transition-all cursor-pointer shadow-2xs"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0] px-3.5 py-2 text-xs font-extrabold text-[#0f6b5c] hover:bg-[#d6e7e1] transition-all cursor-pointer shadow-2xs"
                 >
                   <Smartphone className="h-3.5 w-3.5" />
                   <span>+ Add Chapa Gateway</span>
@@ -906,7 +906,7 @@ export default function OrganizerPrizesPage() {
                 <button
                   type="button"
                   onClick={() => handleAddPaymentMethod("Cheche Pay (Kacha)", "MOBILE_MONEY")}
-                  className="flex items-center gap-1.5 rounded-2xl border border-[#E2DFD8] bg-[#F9F8F3] px-3.5 py-2 text-xs font-extrabold text-[#122622] hover:bg-white transition-all cursor-pointer shadow-2xs"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-2xl border border-[#E2DFD8] bg-[#F9F8F3] px-3.5 py-2 text-xs font-extrabold text-[#122622] hover:bg-white transition-all cursor-pointer shadow-2xs"
                 >
                   <Smartphone className="h-3.5 w-3.5 text-amber-600" />
                   <span>+ Add Cheche Pay</span>
@@ -914,7 +914,7 @@ export default function OrganizerPrizesPage() {
                 <button
                   type="button"
                   onClick={() => handleAddPaymentMethod("Telebirr SuperApp", "MOBILE_MONEY")}
-                  className="flex items-center gap-1.5 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3 py-2 text-xs font-bold text-[#57685f] hover:bg-[#e8f3f0] transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3 py-2 text-xs font-bold text-[#57685f] hover:bg-[#e8f3f0] transition-all cursor-pointer"
                 >
                   <Smartphone className="h-3.5 w-3.5 text-blue-600" />
                   <span>+ Add Telebirr</span>
@@ -922,7 +922,7 @@ export default function OrganizerPrizesPage() {
                 <button
                   type="button"
                   onClick={() => handleAddPaymentMethod("Commercial Bank of Ethiopia", "BANK_TRANSFER")}
-                  className="flex items-center gap-1.5 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3 py-2 text-xs font-bold text-[#57685f] hover:bg-[#e8f3f0] transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3 py-2 text-xs font-bold text-[#57685f] hover:bg-[#e8f3f0] transition-all cursor-pointer"
                 >
                   <Building2 className="h-3.5 w-3.5 text-emerald-600" />
                   <span>+ Add Bank Wire</span>
@@ -1022,7 +1022,7 @@ export default function OrganizerPrizesPage() {
           </div>
 
           {/* Sticky Save Action Bar */}
-          <div className="sticky bottom-4 z-20 flex items-center justify-between rounded-2xl bg-[#122622] p-4 text-white shadow-2xl">
+          <div className="sticky bottom-4 z-20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl bg-[#122622] p-4 text-white shadow-2xl">
             <div className="flex items-center gap-3">
               <Sparkles className="h-5 w-5 text-amber-300 shrink-0" />
               <div>
@@ -1039,7 +1039,7 @@ export default function OrganizerPrizesPage() {
               type="button"
               onClick={handleSaveConfiguration}
               disabled={isSaving || !selectedHackathonId}
-              className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] hover:bg-[#0b5347] px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] hover:bg-[#0b5347] px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all cursor-pointer disabled:opacity-50"
             >
               <Save className="h-4 w-4" />
               <span>{isSaving ? "Saving Config..." : "Save Changes"}</span>

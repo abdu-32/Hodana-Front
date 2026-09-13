@@ -685,7 +685,7 @@ export default function OrganizerRegistrationsPage() {
             )}
 
             {/* Applicant Review Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto no-scrollbar">
               <table className="w-full min-w-[850px] text-left text-xs">
                 <thead>
                   <tr className="border-b border-[#d6e7e1] text-[11px] font-extrabold uppercase tracking-wider text-[#57685f]">
@@ -915,11 +915,11 @@ export default function OrganizerRegistrationsPage() {
       {/* ================= 3. QUICK AVATAR INFO POPOVER ================= */}
       {quickAvatarUser && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-150"
           onClick={() => setQuickAvatarUser(null)}
         >
           <div
-            className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-[#d6e7e1] text-[#122622] animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-sm my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-[#d6e7e1] text-[#122622] animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -1373,10 +1373,10 @@ export default function OrganizerRegistrationsPage() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between border-t border-[#d6e7e1] p-6 bg-[#f8faf9]">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-[#d6e7e1] p-4 sm:p-6 bg-[#f8faf9]">
               <a
                 href={`mailto:${selectedRegistration.email}`}
-                className="inline-flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#122622] hover:bg-gray-100 transition-all cursor-pointer"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#122622] hover:bg-gray-100 transition-all cursor-pointer"
               >
                 <Mail className="h-4 w-4 text-[#0f6b5c]" />
                 <span>Contact {selectedRegistration.participantName}</span>
@@ -1385,7 +1385,7 @@ export default function OrganizerRegistrationsPage() {
               <button
                 type="button"
                 onClick={() => setSelectedRegistration(null)}
-                className="rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                className="w-full sm:w-auto justify-center rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
               >
                 Close
               </button>
