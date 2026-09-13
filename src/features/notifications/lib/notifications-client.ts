@@ -119,13 +119,19 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
   // 2. Check if this is a support ticket / inquiry notification
   const isSupport =
     lowerCat.startsWith("support") ||
+    lowerCat.includes("ticket") ||
     lowerMsg.includes("support ticket") ||
     lowerMsg.includes("ticket reference") ||
     lowerMsg.includes("support team") ||
     lowerMsg.includes("support specialist") ||
     lowerMsg.includes("replied to ticket") ||
+    lowerMsg.includes("replied to") ||
+    lowerMsg.includes("submitted by") ||
     lowerMsg.includes("my tickets") ||
     lowerMsg.includes("ticket:") ||
+    lowerMsg.includes("ticket '") ||
+    lowerMsg.includes("ticket \"") ||
+    lowerMsg.includes("inquiry") ||
     lowerMsg.includes("category: technical") ||
     lowerMsg.includes("category: billing") ||
     lowerMsg.includes("category: general") ||
@@ -147,7 +153,7 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
       message = `Support specialist replied to ticket: '${subjMatch ? subjMatch[1] : "Inquiry"}'.`;
     }
 
-    // If title is already an Inquiry Category headline, use it directly
+    // If title is already a valid canonical Inquiry Category headline, use it directly
     if (title && INQUIRY_HEADLINES.has(title)) {
       return { title, message, priority, category };
     }
@@ -325,7 +331,7 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     } else if (lowerMsg.includes("schedule") || lowerMsg.includes("timeline") || lowerMsg.includes("dates")) {
       title = "Hackathon Schedule Update";
     } else if (!title || title.toLowerCase() === "hackathon announcement" || title.toLowerCase() === "notification") {
-      title = "Hackathon Announcement";
+      title = d.hackathonTitle ? `${d.hackathonTitle} Update` : "Hackathon Update";
     }
     return { title, message, priority, category };
   }
@@ -339,7 +345,32 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
   if (rawMessage.length <= 80 && !rawMessage.includes("\n")) {
     title = rawMessage;
   } else {
-    title = "Notification";
+    title = "Platform Announcement";
+  }
+
+  // Universal safeguard: Under NO circumstances allow "Hackathon Announcement" or generic "Notification"
+  if (!title || title.toLowerCase().trim() === "hackathon announcement" || title.toLowerCase().trim() === "notification") {
+    if (
+      lowerMsg.includes("ticket") ||
+      lowerMsg.includes("support") ||
+      lowerMsg.includes("replied to") ||
+      lowerMsg.includes("submitted by") ||
+      isSupport
+    ) {
+      if (lowerMsg.includes("payment") || lowerMsg.includes("prize") || lowerMsg.includes("billing")) {
+        title = INQUIRY_CATEGORIES.billing;
+      } else if (lowerMsg.includes("rule") || lowerMsg.includes("judg")) {
+        title = INQUIRY_CATEGORIES.hackathon_specific;
+      } else if (lowerMsg.includes("bug") || lowerMsg.includes("technical") || lowerMsg.includes("error")) {
+        title = INQUIRY_CATEGORIES.technical;
+      } else {
+        title = INQUIRY_CATEGORIES.general;
+      }
+    } else if (d.hackathonId || lowerCat.includes("hackathon")) {
+      title = d.hackathonTitle ? `${d.hackathonTitle} Update` : "Hackathon Update";
+    } else {
+      title = "Platform Announcement";
+    }
   }
 
   return { title, message, priority, category };
@@ -404,17 +435,34 @@ export const notificationsClient = {
 
     // Also pull local announcements broadcasted on this machine, repairing any stale generic titles
     const rawLocal = getLocalNotifications();
+    let localModified = false;
     const local = rawLocal.map((item) => {
-      const canonical = item.title ? CANONICAL_INQUIRY_MAP[item.title.toLowerCase()] : null;
-      if (canonical && canonical !== item.title) {
-        return { ...item, title: canonical };
+      const trimmedTitle = (item.title || "").trim();
+      const canonical = trimmedTitle ? CANONICAL_INQUIRY_MAP[trimmedTitle.toLowerCase()] : null;
+      let curTitle = canonical || trimmedTitle;
+      const rawMsg = item.message || "";
+      const cleanMsg = rawMsg.replace(/\[(URGENT|IMPORTANT|HIGH|NORMAL|INFO|LOW)\]\.?/gi, "").trim();
+
+      let curPriority = item.priority || "INFO";
+      if (/priority:\s*urgent/i.test(rawMsg) || rawMsg.includes("[URGENT]")) {
+        curPriority = "URGENT";
+      } else if (/priority:\s*(high|important)/i.test(rawMsg) || rawMsg.includes("[IMPORTANT]") || rawMsg.includes("[HIGH]")) {
+        curPriority = "IMPORTANT";
       }
-      if (!item.title || item.title === "Hackathon Announcement" || item.title === "Notification") {
+
+      const isGenericTitle =
+        !curTitle ||
+        curTitle.toLowerCase().includes("hackathon announcement") ||
+        curTitle.toLowerCase() === "notification";
+
+      if (isGenericTitle) {
+        localModified = true;
         const resolved = resolveNotificationDetails({
           id: item.id,
           notificationId: item.id,
           title: "",
           message: item.message,
+          priority: curPriority,
           category: item.category,
           channel: "in_portal",
           status: "sent",
@@ -428,16 +476,75 @@ export const notificationsClient = {
           category: resolved.category,
         };
       }
+
+      if (curTitle !== item.title || cleanMsg !== item.message || curPriority !== item.priority) {
+        localModified = true;
+        return {
+          ...item,
+          title: curTitle,
+          message: cleanMsg,
+          priority: curPriority,
+        };
+      }
+
       return item;
     });
+
+    if (localModified) {
+      saveLocalNotifications(local);
+    }
 
     // Deduplicate by ID
     const seenIds = new Set<string>();
     const merged: InAppNotification[] = [];
 
-    for (const item of [...backendItems, ...local]) {
+    for (let item of [...backendItems, ...local]) {
       if (!seenIds.has(item.id)) {
         seenIds.add(item.id);
+
+        let finalTitle = (item.title || "").trim();
+        if (CANONICAL_INQUIRY_MAP[finalTitle.toLowerCase()]) {
+          finalTitle = CANONICAL_INQUIRY_MAP[finalTitle.toLowerCase()];
+        }
+
+        const lowerM = (item.message || "").toLowerCase();
+        const isSupportMsg =
+          lowerM.includes("ticket") ||
+          lowerM.includes("support") ||
+          lowerM.includes("replied to") ||
+          lowerM.includes("submitted by") ||
+          (item.category || "").toLowerCase().includes("support");
+
+        if (
+          !finalTitle ||
+          finalTitle.toLowerCase().includes("hackathon announcement") ||
+          finalTitle.toLowerCase() === "notification"
+        ) {
+          if (lowerM.includes("payment") || lowerM.includes("prize") || lowerM.includes("billing") || lowerM.includes("payout")) {
+            finalTitle = INQUIRY_CATEGORIES.billing;
+          } else if (lowerM.includes("rule") || lowerM.includes("judg") || lowerM.includes("criteria")) {
+            finalTitle = INQUIRY_CATEGORIES.hackathon_specific;
+          } else if (lowerM.includes("bug") || lowerM.includes("technical") || lowerM.includes("error") || lowerM.includes("fail")) {
+            finalTitle = INQUIRY_CATEGORIES.technical;
+          } else if (isSupportMsg) {
+            finalTitle = INQUIRY_CATEGORIES.general;
+          } else if (item.hackathonId || (item.category || "").toLowerCase().includes("hackathon")) {
+            finalTitle = item.hackathonTitle ? `${item.hackathonTitle} Update` : "Hackathon Update";
+          } else {
+            finalTitle = "Platform Announcement";
+          }
+        }
+
+        const cleanMessage = (item.message || "")
+          .replace(/\[(URGENT|IMPORTANT|HIGH|NORMAL|INFO|LOW)\]\.?/gi, "")
+          .trim();
+
+        item = {
+          ...item,
+          title: finalTitle,
+          message: cleanMessage,
+        };
+
         if (!unreadOnly || !item.read) {
           merged.push(item);
         }
