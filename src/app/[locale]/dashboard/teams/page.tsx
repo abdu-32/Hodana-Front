@@ -515,7 +515,7 @@ function MyTeamsContent() {
         {/* ================= MAIN CONTENT AREA ================= */}
         <main className="flex min-w-0 flex-1 flex-col p-4 sm:p-6 lg:p-8 transition-all duration-300">
           {/* Top Bar with Search & Action Controls */}
-          <div className="flex items-center justify-between gap-4 pb-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-6">
             {/* Search Input Bar */}
             <div className="relative w-full max-w-md">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -529,13 +529,13 @@ function MyTeamsContent() {
             </div>
 
             {/* Hackathon Selector & Action Icons */}
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl border border-[#d6e7e1] shadow-2xs">
-                <Calendar className="h-4 w-4 text-[#0f6b5c]" />
+            <div className="flex items-center justify-between sm:justify-end gap-3">
+              <div className="flex items-center gap-2 bg-white px-3 sm:px-3.5 py-2 rounded-2xl border border-[#d6e7e1] shadow-2xs flex-1 sm:flex-initial min-w-0">
+                <Calendar className="h-4 w-4 text-[#0f6b5c] shrink-0" />
                 <select
                   value={selectedHackathonId}
                   onChange={(e) => setSelectedHackathonId(e.target.value)}
-                  className="bg-transparent text-xs font-bold text-[#122622] focus:outline-none cursor-pointer max-w-[200px] truncate"
+                  className="bg-transparent text-xs font-bold text-[#122622] focus:outline-none cursor-pointer w-full sm:max-w-[200px] truncate"
                 >
                   {allHackathons.map((h) => (
                     <option key={h.id} value={h.id}>
@@ -545,24 +545,26 @@ function MyTeamsContent() {
                 </select>
               </div>
 
-              <NotificationBellDropdown />
+              <div className="flex items-center gap-3 shrink-0">
+                <NotificationBellDropdown />
 
-              <Link
-                href="/profile"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-[#d6e7e1] text-[#57685f] shadow-2xs hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-all cursor-pointer"
-                aria-label="User Profile"
-                title="User Profile"
-              >
-                {(user as any)?.avatarUrl ? (
-                  <img
-                    src={(user as any).avatarUrl}
-                    alt=""
-                    className="h-7 w-7 rounded-full object-cover"
-                  />
-                ) : (
-                  <User className="h-4 w-4" />
-                )}
-              </Link>
+                <Link
+                  href="/profile"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-[#d6e7e1] text-[#57685f] shadow-2xs hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-all cursor-pointer"
+                  aria-label="User Profile"
+                  title="User Profile"
+                >
+                  {(user as any)?.avatarUrl ? (
+                    <img
+                      src={(user as any).avatarUrl}
+                      alt=""
+                      className="h-7 w-7 rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
+                </Link>
+              </div>
             </div>
           </div>
 

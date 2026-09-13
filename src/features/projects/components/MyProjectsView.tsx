@@ -331,7 +331,7 @@ export function MyProjectsView({ onBackToDashboard }: MyProjectsViewProps) {
       )}
 
       {/* Summary Stat Cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <div
           onClick={() => setStatusFilter("ALL")}
           className={`rounded-2xl border p-4 cursor-pointer transition-all ${
@@ -413,7 +413,7 @@ export function MyProjectsView({ onBackToDashboard }: MyProjectsViewProps) {
       <div className="flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-4 shadow-2xs">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
           {/* Status Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap max-w-full pb-1">
             <button
               type="button"
               onClick={() => setStatusFilter("ALL")}

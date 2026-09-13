@@ -65,15 +65,15 @@ export function LegalModal({ type, onClose }: LegalModalProps) {
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-[#d6e7e1] pb-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e8f3f0] shadow-2xs">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#e8f3f0] shadow-2xs">
               {meta.icon}
             </div>
-            <div>
-              <h3 className="font-display text-lg font-extrabold text-[#122622]">
+            <div className="min-w-0">
+              <h3 className="font-display text-base sm:text-lg font-extrabold text-[#122622] truncate">
                 {meta.title}
               </h3>
-              <p className="text-xs font-medium text-[#57685f]">
+              <p className="text-xs font-medium text-[#57685f] truncate">
                 {meta.subtitle}
               </p>
             </div>
@@ -82,7 +82,7 @@ export function LegalModal({ type, onClose }: LegalModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer"
+            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer shrink-0 ml-2"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />

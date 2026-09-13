@@ -33,7 +33,7 @@
   --color-ink: #0e2b25;
   --color-ink-alt: #123b32;
 
-  --breakpoint-sm: 360px;
+  --breakpoint-xs: 480px;
 }
 
 body {
@@ -61,4 +61,13 @@ body {
     transparent 0
   );
   background-size: 24px 24px;
+}
+
+/* Cross-browser scrollbar hiding for horizontal swipeable tabs and filters */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

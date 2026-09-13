@@ -15,16 +15,16 @@ export function Footer() {
   return (
     <>
       <footer className="w-full border-t border-[#d6e7e1] bg-[#f3f6f4] text-[#122622]">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 sm:gap-10 px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
           {/* Top 4-Column Section */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-12">
             {/* Brand Column */}
             <div className="flex flex-col items-start gap-3 lg:col-span-5">
-              <Link href="/" className="flex items-center gap-3.5">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white border border-[#d6e7e1] shadow-xs overflow-hidden p-1 transition-transform hover:scale-105">
+              <Link href="/" className="flex items-center gap-3 min-w-0">
+                <span className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-white border border-[#d6e7e1] shadow-xs overflow-hidden p-1 transition-transform hover:scale-105 shrink-0">
                   <Logomark className="h-full w-full object-contain" />
                 </span>
-                <span className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-[#122622]">
+                <span className="font-display text-xl sm:text-3xl font-extrabold tracking-tight text-[#122622] truncate">
                   {tNav("brandName")}
                 </span>
               </Link>
@@ -146,7 +146,7 @@ export function Footer() {
           </div>
 
           {/* Bottom Copyright Bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#d6e7e1] pt-6 text-xs text-[#57685f]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#d6e7e1] pt-6 text-xs text-[#57685f] text-center sm:text-left">
             <p>{t("rights")}</p>
             <div className="flex items-center gap-1.5 font-medium">
               <span>{t("poweredBy")}</span>

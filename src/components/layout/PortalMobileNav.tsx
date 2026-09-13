@@ -162,28 +162,28 @@ export function PortalMobileNav({
   return (
     <div className="block lg:hidden sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-[#d6e7e1] shadow-2xs">
       {/* Mobile Top App Bar */}
-      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+      <div className="flex h-16 items-center justify-between px-3 sm:px-6 gap-2">
         {/* Left: Hamburger & Brand */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d6e7e1] bg-white text-[#122622] hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-colors cursor-pointer"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#d6e7e1] bg-white text-[#122622] hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-colors cursor-pointer"
             aria-label="Open Navigation Menu"
             title="Open Menu"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F9F8F3] border border-[#E2DFD8] p-0.5 shadow-2xs">
+          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F9F8F3] border border-[#E2DFD8] p-0.5 shadow-2xs">
               <Logomark className="h-full w-full object-contain" />
             </span>
-            <div className="flex flex-col">
-              <span className="font-display text-sm font-extrabold text-[#0f6b5c] leading-tight">
+            <div className="flex flex-col min-w-0">
+              <span className="font-display text-sm font-extrabold text-[#0f6b5c] leading-tight truncate">
                 HODANA
               </span>
-              <span className="text-[10px] font-bold text-[#57685f] uppercase tracking-wider leading-none">
+              <span className="text-[10px] font-bold text-[#57685f] uppercase tracking-wider leading-none truncate max-w-[120px] sm:max-w-none">
                 {title || (portalType === "participant" ? "Participant" : "Organizer")}
               </span>
             </div>
@@ -191,7 +191,7 @@ export function PortalMobileNav({
         </div>
 
         {/* Right: Notifications & Profile Avatar */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           <NotificationBellDropdown />
 
           <Link
@@ -215,7 +215,7 @@ export function PortalMobileNav({
           />
 
           {/* Drawer Panel */}
-          <div className="relative flex w-[280px] max-w-[85vw] flex-col justify-between bg-white p-5 shadow-2xl z-50 animate-in slide-in-from-left duration-200">
+          <div className="relative flex w-[280px] max-w-[85vw] h-full max-h-dvh flex-col justify-between bg-white p-4 sm:p-5 shadow-2xl z-50 animate-in slide-in-from-left duration-200">
             <div className="flex flex-col gap-6">
               {/* Drawer Header */}
               <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">

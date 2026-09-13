@@ -284,9 +284,10 @@ export function RegistrationForm({ hackathon }: RegistrationFormProps) {
     <div className="min-h-screen bg-[#f8fafc] text-[#122622] py-8 sm:py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
-          {/* ================= LEFT SIDEBAR (STEP NAVIGATOR) ================= */}
+          {/* ================= STEP NAVIGATOR (SIDEBAR ON LG, COMPACT STEPPER ON MOBILE) ================= */}
           <aside className="lg:col-span-4 flex flex-col gap-4">
-            <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 shadow-xs">
+            {/* Desktop Full Sidebar */}
+            <div className="hidden lg:block rounded-2xl border border-[#e2e8f0] bg-white p-6 shadow-xs">
               <div className="mb-6">
                 <h2 className="font-display text-lg font-bold text-[#122622]">Registration</h2>
                 <p className="text-xs font-semibold text-[#57685f] mt-0.5">
@@ -326,6 +327,33 @@ export function RegistrationForm({ hackathon }: RegistrationFormProps) {
                   );
                 })}
               </nav>
+            </div>
+
+            {/* Mobile Compact Progress Bar */}
+            <div className="block lg:hidden rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-xs">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0f6b5c] text-[11px] font-extrabold text-white">
+                    {currentStep}
+                  </span>
+                  <span className="text-xs font-bold text-[#122622]">
+                    {stepsList[currentStep - 1]?.title}
+                  </span>
+                </div>
+                <span className="text-xs font-semibold text-[#57685f]">
+                  Step {currentStep} of 5
+                </span>
+              </div>
+              <div className="grid grid-cols-5 gap-1.5 pt-1">
+                {stepsList.map((s) => (
+                  <div
+                    key={s.number}
+                    className={`h-1.5 rounded-full transition-all ${
+                      s.number <= currentStep ? "bg-[#0f6b5c]" : "bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </aside>
 
@@ -405,7 +433,7 @@ export function RegistrationForm({ hackathon }: RegistrationFormProps) {
             )}
 
             {/* Form Step Card */}
-            <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 sm:p-8 shadow-xs">
+            <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-8 shadow-xs">
               {/* ================= STEP 1: PERSONAL INFORMATION ================= */}
               {currentStep === 1 && (
                 <div className="flex flex-col gap-6">

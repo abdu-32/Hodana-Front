@@ -24,10 +24,10 @@ export function HeaderAuthControl() {
     const isSignupActive = pathname === "/signup";
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-2.5">
         <Link
           href="/login"
-          className={`inline-flex min-h-[38px] items-center justify-center rounded-xl px-3.5 text-xs sm:text-sm font-semibold transition-colors ${
+          className={`inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold transition-colors ${
             isLoginActive
               ? "text-[#0f6b5c] bg-[#e8f3f0]"
               : "text-[#122622] hover:text-[#0f6b5c] hover:bg-gray-100"
@@ -37,7 +37,7 @@ export function HeaderAuthControl() {
         </Link>
         <Link
           href="/signup"
-          className="inline-flex min-h-[38px] items-center justify-center rounded-xl bg-[#0f6b5c] px-4.5 text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-[#0b5347] hover:shadow-md"
+          className="hidden xs:inline-flex sm:inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl bg-[#0f6b5c] px-3 sm:px-4.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-all hover:bg-[#0b5347] hover:shadow-md"
         >
           Register
         </Link>
@@ -48,10 +48,10 @@ export function HeaderAuthControl() {
   const initial = user.fullName.trim().charAt(0).toUpperCase() || "?";
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-1.5 sm:gap-3">
       <Link
         href="/dashboard"
-        className="flex items-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-3 py-1.5 text-xs sm:text-sm font-semibold text-[#122622] shadow-2xs hover:border-[#b5d6cc] hover:bg-[#f3f6f4] hover:text-[#0f6b5c] transition-all"
+        className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-[#d6e7e1] bg-white px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold text-[#122622] shadow-2xs hover:border-[#b5d6cc] hover:bg-[#f3f6f4] hover:text-[#0f6b5c] transition-all"
       >
         {user.avatarUrl ? (
           <img
@@ -67,7 +67,7 @@ export function HeaderAuthControl() {
             {initial}
           </span>
         )}
-        <span className="hidden sm:inline font-bold text-xs">{user.fullName}</span>
+        <span className="hidden sm:inline font-bold text-xs max-w-[120px] truncate">{user.fullName}</span>
       </Link>
       <button
         type="button"
@@ -75,7 +75,7 @@ export function HeaderAuthControl() {
           await logout();
           router.push("/");
         }}
-        className="inline-flex min-h-[38px] items-center justify-center rounded-xl border border-[#d6e7e1] bg-white px-3.5 text-xs sm:text-sm font-semibold text-[#57685f] shadow-2xs hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
+        className="hidden xs:inline-flex sm:inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl border border-[#d6e7e1] bg-white px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold text-[#57685f] shadow-2xs hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
       >
         {t("logout")}
       </button>

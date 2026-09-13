@@ -158,7 +158,7 @@ export function ParticipantProfileView({
   return (
     <div className="space-y-6">
       {/* ================= 1. PROFILE HEADER CARD ================= */}
-      <div className="relative overflow-hidden rounded-2xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-xs">
+      <div className="relative overflow-hidden rounded-2xl border border-[#d6e7e1] bg-white p-4 sm:p-8 shadow-xs">
         {/* Background gradient decor */}
         <div className="absolute top-0 right-0 h-40 w-96 bg-gradient-to-bl from-[#e8f3f0] to-transparent pointer-events-none rounded-bl-full opacity-70" />
 
@@ -221,11 +221,11 @@ export function ParticipantProfileView({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={handleShare}
-              className="flex items-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#122622] hover:bg-[#f8faf9] transition-all shadow-2xs"
+              className="flex items-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#122622] hover:bg-[#f8faf9] transition-all shadow-2xs cursor-pointer"
             >
               <Share2 className="h-4 w-4 text-[#57685f]" />
               Share
@@ -244,7 +244,7 @@ export function ParticipantProfileView({
       </div>
 
       {/* ================= 2. PROFILE COMPLETION METER ================= */}
-      <div className="rounded-2xl border border-[#d6e7e1] bg-gradient-to-r from-white via-[#fcfefd] to-[#f4f9f7] p-5 sm:p-6 shadow-2xs">
+      <div className="rounded-2xl border border-[#d6e7e1] bg-gradient-to-r from-white via-[#fcfefd] to-[#f4f9f7] p-4 sm:p-6 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
           <div>
             <div className="flex items-center gap-2">
@@ -301,7 +301,7 @@ export function ParticipantProfileView({
       </div>
 
       {/* ================= 3. NAVIGATION TABS ================= */}
-      <div className="flex border-b border-[#d6e7e1] gap-6 text-sm font-bold">
+      <div className="flex border-b border-[#d6e7e1] gap-6 text-xs sm:text-sm font-bold overflow-x-auto no-scrollbar whitespace-nowrap">
         <button
           type="button"
           onClick={() => setActiveTab("overview")}

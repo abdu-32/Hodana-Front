@@ -4,6 +4,7 @@ export interface NotificationDeliveryItem {
   id: string;
   notificationId: string;
   hackathonId?: string | null;
+  hackathonTitle?: string | null;
   title?: string;
   priority?: "INFO" | "IMPORTANT" | "URGENT";
   category?: string;
