@@ -198,41 +198,41 @@ export default function JudgeDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#f3f6f4] text-[#122622]">
-      <div className="mx-auto flex w-full max-w-[1500px] flex-col p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-col p-3 sm:p-6 lg:p-8">
         {/* ================= HEADER & IDENTITY BAR ================= */}
-        <header className="mb-8 flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-2xs sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
+        <header className="mb-6 sm:mb-8 flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-2xs sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link
               href="/"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white shadow-md transition-transform hover:scale-105 p-2"
+              className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white shadow-md transition-transform hover:scale-105 p-2"
               title="Go to Home"
             >
               <Logomark className="h-full w-full object-contain" />
             </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-display text-2xl font-extrabold tracking-tight text-[#122622]">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-[#122622]">
                   Judge Evaluation Portal
                 </h1>
                 <span className="rounded-full bg-[#e8f3f0] border border-[#d6e7e1] px-2.5 py-0.5 text-[10px] font-extrabold text-[#0f6b5c]">
                   OFFICIAL JUDGE
                 </span>
               </div>
-              <p className="text-xs text-[#57685f] mt-0.5">
+              <p className="text-xs text-[#57685f] mt-0.5 truncate">
                 Review assigned hackathons, inspect team deliverables, and evaluate project rubrics.
               </p>
             </div>
           </div>
 
           {/* Judge Identity Badge & Notifications */}
-          <div className="flex items-center gap-3 self-end sm:self-auto">
-            <div className="flex items-center gap-3 rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] p-2 pr-4 shadow-2xs">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0f6b5c] text-xs font-extrabold text-white shadow-xs">
+          <div className="flex items-center gap-2 sm:gap-3 self-stretch sm:self-auto justify-between sm:justify-start">
+            <div className="flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] p-2 pr-3 sm:pr-4 shadow-2xs min-w-0">
+              <span className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full bg-[#0f6b5c] text-xs font-extrabold text-white shadow-xs">
                 {judgeInitial}
               </span>
-              <div className="flex flex-col">
-                <span className="text-xs font-extrabold text-[#122622]">{judgeName}</span>
-                <span className="text-[10px] font-bold text-[#57685f]">{user?.email || "Official Evaluation Panel"}</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-extrabold text-[#122622] truncate">{judgeName}</span>
+                <span className="text-[10px] font-bold text-[#57685f] truncate">{user?.email || "Official Evaluation Panel"}</span>
               </div>
             </div>
             <NotificationBellDropdown />
@@ -291,7 +291,7 @@ export default function JudgeDashboardPage() {
                   return (
                     <div
                       key={hck.id}
-                      className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-2xs hover:shadow-sm transition-all"
+                      className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-2xs hover:shadow-sm transition-all"
                     >
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center justify-between">
@@ -353,7 +353,7 @@ export default function JudgeDashboardPage() {
             {/* ================= 2. EVALUATION QUEUE & FILTERS ================= */}
             <section className="flex flex-col gap-4">
               {/* Filters Bar */}
-              <div className="flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs lg:flex-row lg:items-center lg:justify-between">
                 {/* Search Input */}
                 <div className="relative flex-1 min-w-[240px]">
                   <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#57685f]" />
@@ -630,19 +630,19 @@ export default function JudgeDashboardPage() {
 
         {/* ================= 3. SUBMISSION EVALUATION MODAL (SCORING INTERFACE) ================= */}
         {evaluatingSubmission && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-6 animate-in fade-in-50 overflow-y-auto">
+            <div className="w-full max-w-4xl max-h-[92dvh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 md:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5 sm:gap-6 my-auto">
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] shadow-2xs font-bold">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] shadow-2xs font-bold">
                     <Gavel className="h-5 w-5" />
                   </span>
-                  <div>
-                    <h3 className="font-display text-lg font-extrabold text-[#122622]">
+                  <div className="min-w-0">
+                    <h3 className="font-display text-base sm:text-lg font-extrabold text-[#122622] truncate">
                       Evaluation Rubric: {evaluatingSubmission.projectTitle}
                     </h3>
-                    <p className="text-xs text-[#57685f]">
+                    <p className="text-xs text-[#57685f] truncate">
                       Submitted to <strong>{evaluatingSubmission.hackathonName}</strong> ({evaluatingSubmission.teamName})
                     </p>
                   </div>
@@ -651,7 +651,7 @@ export default function JudgeDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setEvaluatingSubmission(null)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#57685f] hover:bg-gray-100 transition-colors cursor-pointer"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#57685f] hover:bg-gray-100 transition-colors cursor-pointer ml-2"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -882,12 +882,12 @@ export default function JudgeDashboardPage() {
               </div>
 
               {/* Modal Actions Footer */}
-              <div className="flex items-center justify-between border-t border-[#d6e7e1] pt-4">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-[#d6e7e1] pt-4">
                 <button
                   type="button"
                   onClick={() => handleSaveEvaluation(false)}
                   disabled={isSubmittingEval}
-                  className="flex items-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer w-full sm:w-auto"
                 >
                   <Save className="h-4 w-4 text-[#57685f]" />
                   <span>Save Draft Score</span>
@@ -897,7 +897,7 @@ export default function JudgeDashboardPage() {
                   type="button"
                   onClick={() => handleSaveEvaluation(true)}
                   disabled={isSubmittingEval}
-                  className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50 w-full sm:w-auto"
                 >
                   <Award className="h-4 w-4" />
                   <span>{isSubmittingEval ? "Submitting..." : "Submit Final Evaluation"}</span>

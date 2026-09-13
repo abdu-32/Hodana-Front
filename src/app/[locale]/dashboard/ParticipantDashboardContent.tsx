@@ -603,7 +603,7 @@ export function ParticipantDashboardContent({
           <div className="flex flex-col gap-8 pt-8">
             {/* ================= NOTIFICATIONS & BROADCASTS FEED ================= */}
             {notifications.length > 0 && (
-              <div className="rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs">
+              <div className="rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-xs">
                 <div className="flex items-center justify-between pb-4 border-b border-[#d6e7e1]">
                   <div className="flex items-center gap-2.5">
                     <Megaphone className="h-5 w-5 text-[#0f6b5c]" />
@@ -704,7 +704,7 @@ export function ParticipantDashboardContent({
             {/* ================= ROW 1: Featured Hackathon & My Teams ================= */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               {/* Featured Hackathons Bento Card */}
-              <div className="flex flex-col justify-between gap-5 rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs lg:col-span-7">
+              <div className="flex flex-col justify-between gap-5 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-xs lg:col-span-7">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-[#0f6b5c]" />
@@ -744,7 +744,7 @@ export function ParticipantDashboardContent({
                     </div>
                     <Link
                       href={`/hackathons/${featuredHackathon.slug || featuredHackathon.id}`}
-                      className="inline-flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl bg-[#0f6b5c] px-6 text-xs font-extrabold text-white shadow-xs hover:bg-[#0b5347] transition-all shrink-0"
+                      className="inline-flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl bg-[#0f6b5c] px-6 text-xs font-extrabold text-white shadow-xs hover:bg-[#0b5347] transition-all shrink-0 w-full sm:w-auto"
                     >
                       <span>Explore</span>
                       <ArrowRight className="h-3.5 w-3.5" />
@@ -758,7 +758,7 @@ export function ParticipantDashboardContent({
               </div>
 
               {/* My Teams Bento Card */}
-              <div className="flex flex-col justify-between gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs lg:col-span-5">
+              <div className="flex flex-col justify-between gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-xs lg:col-span-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-[#0f6b5c]">
                     <Users className="h-5 w-5" />

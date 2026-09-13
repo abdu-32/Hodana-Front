@@ -162,19 +162,19 @@ export function ExportCenterModal({
   const eventName = selectedHackathonId === "all" ? "All Managed Hackathons" : selectedHackathonObj?.title || "Selected Event";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="relative w-full max-w-3xl rounded-3xl bg-white border border-[#d6e7e1] shadow-2xl overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+      <div className="relative w-full max-w-3xl rounded-3xl bg-white border border-[#d6e7e1] shadow-2xl overflow-hidden my-auto max-h-[92dvh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e8f3f0] px-6 py-5 bg-[#f8faf9]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white shadow-md">
+        <div className="flex items-center justify-between border-b border-[#e8f3f0] px-4 sm:px-6 py-4 sm:py-5 bg-[#f8faf9] shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white shadow-md">
               <Download className="h-5 w-5" />
             </div>
-            <div>
-              <h2 className="text-lg font-extrabold text-[#122622] font-display">
+            <div className="min-w-0">
+              <h2 className="text-base sm:text-lg font-extrabold text-[#122622] font-display truncate">
                 Organizer Export Center
               </h2>
-              <p className="text-xs font-medium text-[#57685f]">
+              <p className="text-xs font-medium text-[#57685f] truncate">
                 Export live verified database records across managed hackathons
               </p>
             </div>
@@ -183,14 +183,14 @@ export function ExportCenterModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-xl p-2 text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors cursor-pointer"
+            className="rounded-xl p-2 text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors cursor-pointer shrink-0 ml-2"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 overflow-y-auto flex-1">
           {/* Notifications */}
           {errorMsg && (
             <div className="flex items-center gap-2.5 rounded-2xl bg-red-50 border border-red-200 p-3.5 text-xs text-red-700 font-medium animate-in fade-in">
@@ -336,12 +336,12 @@ export function ExportCenterModal({
           </div>
 
           {/* Summary Preview Banner */}
-          <div className="rounded-2xl bg-[#f8faf9] border border-[#d6e7e1] p-3.5 text-xs text-[#57685f] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#122622]">Target:</span>
-              <span className="truncate max-w-[280px] text-[#0f6b5c] font-semibold">{eventName}</span>
+          <div className="rounded-2xl bg-[#f8faf9] border border-[#d6e7e1] p-3.5 text-xs text-[#57685f] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="font-bold text-[#122622] shrink-0">Target:</span>
+              <span className="truncate text-[#0f6b5c] font-semibold">{eventName}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <span className="font-bold text-[#122622]">Format:</span>
               <span className="font-semibold uppercase text-[#0f6b5c]">.{selectedFormat}</span>
             </div>
@@ -349,12 +349,12 @@ export function ExportCenterModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-3 border-t border-[#e8f3f0] px-6 py-4 bg-[#f8faf9]">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-[#e8f3f0] px-4 sm:px-6 py-3.5 sm:py-4 bg-[#f8faf9] shrink-0">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-2xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors cursor-pointer"
+            className="rounded-2xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors cursor-pointer text-center"
           >
             Cancel
           </button>
@@ -362,7 +362,7 @@ export function ExportCenterModal({
             type="button"
             onClick={handleExport}
             disabled={isLoading}
-            className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-60"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-60"
           >
             {isLoading ? (
               <>

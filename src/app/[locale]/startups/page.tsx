@@ -121,11 +121,11 @@ export default function StartupsPage() {
 
         {/* ================= FILTER CONTROLS BAR ================= */}
         <section className="rounded-2xl border border-[#d6e7e1] bg-white/80 p-4 shadow-xs backdrop-blur-md">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Left Filter Dropdowns & Stage Pills */}
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               {/* Industry Select */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 w-full xs:w-auto">
                 <label className="text-[11px] font-bold text-[#57685f] uppercase tracking-wider">
                   {t("industryLabel")}
                 </label>
@@ -133,7 +133,7 @@ export default function StartupsPage() {
                   <select
                     value={selectedIndustry}
                     onChange={(e) => setSelectedIndustry(e.target.value)}
-                    className="appearance-none rounded-xl border border-gray-200 bg-white px-3.5 py-2 pr-9 text-xs font-semibold text-[#122622] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#0f6b5c]"
+                    className="w-full xs:w-auto appearance-none rounded-xl border border-gray-200 bg-white px-3.5 py-2 pr-9 text-xs font-semibold text-[#122622] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#0f6b5c]"
                   >
                     <option value="All">{t("allIndustries")}</option>
                     <option value="FinTech">FinTech</option>
@@ -147,7 +147,7 @@ export default function StartupsPage() {
               </div>
 
               {/* Launch Year Select */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 w-full xs:w-auto">
                 <label className="text-[11px] font-bold text-[#57685f] uppercase tracking-wider">
                   {t("yearLabel")}
                 </label>
@@ -155,7 +155,7 @@ export default function StartupsPage() {
                   <select
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    className="appearance-none rounded-xl border border-gray-200 bg-white px-3.5 py-2 pr-9 text-xs font-semibold text-[#122622] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#0f6b5c]"
+                    className="w-full xs:w-auto appearance-none rounded-xl border border-gray-200 bg-white px-3.5 py-2 pr-9 text-xs font-semibold text-[#122622] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#0f6b5c]"
                   >
                     <option value="All">{t("allYears")}</option>
                     <option value="2024">2024</option>
@@ -167,7 +167,7 @@ export default function StartupsPage() {
               </div>
 
               {/* Stage Pills */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 w-full xs:w-auto">
                 <label className="text-[11px] font-bold text-[#57685f] uppercase tracking-wider">
                   {t("stageLabel")}
                 </label>
@@ -199,7 +199,7 @@ export default function StartupsPage() {
             </div>
 
             {/* Right Search Input */}
-            <div className="relative w-full sm:w-64 pt-2 sm:pt-0">
+            <div className="relative w-full md:w-64 pt-2 md:pt-0">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -213,7 +213,7 @@ export default function StartupsPage() {
         </section>
 
         {/* ================= STARTUPS CARDS GRID ================= */}
-        <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredStartups.map((s) => (
             <article
               key={s.id}

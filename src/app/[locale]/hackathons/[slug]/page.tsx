@@ -73,15 +73,15 @@ export default function HackathonDetailPage({
 
       {/* Hero Banner Section */}
       <section className="relative overflow-hidden rounded-3xl border border-black/10 bg-surface shadow-xl">
-        <div className="relative h-64 w-full sm:h-80 md:h-96">
+        <div className="relative min-h-[400px] sm:min-h-[360px] md:h-96 w-full flex flex-col justify-end">
           <img
             src={hackathon.bannerUrl || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"}
             alt={hackathon.title}
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20" />
           
-          <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-4 p-6 sm:p-8 text-white">
+          <div className="relative z-10 flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-8 text-white">
             <div className="flex flex-wrap items-center gap-2">
               {hackathon.status && (
                 <StatusBadge domain="hackathon" value={hackathon.status}>
@@ -106,7 +106,7 @@ export default function HackathonDetailPage({
               </span>
             </div>
 
-            <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-white">
+            <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
               {hackathon.title}
             </h1>
 
@@ -121,21 +121,21 @@ export default function HackathonDetailPage({
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-white/10 px-4 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                  className="inline-flex min-h-[42px] sm:min-h-[44px] items-center justify-center rounded-xl bg-white/10 px-4 text-xs sm:text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/20 cursor-pointer"
                 >
                   <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.368 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684" />
                   </svg>
                   Share
                 </button>
 
                 <Link
                   href={`/hackathons/${slug}/register`}
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className="inline-flex min-h-[42px] sm:min-h-[44px] items-center justify-center rounded-xl bg-primary px-6 text-xs sm:text-sm font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   Register Now &rarr;
                 </Link>
@@ -150,7 +150,7 @@ export default function HackathonDetailPage({
         {/* Left 2 Columns: Tabs & Main Information */}
         <div className="flex flex-col gap-6 lg:col-span-2">
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-2 border-b border-black/10 pb-2">
+          <div className="flex items-center gap-2 border-b border-black/10 pb-2 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               type="button"
               onClick={() => setActiveTab("overview")}

@@ -417,9 +417,9 @@ export default function OrganizerRegistrationsPage() {
         </aside>
 
         {/* ================= MAIN CONTENT AREA ================= */}
-        <main className="flex min-w-0 flex-1 flex-col p-4 sm:p-6 lg:p-8 transition-all duration-300">
+        <main className="flex min-w-0 flex-1 flex-col p-3 sm:p-6 lg:p-8 transition-all duration-300">
           {/* Top Bar Title */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6">
             <div>
               <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-[#122622]">
                 Participant Registrations
@@ -433,7 +433,7 @@ export default function OrganizerRegistrationsPage() {
               type="button"
               onClick={handleExportCurrentView}
               disabled={isExporting || registrations.length === 0}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
             >
               {isExporting ? (
                 <Loader2 className="h-4 w-4 animate-spin text-[#0f6b5c]" />
@@ -445,9 +445,9 @@ export default function OrganizerRegistrationsPage() {
           </div>
 
           {/* 1. Real Database Header Metrics Cards */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 pb-8">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4 pb-6 sm:pb-8">
             {/* Metric 1: Total Registrations */}
-            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs transition-all">
+            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs transition-all">
               <div className="flex items-center justify-between">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c]">
                   <Users className="h-5 w-5" />
@@ -467,7 +467,7 @@ export default function OrganizerRegistrationsPage() {
             </div>
 
             {/* Metric 2: Active Participants */}
-            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs transition-all">
+            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs transition-all">
               <div className="flex items-center justify-between">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-[#16793d]">
                   <Check className="h-5 w-5" />
@@ -487,7 +487,7 @@ export default function OrganizerRegistrationsPage() {
             </div>
 
             {/* Metric 3: Unique Participants */}
-            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs transition-all">
+            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs transition-all">
               <div className="flex items-center justify-between">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
                   <UserCheck className="h-5 w-5" />
@@ -507,7 +507,7 @@ export default function OrganizerRegistrationsPage() {
             </div>
 
             {/* Metric 4: Withdrawn / Inactive */}
-            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs transition-all">
+            <div className="flex flex-col justify-between rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs transition-all">
               <div className="flex items-center justify-between">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gray-100 text-gray-600">
                   <Hourglass className="h-5 w-5" />
@@ -528,7 +528,7 @@ export default function OrganizerRegistrationsPage() {
           </div>
 
           {/* 2. Participant Review Table Card */}
-          <div className="flex flex-col rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-sm">
+          <div className="flex flex-col rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-6 shadow-sm">
             {/* Table Controls: Search + Side-by-Side Dual Filters */}
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between pb-6">
               <div className="relative w-full lg:max-w-md">
@@ -1020,40 +1020,40 @@ export default function OrganizerRegistrationsPage() {
       {/* ================= 4. RICH PARTICIPANT DETAILS MODAL ================= */}
       {selectedRegistration && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200"
           onClick={() => setSelectedRegistration(null)}
         >
           <div
-            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl border border-[#d6e7e1] text-[#122622] my-8 animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-3xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-white shadow-2xl border border-[#d6e7e1] text-[#122622] my-auto animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-start justify-between border-b border-[#d6e7e1] p-6 bg-[#f8faf9]">
-              <div className="flex items-center gap-4">
+            <div className="flex items-start justify-between border-b border-[#d6e7e1] p-4 sm:p-6 bg-[#f8faf9]">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                 {selectedRegistration.avatarUrl ? (
                   <img
                     src={selectedRegistration.avatarUrl}
                     alt={selectedRegistration.participantName}
-                    className="h-16 w-16 rounded-full object-cover ring-4 ring-[#0f6b5c]/20 shadow-sm"
+                    className="h-12 w-12 sm:h-16 sm:w-16 rounded-full object-cover ring-4 ring-[#0f6b5c]/20 shadow-sm shrink-0"
                   />
                 ) : (
-                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white text-xl font-bold shadow-sm">
+                  <span className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white text-lg sm:text-xl font-bold shadow-sm">
                     {selectedRegistration.participantName.charAt(0).toUpperCase()}
                   </span>
                 )}
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-display text-xl sm:text-2xl font-extrabold text-[#122622]">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h2 className="font-display text-lg sm:text-2xl font-extrabold text-[#122622] truncate">
                       {selectedRegistration.participantName}
                     </h2>
-                    <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-extrabold text-[#16793d]">
+                    <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-extrabold text-[#16793d]">
                       {selectedRegistration.withdrawnAt ? "WITHDRAWN" : "REGISTERED"}
                     </span>
                   </div>
-                  <p className="text-xs font-semibold text-[#0f6b5c] mt-0.5">
+                  <p className="text-xs font-semibold text-[#0f6b5c] mt-0.5 truncate">
                     {selectedRegistration.professionalTitle || selectedRegistration.role || "Innovator"}
                   </p>
-                  <p className="text-xs text-[#57685f]">
+                  <p className="text-xs text-[#57685f] truncate">
                     {selectedRegistration.university || selectedRegistration.organization || "Independent Creator"}
                   </p>
                 </div>
@@ -1062,18 +1062,18 @@ export default function OrganizerRegistrationsPage() {
               <button
                 type="button"
                 onClick={() => setSelectedRegistration(null)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all cursor-pointer"
+                className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all cursor-pointer ml-2"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Tab navigation */}
-            <div className="flex items-center gap-2 border-b border-[#d6e7e1] px-6 pt-3 bg-white">
+            <div className="flex items-center gap-2 border-b border-[#d6e7e1] px-4 sm:px-6 pt-3 bg-white overflow-x-auto no-scrollbar whitespace-nowrap">
               <button
                 type="button"
                 onClick={() => setModalTab("profile")}
-                className={`pb-3 text-xs font-bold transition-all border-b-2 cursor-pointer ${
+                className={`pb-3 text-xs font-bold transition-all border-b-2 cursor-pointer shrink-0 ${
                   modalTab === "profile"
                     ? "border-[#0f6b5c] text-[#0f6b5c]"
                     : "border-transparent text-[#57685f] hover:text-[#122622]"
@@ -1084,7 +1084,7 @@ export default function OrganizerRegistrationsPage() {
               <button
                 type="button"
                 onClick={() => setModalTab("application")}
-                className={`pb-3 text-xs font-bold transition-all border-b-2 cursor-pointer ${
+                className={`pb-3 text-xs font-bold transition-all border-b-2 cursor-pointer shrink-0 ${
                   modalTab === "application"
                     ? "border-[#0f6b5c] text-[#0f6b5c]"
                     : "border-transparent text-[#57685f] hover:text-[#122622]"
@@ -1095,7 +1095,7 @@ export default function OrganizerRegistrationsPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-6">
               {modalTab === "profile" && (
                 <div className="space-y-6">
                   {/* Bio */}

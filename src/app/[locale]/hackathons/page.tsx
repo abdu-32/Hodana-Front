@@ -349,21 +349,23 @@ export default function HackathonsDiscoveryPage() {
         <section className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Status Toggle Pills */}
-            <div className="flex items-center gap-1 rounded-full bg-[#e8f3f0] p-1 border border-[#d6e7e1]">
-              {(["Active", "Upcoming", "Ended", "All"] as const).map((st) => (
-                <button
-                  key={st}
-                  type="button"
-                  onClick={() => setSelectedStatus(st)}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                    selectedStatus === st
-                      ? "bg-[#0f6b5c] text-white shadow-xs"
-                      : "text-[#57685f] hover:text-[#0f6b5c]"
-                  }`}
-                >
-                  {st === "Active" ? `${t("statusActive")} (10)` : st === "Upcoming" ? `${t("statusUpcoming")} (24)` : st === "Ended" ? t("statusEnded") : t("statusAll")}
-                </button>
-              ))}
+            <div className="max-w-full overflow-x-auto no-scrollbar py-1">
+              <div className="inline-flex items-center gap-1 rounded-full bg-[#e8f3f0] p-1 border border-[#d6e7e1] whitespace-nowrap">
+                {(["Active", "Upcoming", "Ended", "All"] as const).map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setSelectedStatus(st)}
+                    className={`rounded-full px-3.5 sm:px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                      selectedStatus === st
+                        ? "bg-[#0f6b5c] text-white shadow-xs"
+                        : "text-[#57685f] hover:text-[#0f6b5c]"
+                    }`}
+                  >
+                    {st === "Active" ? `${t("statusActive")} (10)` : st === "Upcoming" ? `${t("statusUpcoming")} (24)` : st === "Ended" ? t("statusEnded") : t("statusAll")}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Interest Tags Pills */}

@@ -144,19 +144,19 @@ export function HumanSupportModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-black/10 bg-surface-alt/70 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4.5 border-b border-black/10 bg-surface-alt/70 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
               <LifeBuoy className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h2
                 id="support-request-modal-title"
-                className="font-display text-lg sm:text-xl font-bold tracking-tight text-text"
+                className="font-display text-base sm:text-xl font-bold tracking-tight text-text truncate"
               >
                 {t("humanSupportModalTitle")}
               </h2>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-text-muted truncate">
                 {t("humanSupportModalSubtitle")}
               </p>
             </div>
@@ -164,7 +164,7 @@ export function HumanSupportModal({
 
           <button
             onClick={handleReset}
-            className="p-2 text-text-muted hover:text-text hover:bg-black/5 rounded-xl transition-colors cursor-pointer"
+            className="p-2 text-text-muted hover:text-text hover:bg-black/5 rounded-xl transition-colors cursor-pointer shrink-0 ml-2"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -172,7 +172,7 @@ export function HumanSupportModal({
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-5">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 sm:space-y-5">
           {createdTicket ? (
             /* Success confirmation screen */
             <div className="py-6 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
@@ -381,11 +381,11 @@ export function HumanSupportModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 flex items-center justify-end gap-3 border-t border-black/10">
+              <div className="pt-3 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-black/10">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="min-h-[44px] px-4.5 py-2 rounded-xl border border-black/10 bg-surface text-text hover:bg-surface-alt font-medium text-sm transition-colors cursor-pointer"
+                  className="min-h-[44px] px-4.5 py-2 rounded-xl border border-black/10 bg-surface text-text hover:bg-surface-alt font-medium text-sm transition-colors cursor-pointer w-full sm:w-auto text-center"
                 >
                   {t("closeBtn")}
                 </button>
@@ -393,7 +393,7 @@ export function HumanSupportModal({
                 <button
                   type="submit"
                   disabled={loading || !subject.trim() || !description.trim()}
-                  className="min-h-[44px] px-6 py-2 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="min-h-[44px] px-6 py-2 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
                 >
                   {loading ? (
                     <>
