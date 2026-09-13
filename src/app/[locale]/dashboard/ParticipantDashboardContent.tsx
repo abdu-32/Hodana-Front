@@ -35,6 +35,7 @@ import {
   RefreshCw,
   Tag,
   Check,
+  Megaphone,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useSession } from "@/features/auth";
@@ -45,6 +46,10 @@ import {
   type Hackathon,
 } from "@/features/hackathons/lib/hackathons-client";
 import { NotificationBellDropdown } from "@/features/notifications/components/NotificationBellDropdown";
+import {
+  notificationsClient,
+  type InAppNotification,
+} from "@/features/notifications/lib/notifications-client";
 import { PortalMobileNav } from "@/components/layout/PortalMobileNav";
 import {
   listMyRegistrations,
@@ -55,10 +60,6 @@ import {
   type UserProject,
   type ProjectEvaluation,
 } from "@/features/projects/lib/user-projects-client";
-import {
-  announcementsClient,
-  type Announcement,
-} from "@/features/announcements/lib/announcements-client";
 import { MyProjectsView } from "@/features/projects/components/MyProjectsView";
 
 export function ParticipantDashboardContent({
@@ -82,7 +83,7 @@ export function ParticipantDashboardContent({
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [projects, setProjects] = useState<UserProject[]>([]);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [notifications, setNotifications] = useState<InAppNotification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Project Table Controls: Search, Filter, Pagination
@@ -101,12 +102,12 @@ export function ParticipantDashboardContent({
     async function loadDashboardData() {
       setIsLoading(true);
       try {
-        const [hackathonsRes, registrationsRes, projectsRes, announcementsRes] =
+        const [hackathonsRes, registrationsRes, projectsRes, notificationsRes] =
           await Promise.allSettled([
             listHackathons(),
             listMyRegistrations(),
             userProjectsClient.getUserProjects(),
-            announcementsClient.getParticipantAnnouncements("hck-101"),
+            notificationsClient.getMyNotifications(),
           ]);
 
         if (isMounted) {
@@ -119,8 +120,8 @@ export function ParticipantDashboardContent({
           if (projectsRes.status === "fulfilled" && Array.isArray(projectsRes.value)) {
             setProjects(projectsRes.value);
           }
-          if (announcementsRes.status === "fulfilled" && Array.isArray(announcementsRes.value)) {
-            setAnnouncements(announcementsRes.value);
+          if (notificationsRes.status === "fulfilled" && Array.isArray(notificationsRes.value)) {
+            setNotifications(notificationsRes.value);
           }
         }
       } catch (err) {
@@ -579,6 +580,106 @@ export function ParticipantDashboardContent({
 
           {/* Bento Grid Rows */}
           <div className="flex flex-col gap-8 pt-8">
+            {/* ================= NOTIFICATIONS & BROADCASTS FEED ================= */}
+            {notifications.length > 0 && (
+              <div className="rounded-3xl border border-[#d6e7e1] bg-white p-6 shadow-xs">
+                <div className="flex items-center justify-between pb-4 border-b border-[#d6e7e1]">
+                  <div className="flex items-center gap-2.5">
+                    <Megaphone className="h-5 w-5 text-[#0f6b5c]" />
+                    <h3 className="font-display text-lg font-extrabold text-[#122622]">
+                      Notifications & Broadcasts
+                    </h3>
+                    {notifications.filter((n) => !n.read).length > 0 && (
+                      <span className="rounded-full bg-red-100 text-red-700 px-2.5 py-0.5 text-xs font-extrabold">
+                        {notifications.filter((n) => !n.read).length} new
+                      </span>
+                    )}
+                  </div>
+                  {notifications.some((n) => !n.read) && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await notificationsClient.markAllRead();
+                        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+                      }}
+                      className="text-xs font-bold text-[#0f6b5c] hover:underline cursor-pointer"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                  {notifications.slice(0, 3).map((item) => {
+                    const isUrgent = item.priority === "URGENT";
+                    const isImportant = item.priority === "IMPORTANT";
+                    return (
+                      <div
+                        key={item.id}
+                        className={`rounded-2xl border p-4 text-xs transition-all ${
+                          !item.read
+                            ? isUrgent
+                              ? "border-red-300 bg-red-50/70 shadow-xs"
+                              : isImportant
+                              ? "border-amber-300 bg-amber-50/70 shadow-xs"
+                              : "border-emerald-300 bg-emerald-50/50 shadow-xs"
+                            : "border-[#d6e7e1] bg-white opacity-85 hover:opacity-100"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                            {!item.read && (
+                              <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+                            )}
+                            <span className="font-display font-extrabold text-xs text-[#122622] truncate" title={item.title}>
+                              {item.title}
+                            </span>
+                          </div>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase shrink-0 ${
+                              isUrgent
+                                ? "bg-red-200 text-red-900"
+                                : isImportant
+                                ? "bg-amber-200 text-amber-900"
+                                : "bg-[#e8f3f0] text-[#0f6b5c]"
+                            }`}
+                          >
+                            {item.priority}
+                          </span>
+                        </div>
+                        {item.message && item.message.trim() !== item.title.trim() && (
+                          <p className="text-[11px] text-[#57685f] leading-relaxed line-clamp-2">
+                            {item.message}
+                          </p>
+                        )}
+                        <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#d6e7e1]/50 text-[10px] text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {new Date(item.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })} at{" "}
+                            {new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                          {!item.read && (
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                await notificationsClient.markRead(item.id);
+                                setNotifications((prev) =>
+                                  prev.map((n) => (n.id === item.id ? { ...n, read: true } : n))
+                                );
+                              }}
+                              className="text-[#0f6b5c] font-bold hover:underline"
+                            >
+                              Mark read
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* ================= ROW 1: Featured Hackathon & My Teams ================= */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               {/* Featured Hackathons Bento Card */}
