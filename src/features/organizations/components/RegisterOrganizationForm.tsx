@@ -137,8 +137,8 @@ export function RegisterOrganizationForm() {
         />
       </div>
 
-      <div className="flex items-center gap-3">
-        <Button type="submit" disabled={mutation.isPending}>
+      <div className="flex items-center gap-3 w-full sm:w-auto">
+        <Button type="submit" disabled={mutation.isPending} className="w-full sm:w-auto justify-center">
           {mutation.isPending ? t("registering") : t("registerCta")}
         </Button>
       </div>

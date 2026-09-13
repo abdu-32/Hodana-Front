@@ -561,11 +561,11 @@ export default function OrganizerSubmissionsPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto shrink-0">
               <button
                 type="button"
                 onClick={() => setIsTop3Only((prev) => !prev)}
-                className={`flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-xs font-bold transition-all cursor-pointer shadow-xs ${
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl border px-4 py-2.5 text-xs font-bold transition-all cursor-pointer shadow-xs ${
                   isTop3Only
                     ? "border-amber-400 bg-amber-500 text-white hover:bg-amber-600"
                     : "border-amber-300 bg-white text-amber-900 hover:bg-amber-50"
@@ -580,7 +580,7 @@ export default function OrganizerSubmissionsPage() {
                 type="button"
                 onClick={handleRequestTop3Payouts}
                 disabled={isRequestingTop3 || submissions.length === 0}
-                className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
                 title="Send payment method forms to all Top 3 winning teams"
               >
                 {isRequestingTop3 ? (
@@ -753,7 +753,7 @@ export default function OrganizerSubmissionsPage() {
                 type="button"
                 onClick={handleExportSubmissions}
                 disabled={isExporting}
-                className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#e8f3f0] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
                 title="Export currently filtered project submissions"
               >
                 {isExporting ? (
@@ -768,7 +768,7 @@ export default function OrganizerSubmissionsPage() {
 
           {/* 2. Submission Review & Leaderboard Table */}
           <div className="overflow-hidden rounded-3xl border border-[#d6e7e1] bg-white shadow-2xs">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto no-scrollbar">
               <table className="w-full min-w-[850px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-[#d6e7e1] bg-[#e8f3f0]/50 text-[11px] font-extrabold uppercase tracking-wider text-[#57685f]">
@@ -1049,8 +1049,8 @@ export default function OrganizerSubmissionsPage() {
 
       {/* 3. Assign Winner Modal / Drawer */}
       {assigningSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-          <div className="w-full max-w-lg rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in-50">
+          <div className="w-full max-w-lg my-auto max-h-[92dvh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-5 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5 sm:gap-6">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
               <div className="flex items-center gap-3">
@@ -1135,11 +1135,11 @@ export default function OrganizerSubmissionsPage() {
             </div>
 
             {/* Actions Footer */}
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setAssigningSubmission(null)}
-                className="rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                className="w-full sm:w-auto rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -1148,7 +1148,7 @@ export default function OrganizerSubmissionsPage() {
                 type="button"
                 onClick={handleConfirmWinnerAssignment}
                 disabled={isSubmittingWinner}
-                className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
               >
                 <Award className="h-4 w-4" />
                 <span>{isSubmittingWinner ? "Assigning..." : "Confirm Winner Assignment"}</span>
@@ -1160,8 +1160,8 @@ export default function OrganizerSubmissionsPage() {
 
       {/* 4. Request Payment Method Form Modal */}
       {requestingPayoutSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-[#d6e7e1] flex flex-col gap-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="w-full max-w-lg my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-[#d6e7e1] flex flex-col gap-5">
             <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] shadow-2xs font-extrabold text-base">
@@ -1219,11 +1219,11 @@ export default function OrganizerSubmissionsPage() {
             </div>
 
             {/* Actions Footer */}
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setRequestingPayoutSubmission(null)}
-                className="rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                className="w-full sm:w-auto rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -1232,7 +1232,7 @@ export default function OrganizerSubmissionsPage() {
                 type="button"
                 onClick={handleConfirmRequestPayout}
                 disabled={isRequestingPayout}
-                className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
               >
                 {isRequestingPayout ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -1248,8 +1248,8 @@ export default function OrganizerSubmissionsPage() {
 
       {/* 5. View Submitted Payment Details & Mark Paid Modal */}
       {viewingPayoutSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-[#d6e7e1] flex flex-col gap-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="w-full max-w-lg my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-[#d6e7e1] flex flex-col gap-5">
             <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 shadow-2xs font-extrabold text-base">
@@ -1371,11 +1371,11 @@ export default function OrganizerSubmissionsPage() {
             )}
 
             {/* Actions Footer */}
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setViewingPayoutSubmission(null)}
-                className="rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer"
+                className="w-full sm:w-auto rounded-xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer text-center"
               >
                 Close
               </button>
@@ -1385,7 +1385,7 @@ export default function OrganizerSubmissionsPage() {
                   type="button"
                   onClick={() => handleMarkPayoutPaid(viewingPayoutSubmission.id)}
                   disabled={isRequestingPayout}
-                  className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition-all cursor-pointer disabled:opacity-50"
                 >
                   <CheckCircle2 className="h-4 w-4" />
                   <span>Mark as Disbursed / Paid</span>

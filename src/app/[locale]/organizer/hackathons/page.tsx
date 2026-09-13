@@ -316,7 +316,7 @@ export default function OrganizerHackathonsPage() {
                 setSelectedHackathonToEdit(null);
                 setIsCreateModalOpen(true);
               }}
-              className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>{t("createHackathonBtn")}</span>
@@ -479,12 +479,12 @@ export default function OrganizerHackathonsPage() {
               Are you sure you want to delete <strong className="text-[#122622]">&quot;{hackathonToDelete.title}&quot;</strong>? All associated registrations, tracks, and settings will be permanently removed.
             </p>
 
-            <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+            <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-gray-100 pt-4">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setHackathonToDelete(null)}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -492,7 +492,7 @@ export default function OrganizerHackathonsPage() {
                 type="button"
                 disabled={isDeleting}
                 onClick={() => handleDeleteHackathon(hackathonToDelete.id)}
-                className="flex items-center gap-1.5 rounded-2xl bg-[#c4211c] px-5 py-2 text-xs font-bold text-white shadow-md hover:bg-red-700 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-[#c4211c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-red-700 cursor-pointer disabled:opacity-50"
               >
                 <Trash2 className="h-4 w-4" />
                 <span>{isDeleting ? "Deleting..." : "Yes, Delete Event"}</span>

@@ -96,8 +96,8 @@ export default function AdminFinancesPage() {
       </div>
 
       {/* Financial Summary Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="flex flex-col gap-2 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3">
+        <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#57685f]">Total Prize Pool Committed</span>
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c]">
@@ -112,7 +112,7 @@ export default function AdminFinancesPage() {
           </span>
         </div>
 
-        <div className="flex flex-col gap-2 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs">
+        <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#57685f]">Secured in Escrow</span>
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c]">
@@ -127,7 +127,7 @@ export default function AdminFinancesPage() {
           </span>
         </div>
 
-        <div className="flex flex-col gap-2 rounded-3xl bg-white p-6 border border-[#d6e7e1] shadow-xs">
+        <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 sm:p-6 border border-[#d6e7e1] shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#57685f]">Payment Gateways Active</span>
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-50 text-[#0f6b5c]">
@@ -145,7 +145,7 @@ export default function AdminFinancesPage() {
 
       {/* Escrow Records Table */}
       <div className="rounded-3xl border border-[#d6e7e1] bg-white shadow-xs overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-[#d6e7e1]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 sm:p-6 border-b border-[#d6e7e1]">
           <h3 className="text-base font-extrabold text-[#122622]">
             Hackathon Prize Escrow & Disbursement Schedule
           </h3>
@@ -168,8 +168,8 @@ export default function AdminFinancesPage() {
             <p className="text-xs text-[#57685f]">No hackathon prize pools or escrow deposits are currently active in the system.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full min-w-[760px] text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-[#d6e7e1] bg-[#f3f6f4] text-[#57685f] font-extrabold uppercase tracking-wider text-[11px]">
                   <th className="py-4 px-6">Event & Host</th>
@@ -281,12 +281,12 @@ export default function AdminFinancesPage() {
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setRecordToDelete(null)}
                 disabled={isProcessing}
-                className="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -294,7 +294,7 @@ export default function AdminFinancesPage() {
                 type="button"
                 disabled={isProcessing}
                 onClick={() => handleDeleteRecord(recordToDelete.hackathonId || recordToDelete.id, recordToDelete.hackathonTitle)}
-                className="inline-flex items-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-red-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-red-700 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>{isProcessing ? "Deleting..." : "Delete Record"}</span>

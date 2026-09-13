@@ -355,7 +355,7 @@ export default function JudgeDashboardPage() {
               {/* Filters Bar */}
               <div className="flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs lg:flex-row lg:items-center lg:justify-between">
                 {/* Search Input */}
-                <div className="relative flex-1 min-w-[240px]">
+                <div className="relative flex-1 w-full min-w-0 sm:min-w-[240px]">
                   <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#57685f]" />
                   <input
                     type="text"
@@ -369,20 +369,22 @@ export default function JudgeDashboardPage() {
                 {/* Dropdowns */}
                 <div className="flex flex-wrap items-center gap-3">
                   {/* Event Filter (strictly contains assigned hackathons) */}
-                  <div className="relative">
+                  <div className="relative w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={() => setIsEventDropdownOpen((prev) => !prev)}
-                      className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
+                      className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
                     >
-                      <Layers className="h-3.5 w-3.5 text-[#0f6b5c]" />
-                      <span className="text-[#57685f]">Event:</span>
-                      <span>{selectedHackathonTitle}</span>
-                      <ChevronDown className="h-3.5 w-3.5 text-[#57685f]" />
+                      <div className="flex items-center gap-2 min-w-0 truncate">
+                        <Layers className="h-3.5 w-3.5 text-[#0f6b5c] shrink-0" />
+                        <span className="text-[#57685f]">Event:</span>
+                        <span className="truncate">{selectedHackathonTitle}</span>
+                      </div>
+                      <ChevronDown className="h-3.5 w-3.5 text-[#57685f] shrink-0" />
                     </button>
 
                     {isEventDropdownOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30">
+                      <div className="absolute right-0 top-full mt-2 w-full sm:w-64 rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30">
                         {assignedHackathons.length > 1 && (
                           <button
                             type="button"
@@ -414,8 +416,8 @@ export default function JudgeDashboardPage() {
                                 : "text-[#122622] hover:bg-[#e8f3f0]"
                             }`}
                           >
-                            <span>{hck.title}</span>
-                            {selectedHackathonId === hck.id && <Check className="h-3.5 w-3.5" />}
+                            <span className="truncate">{hck.title}</span>
+                            {selectedHackathonId === hck.id && <Check className="h-3.5 w-3.5 shrink-0" />}
                           </button>
                         ))}
                       </div>
@@ -423,25 +425,27 @@ export default function JudgeDashboardPage() {
                   </div>
 
                   {/* Status Filter */}
-                  <div className="relative">
+                  <div className="relative w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={() => setIsStatusDropdownOpen((prev) => !prev)}
-                      className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
+                      className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
                     >
-                      <Filter className="h-3.5 w-3.5 text-[#0f6b5c]" />
-                      <span className="capitalize">
-                        {selectedStatus === "all"
-                          ? "All Statuses"
-                          : selectedStatus === "pending"
-                          ? "Pending Review"
-                          : "Completed"}
-                      </span>
-                      <ChevronDown className="h-3.5 w-3.5 text-[#57685f]" />
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-3.5 w-3.5 text-[#0f6b5c] shrink-0" />
+                        <span className="capitalize">
+                          {selectedStatus === "all"
+                            ? "All Statuses"
+                            : selectedStatus === "pending"
+                            ? "Pending Review"
+                            : "Completed"}
+                        </span>
+                      </div>
+                      <ChevronDown className="h-3.5 w-3.5 text-[#57685f] shrink-0" />
                     </button>
 
                     {isStatusDropdownOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-48 rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30">
+                      <div className="absolute right-0 top-full mt-2 w-full sm:w-48 rounded-2xl border border-[#d6e7e1] bg-white p-2 shadow-xl z-30">
                         {[
                           { key: "all", label: "All Statuses" },
                           { key: "pending", label: "Pending Review" },
@@ -472,7 +476,7 @@ export default function JudgeDashboardPage() {
 
               {/* Submissions Queue Table */}
               <div className="overflow-hidden rounded-3xl border border-[#d6e7e1] bg-white shadow-2xs">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto no-scrollbar">
                   <table className="w-full min-w-[720px] text-left text-xs border-collapse">
                     <thead>
                       <tr className="border-b border-[#d6e7e1] bg-[#f3f6f4] text-[11px] font-extrabold uppercase tracking-wider text-[#57685f]">

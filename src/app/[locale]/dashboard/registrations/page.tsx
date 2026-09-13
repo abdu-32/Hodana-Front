@@ -176,9 +176,9 @@ export default function MyRegistrationsPage() {
         </aside>
 
         {/* Right Main Content Area */}
-        <main className="flex-1 min-w-0 p-5 lg:p-8 flex flex-col gap-6">
+        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 flex flex-col gap-5 sm:gap-6">
           {/* Top Header Card */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl bg-white p-6 sm:p-7 border border-[#d6e7e1] shadow-xs">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl bg-white p-4 sm:p-7 border border-[#d6e7e1] shadow-xs">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-xs font-extrabold text-[#0f6b5c]">
                 <Layers className="h-4 w-4" />
@@ -194,7 +194,7 @@ export default function MyRegistrationsPage() {
 
             <Link
               href="/hackathons"
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all self-start sm:self-auto"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-[#0b5347] transition-all"
             >
               <Calendar className="h-4 w-4" />
               <span>Explore More Events</span>

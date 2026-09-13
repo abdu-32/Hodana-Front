@@ -260,8 +260,8 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
         {/* Right Main Admin Content */}
         <div className="flex-1 min-w-0 flex flex-col">
           {/* Top Admin Status & Search Bar */}
-          <header className="sticky top-0 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#d6e7e1] bg-[#f3f6f4]/90 backdrop-blur-md px-4 sm:px-6 py-4">
-            <div className="flex items-center gap-3 flex-1">
+          <header className="sticky top-0 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-[#d6e7e1] bg-[#f3f6f4]/90 backdrop-blur-md px-3 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
               {/* Mobile Hamburger Menu Toggle */}
               <button
                 type="button"
@@ -337,12 +337,12 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
 
                   <nav className="flex flex-col gap-1.5">
                     {[
-                      { key: "dashboard", label: "Overview", icon: LayoutDashboard, href: "/admin" },
-                      { key: "organizations", label: "Organizations", icon: Building2, href: "/admin/organizations", badge: livePendingCount > 0 ? livePendingCount : undefined },
+                      { key: "dashboard", label: "Overview", icon: LayoutDashboard, href: "/admin/dashboard" },
+                      { key: "organizations", label: "Org Requests", icon: Building2, href: "/admin/organization-requests", badge: livePendingCount > 0 ? livePendingCount : undefined },
                       { key: "hackathons", label: "Hackathons", icon: Trophy, href: "/admin/hackathons" },
                       { key: "users", label: "Users Directory", icon: Users, href: "/admin/users" },
                       { key: "finances", label: "Finances & Billing", icon: CreditCard, href: "/admin/finances" },
-                      { key: "audit", label: "Security Audit", icon: ShieldAlert, href: "/admin/audit" },
+                      { key: "audit", label: "Security Audit", icon: ShieldAlert, href: "/admin/audit-logs" },
                       { key: "support", label: "Support Tickets", icon: LifeBuoy, href: "/admin/support" },
                     ].map((item) => {
                       const Icon = item.icon;
@@ -388,7 +388,7 @@ export function AdminShell({ children, activeMenu, pendingOrgCount = 2 }: AdminS
           )}
 
           {/* Page Body Content */}
-          <main className="flex-1 p-5 lg:p-8 flex flex-col gap-6">
+          <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 flex flex-col gap-5 sm:gap-6">
             {children}
           </main>
         </div>

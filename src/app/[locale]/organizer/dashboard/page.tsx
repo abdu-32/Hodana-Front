@@ -455,11 +455,11 @@ function OrganizerDashboardContent() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={handleExportData}
-                  className="flex items-center gap-2 rounded-2xl bg-[#e8f3f0] border border-[#d6e7e1] px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#d6e7e1] transition-all cursor-pointer shadow-2xs"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl bg-[#e8f3f0] border border-[#d6e7e1] px-4 py-2.5 text-xs font-bold text-[#0f6b5c] hover:bg-[#d6e7e1] transition-all cursor-pointer shadow-2xs"
                 >
                   <Download className="h-3.5 w-3.5" />
                   <span>Export Data</span>
@@ -471,7 +471,7 @@ function OrganizerDashboardContent() {
                     setSelectedHackathonToEdit(null);
                     setIsCreateModalOpen(true);
                   }}
-                  className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>+ New Event</span>
@@ -931,12 +931,12 @@ function OrganizerDashboardContent() {
                   Are you sure you want to delete <strong className="text-[#122622]">&quot;{hackathonToDelete.title}&quot;</strong>? This action cannot be undone.
                 </p>
 
-                <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+                <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-gray-100 pt-4">
                   <button
                     type="button"
                     disabled={isDeleting}
                     onClick={() => setHackathonToDelete(null)}
-                    className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                    className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer text-center"
                   >
                     Cancel
                   </button>
@@ -944,7 +944,7 @@ function OrganizerDashboardContent() {
                     type="button"
                     disabled={isDeleting}
                     onClick={() => handleDeleteHackathon(hackathonToDelete.id)}
-                    className="flex items-center gap-1.5 rounded-2xl bg-[#c4211c] px-5 py-2 text-xs font-bold text-white shadow-md hover:bg-red-700 cursor-pointer disabled:opacity-50"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-2xl bg-[#c4211c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-red-700 cursor-pointer disabled:opacity-50"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span>{isDeleting ? "Deleting..." : "Yes, Delete Event"}</span>

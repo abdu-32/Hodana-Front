@@ -399,19 +399,19 @@ export function CreateHackathonModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-3xl rounded-3xl border border-[#d6e7e1] bg-white shadow-2xl overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
+      <div className="relative w-full max-w-3xl my-auto max-h-[92dvh] flex flex-col rounded-3xl border border-[#d6e7e1] bg-white shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#d6e7e1] px-6 py-4 bg-[#f8faf9]">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white shadow-xs">
+        <div className="shrink-0 flex items-center justify-between border-b border-[#d6e7e1] px-4 sm:px-6 py-3.5 sm:py-4 bg-[#f8faf9]">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#0f6b5c] text-white shadow-xs">
               <Sparkles className="h-5 w-5" />
             </div>
-            <div>
-              <h2 className="text-base font-extrabold text-[#122622]">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-extrabold text-[#122622] truncate">
                 {initialData ? "Edit Hackathon" : "Create Hackathon"}
               </h2>
-              <p className="text-xs text-[#57685f]">
+              <p className="text-xs text-[#57685f] truncate">
                 Configure event details, location, field, tags, eligibility, and prize allocation.
               </p>
             </div>
@@ -419,7 +419,7 @@ export function CreateHackathonModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-[#57685f] hover:bg-gray-100 hover:text-[#122622] transition-colors cursor-pointer"
+            className="rounded-full p-2 text-[#57685f] hover:bg-gray-100 hover:text-[#122622] transition-colors cursor-pointer shrink-0"
           >
             <X className="h-5 w-5" />
           </button>
@@ -451,9 +451,9 @@ export function CreateHackathonModal({
                   type="button"
                   disabled={isDeleting}
                   onClick={handleDelete}
-                  className="flex-1 rounded-2xl bg-rose-600 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-rose-700 transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex-1 rounded-2xl bg-rose-600 py-2.5 text-xs font-bold text-white hover:bg-rose-700 transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {isDeleting ? "Deleting..." : "Yes, Delete"}
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
@@ -466,7 +466,7 @@ export function CreateHackathonModal({
             e.preventDefault();
             handleSubmit();
           }}
-          className="max-h-[80vh] overflow-y-auto p-6 flex flex-col gap-6"
+          className="flex-1 overflow-y-auto p-4 sm:p-6 min-w-0 flex flex-col gap-5 sm:gap-6"
         >
           {/* Section 1: Basic Information */}
           <div className="flex flex-col gap-4">
@@ -697,7 +697,7 @@ export function CreateHackathonModal({
               <label className="block text-xs font-bold text-[#122622] mb-2">
                 Event Type <span className="text-rose-500">*</span>
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-3">
                 {[
                   { id: "in_person", label: "In Person", desc: "Physical venue" },
                   { id: "online", label: "Online", desc: "100% Virtual event" },
@@ -1198,7 +1198,7 @@ export function CreateHackathonModal({
           </div>
 
           {/* Action Buttons Footer */}
-          <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 border-t border-[#d6e7e1] pt-6">
+          <div className="shrink-0 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t border-[#d6e7e1] pt-4 sm:pt-6">
             {/* Delete Option (When editing) */}
             {initialData?.id ? (
               <button
@@ -1213,12 +1213,12 @@ export function CreateHackathonModal({
               <div />
             )}
 
-            <div className="w-full sm:w-auto flex items-center justify-end gap-3">
+            <div className="w-full sm:w-auto flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
               <button
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleSubmit("draft")}
-                className="rounded-2xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto rounded-2xl border border-[#d6e7e1] bg-white px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-all cursor-pointer disabled:opacity-50 text-center"
               >
                 Save as Draft
               </button>
@@ -1227,7 +1227,7 @@ export function CreateHackathonModal({
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleSubmit("published")}
-                className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all cursor-pointer disabled:opacity-50"
               >
                 <CheckCircle className="h-4 w-4" />
                 <span>{isSubmitting ? "Saving..." : initialData ? "Update Hackathon" : "+ Create Hackathon"}</span>

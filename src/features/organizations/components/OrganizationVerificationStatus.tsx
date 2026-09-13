@@ -186,8 +186,8 @@ export function OrganizationVerificationStatus({
 
           <div className="flex flex-col gap-3">
             {documentUrls.map((url, index) => (
-              <div key={index} className="flex items-end gap-2">
-                <div className="flex-1">
+              <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
+                <div className="flex-1 min-w-0">
                   <TextField
                     label={t("documentUrlLabel", { index: index + 1 })}
                     type="url"
@@ -205,6 +205,7 @@ export function OrganizationVerificationStatus({
                     type="button"
                     variant="secondary"
                     size="sm"
+                    className="w-full sm:w-auto justify-center"
                     onClick={() =>
                       setDocumentUrls(
                         documentUrls.filter((_, i) => i !== index),
@@ -225,6 +226,7 @@ export function OrganizationVerificationStatus({
                 type="button"
                 variant="secondary"
                 size="sm"
+                className="w-full sm:w-auto justify-center"
                 onClick={() => setDocumentUrls([...documentUrls, ""])}
               >
                 {t("addDocumentCta")}
@@ -232,9 +234,10 @@ export function OrganizationVerificationStatus({
             </div>
           )}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <Button
               type="submit"
+              className="w-full sm:w-auto justify-center"
               disabled={
                 submitMutation.isPending ||
                 documentUrls.every((url) => !url.trim())
