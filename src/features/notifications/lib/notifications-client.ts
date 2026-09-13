@@ -31,9 +31,20 @@ const LOCAL_NOTIFS_STORAGE_KEY = "hodana_user_notifications_v1";
 
 export const INQUIRY_CATEGORIES: Record<string, string> = {
   technical: "Technical & Platform Bug",
-  billing: "Payments, Prizes & Billing",
-  general: "General Platform Question",
+  billing: "Payments, Prizes, Billing",
+  general: "General Platform Questions",
   hackathon_specific: "Hackathon Rules & Judging",
+};
+
+export const CANONICAL_INQUIRY_MAP: Record<string, string> = {
+  "technical & platform bug": "Technical & Platform Bug",
+  "payments, prizes, billing": "Payments, Prizes, Billing",
+  "payments, prizes & billing": "Payments, Prizes, Billing",
+  "payments & prizes": "Payments, Prizes, Billing",
+  "general platform questions": "General Platform Questions",
+  "general platform question": "General Platform Questions",
+  "hackathon rules & judging": "Hackathon Rules & Judging",
+  "hackathon rules and judging": "Hackathon Rules & Judging",
 };
 
 export const INQUIRY_HEADLINES = new Set(Object.values(INQUIRY_CATEGORIES));
@@ -76,6 +87,9 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     .trim();
 
   let title = (d.title || "").trim();
+  if (title && CANONICAL_INQUIRY_MAP[title.toLowerCase()]) {
+    title = CANONICAL_INQUIRY_MAP[title.toLowerCase()];
+  }
   let message = rawMessage;
 
   // 1. If message is formatted as "Title:\nContent" or "Title - Content"
@@ -107,13 +121,16 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     lowerCat.startsWith("support") ||
     lowerMsg.includes("support ticket") ||
     lowerMsg.includes("ticket reference") ||
+    lowerMsg.includes("support team") ||
     lowerMsg.includes("support specialist") ||
     lowerMsg.includes("replied to ticket") ||
+    lowerMsg.includes("my tickets") ||
     lowerMsg.includes("ticket:") ||
     lowerMsg.includes("category: technical") ||
     lowerMsg.includes("category: billing") ||
     lowerMsg.includes("category: general") ||
-    lowerMsg.includes("category: hackathon");
+    lowerMsg.includes("category: hackathon") ||
+    lowerMsg.includes("knowledge base");
 
   if (isSupport) {
     category = "support";
@@ -140,10 +157,12 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
     // 1. Resolve from specific category string
     if (lowerCat.includes("billing") || lowerCat.includes("payment")) {
       inquiryTitle = INQUIRY_CATEGORIES.billing;
-    } else if (lowerCat.includes("hackathon")) {
+    } else if (lowerCat.includes("hackathon") || lowerCat.includes("judging")) {
       inquiryTitle = INQUIRY_CATEGORIES.hackathon_specific;
     } else if (lowerCat.includes("technical") || lowerCat.includes("bug")) {
       inquiryTitle = INQUIRY_CATEGORIES.technical;
+    } else if (lowerCat.includes("general")) {
+      inquiryTitle = INQUIRY_CATEGORIES.general;
     }
 
     // 2. Check message tags
@@ -194,7 +213,7 @@ export function resolveNotificationDetails(d: NotificationDeliveryItem): {
       }
     }
 
-    // 4. Default to General Platform Question
+    // 4. Default to General Platform Questions
     if (!inquiryTitle) {
       inquiryTitle = INQUIRY_CATEGORIES.general;
     }
@@ -386,6 +405,10 @@ export const notificationsClient = {
     // Also pull local announcements broadcasted on this machine, repairing any stale generic titles
     const rawLocal = getLocalNotifications();
     const local = rawLocal.map((item) => {
+      const canonical = item.title ? CANONICAL_INQUIRY_MAP[item.title.toLowerCase()] : null;
+      if (canonical && canonical !== item.title) {
+        return { ...item, title: canonical };
+      }
       if (!item.title || item.title === "Hackathon Announcement" || item.title === "Notification") {
         const resolved = resolveNotificationDetails({
           id: item.id,
