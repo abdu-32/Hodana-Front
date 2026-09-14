@@ -216,18 +216,16 @@ export const AISupportChatModal: React.FC<AISupportChatModalProps> = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2.5 px-5 py-3.5 rounded-full bg-gradient-to-r from-[#0f6b5c] to-[#0b3c33] text-amber-300 font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 border border-emerald-500/30 group"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-[#0f6b5c] to-[#0b3c33] text-amber-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 border border-emerald-500/30 group cursor-pointer"
           type="button"
-          aria-label="Open AI Assistant"
+          aria-label={t("askAiBtn")}
+          title={t("askAiBtn")}
         >
-          <div className="relative">
-            <Bot className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
+          <div className="relative flex items-center justify-center">
+            <Bot className="w-6 h-6 group-hover:rotate-12 transition-transform duration-200" />
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full" />
           </div>
-          <span className="text-sm font-semibold text-white tracking-wide">
-            {t("askAiBtn")}
-          </span>
         </button>
       )}
 
