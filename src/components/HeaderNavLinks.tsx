@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Menu, X, Compass, Calendar, Rocket, Sparkles, ShieldAlert, LogIn, UserPlus } from "lucide-react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Menu, X, LogIn, UserPlus, LogOut } from "lucide-react";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { LegalModal } from "@/components/ui/LegalModal";
 import { useSession } from "@/features/auth";
 
 export function HeaderNavLinks() {
   const t = useTranslations("Nav");
   const pathname = usePathname();
-  const { user } = useSession();
+  const router = useRouter();
+  const { user, logout } = useSession();
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -93,7 +94,7 @@ export function HeaderNavLinks() {
         <button
           type="button"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d6e7e1] bg-white text-[#122622] hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-colors"
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d6e7e1] bg-white text-[#122622] hover:bg-[#e8f3f0] hover:text-[#0f6b5c] transition-colors cursor-pointer"
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           title={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
@@ -109,47 +110,49 @@ export function HeaderNavLinks() {
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="md:hidden fixed inset-x-0 top-14 sm:top-16 md:top-20 z-50 border-b border-[#d6e7e1] bg-white/95 backdrop-blur-md p-4 sm:p-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 max-h-[calc(100dvh-3.5rem)] sm:max-h-[calc(100dvh-4rem)] overflow-y-auto">
-            <div className="flex flex-col gap-2 text-sm font-bold text-[#122622]">
+          <div className="md:hidden fixed inset-x-0 top-14 sm:top-16 md:top-20 z-50 border-b border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 max-h-[calc(100dvh-3.5rem)] sm:max-h-[calc(100dvh-4rem)] overflow-y-auto">
+            <div className="flex flex-col gap-1 text-sm font-semibold text-[#57685f]">
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${
-                  isDiscover ? "bg-[#e8f3f0] text-[#0f6b5c]" : "hover:bg-gray-100"
+                className={`relative px-3 py-2.5 rounded-lg transition-colors ${
+                  isDiscover
+                    ? "text-[#0f6b5c] font-bold after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-[#0f6b5c] after:rounded-full"
+                    : "hover:text-[#0f6b5c]"
                 }`}
               >
-                <Compass className="h-4 w-4 text-[#0f6b5c]" />
                 <span>{t("discover")}</span>
               </Link>
 
               <Link
                 href="/hackathons"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${
-                  isHackathons ? "bg-[#e8f3f0] text-[#0f6b5c]" : "hover:bg-gray-100"
+                className={`relative px-3 py-2.5 rounded-lg transition-colors ${
+                  isHackathons
+                    ? "text-[#0f6b5c] font-bold after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-[#0f6b5c] after:rounded-full"
+                    : "hover:text-[#0f6b5c]"
                 }`}
               >
-                <Calendar className="h-4 w-4 text-[#0f6b5c]" />
                 <span>{t("hackathons")}</span>
               </Link>
 
               <Link
                 href="/startups"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${
-                  isStartups ? "bg-[#e8f3f0] text-[#0f6b5c]" : "hover:bg-gray-100"
+                className={`relative px-3 py-2.5 rounded-lg transition-colors ${
+                  isStartups
+                    ? "text-[#0f6b5c] font-bold after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-[#0f6b5c] after:rounded-full"
+                    : "hover:text-[#0f6b5c]"
                 }`}
               >
-                <Rocket className="h-4 w-4 text-[#0f6b5c]" />
                 <span>{t("startups")}</span>
               </Link>
 
               <Link
                 href="/#programs"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-gray-100 transition-colors"
+                className="px-3 py-2.5 rounded-lg hover:text-[#0f6b5c] transition-colors"
               >
-                <Sparkles className="h-4 w-4 text-[#0f6b5c]" />
                 <span>{t("programs")}</span>
               </Link>
 
@@ -159,9 +162,8 @@ export function HeaderNavLinks() {
                   setMobileMenuOpen(false);
                   setPolicyModalOpen(true);
                 }}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-left hover:bg-gray-100 transition-colors cursor-pointer"
+                className="px-3 py-2.5 rounded-lg hover:text-[#0f6b5c] transition-colors cursor-pointer text-left font-semibold"
               >
-                <ShieldAlert className="h-4 w-4 text-[#0f6b5c]" />
                 <span>{t("policy")}</span>
               </button>
 
@@ -194,6 +196,18 @@ export function HeaderNavLinks() {
                   >
                     <span>My Dashboard</span>
                   </Link>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setMobileMenuOpen(false);
+                      await logout();
+                      router.push("/");
+                    }}
+                    className="flex items-center justify-center gap-2 rounded-xl border border-[#d6e7e1] bg-white py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4 text-gray-500" />
+                    <span>{t("logout")}</span>
+                  </button>
                 </div>
               )}
             </div>

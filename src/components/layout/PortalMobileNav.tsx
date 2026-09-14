@@ -18,8 +18,9 @@ import {
   FileText,
   Briefcase,
   UserCheck,
+  LogOut,
 } from "lucide-react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Logomark } from "@/components/ui/Logomark";
 import { useSession } from "@/features/auth";
 import { NotificationBellDropdown } from "@/features/notifications/components/NotificationBellDropdown";
@@ -39,7 +40,8 @@ export function PortalMobileNav({
 }: PortalMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { user } = useSession();
+  const router = useRouter();
+  const { user, logout } = useSession();
 
   const userName = user?.fullName || user?.email?.split("@")[0] || "User";
   const userInitial = userName.charAt(0).toUpperCase();
@@ -335,6 +337,21 @@ export function PortalMobileNav({
                   </span>
                 </div>
               </Link>
+
+              {user && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsOpen(false);
+                    await logout();
+                    router.push("/");
+                  }}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-[#d6e7e1] bg-white py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4 text-gray-500" />
+                  <span>Log out</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

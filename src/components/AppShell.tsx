@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-dvh flex-col bg-[#f3f6f4]">
-      <header className="sticky top-0 z-40 bg-[#f3f6f4]/95 backdrop-blur-md border-b border-[#d6e7e1]/80">
+      <header className="sticky top-0 z-40 bg-[#f3f6f4] backdrop-blur-md border-b border-[#d6e7e1]/80">
         <div className="mx-auto flex h-14 sm:h-16 lg:h-20 w-full max-w-7xl items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
           <Link
             href="/"
