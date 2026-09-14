@@ -245,7 +245,7 @@ export default function Home() {
               </div>
             )}
 
-            <h1 className="font-display text-4xl font-extrabold tracking-tight text-[#122622] sm:text-5xl lg:text-6xl leading-[1.12]">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#122622] leading-[1.15] sm:leading-[1.12] break-words w-full">
               {tHero("titlePart1")}{" "}
               <span className="text-[#0f6b5c] font-extrabold block sm:inline">
                 {tHero("titlePart2")}
@@ -256,21 +256,10 @@ export default function Home() {
               {tHero("description")}
             </p>
 
-            {/* Mobile-only: Register CTA right below description */}
-            {!isAuthenticated && (
-              <Link
-                href="/signup"
-                className="md:hidden inline-flex w-full items-center justify-center gap-2.5 min-h-[50px] rounded-2xl bg-[#0f6b5c] px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:bg-[#0b5347] hover:shadow-lg"
-              >
-                <span>Register Now</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            )}
-
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full sm:w-auto">
               <Link
                 href="/hackathons"
-                className="inline-flex min-h-[50px] items-center justify-center gap-2.5 rounded-2xl bg-[#0f6b5c] px-7 text-sm font-bold text-white shadow-md transition-all duration-200 hover:bg-[#0b5347] hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="inline-flex min-h-[48px] sm:min-h-[50px] items-center justify-center gap-2.5 rounded-2xl bg-[#0f6b5c] px-7 text-sm font-bold text-white shadow-md transition-all duration-200 hover:bg-[#0b5347] hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 <span>{tHero("exploreBtn")}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -280,7 +269,7 @@ export default function Home() {
                 <>
                   <Link
                     href="/dashboard"
-                    className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-5 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#e8f3f0]"
+                    className="inline-flex min-h-[48px] sm:min-h-[50px] items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-white px-5 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#e8f3f0]"
                   >
                     <Layers className="h-4 w-4" />
                     <span>{tHero("forParticipants")}</span>
@@ -288,7 +277,7 @@ export default function Home() {
 
                   <Link
                     href={isOrganizer ? "/organizer/dashboard" : "/onboarding/organizer"}
-                    className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0] px-5 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#d6e7e1]"
+                    className="inline-flex min-h-[48px] sm:min-h-[50px] items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0] px-5 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#d6e7e1]"
                   >
                     <Award className="h-4 w-4" />
                     <span>{tHero("forOrganizers")}</span>
@@ -297,17 +286,16 @@ export default function Home() {
                   {isJudge && (
                     <Link
                       href="/judge/dashboard"
-                      className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-amber-50 px-5 text-sm font-bold text-amber-900 shadow-2xs transition-all hover:bg-amber-100"
+                      className="inline-flex min-h-[48px] sm:min-h-[50px] items-center justify-center gap-2 rounded-2xl border border-[#d6e7e1] bg-amber-50 px-5 text-sm font-bold text-amber-900 shadow-2xs transition-all hover:bg-amber-100"
                     >
                       <span>Judge Portal</span>
                     </Link>
                   )}
                 </>
               ) : (
-                /* "Join Platform" secondary CTA — only on desktop (mobile uses Register above) */
                 <Link
                   href="/signup"
-                  className="hidden md:inline-flex min-h-[50px] items-center justify-center gap-2.5 rounded-2xl border border-[#d6e7e1] bg-white px-6 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#e8f3f0]"
+                  className="inline-flex min-h-[48px] sm:min-h-[50px] items-center justify-center gap-2.5 rounded-2xl border border-[#d6e7e1] bg-white px-6 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#e8f3f0]"
                 >
                   <span>Join Platform</span>
                   <ArrowRight className="h-4 w-4" />
@@ -642,7 +630,7 @@ export default function Home() {
             {tPartners("title")}
           </h3>
 
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 text-xs sm:text-sm font-semibold text-[#57685f]">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 md:gap-12 text-xs sm:text-sm font-semibold text-[#57685f]">
             <div className="flex items-center gap-2">
               <Landmark className="h-4 w-4 text-[#57685f]" />
               <span>{tPartners("ministry")}</span>
@@ -667,7 +655,7 @@ export default function Home() {
         </section>
 
         {/* ================= NEWSLETTER SUBSCRIPTION ================= */}
-        <section className="w-full rounded-3xl bg-[#0e2b25] py-12 px-6 sm:px-12 text-center text-white shadow-xl my-4">
+        <section className="w-full rounded-3xl bg-[#0e2b25] py-8 sm:py-12 px-4 sm:px-12 text-center text-white shadow-xl my-4">
           <div className="max-w-2xl mx-auto flex flex-col gap-3">
             <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
               {tNewsletter("title")}
@@ -676,19 +664,19 @@ export default function Home() {
               {tNewsletter("subtitle")}
             </p>
 
-            <form onSubmit={handleSubscribe} className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <form onSubmit={handleSubscribe} className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
               <input
                 type="email"
                 placeholder={tNewsletter("emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full sm:w-80 rounded-2xl bg-white px-5 py-3.5 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f6b5c] shadow-inner"
+                className="w-full sm:w-80 rounded-2xl bg-white px-4 sm:px-5 py-3 sm:py-3.5 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f6b5c] shadow-inner"
                 required
               />
               <button
                 type="submit"
                 disabled={isSubscribing}
-                className="w-full sm:w-auto rounded-2xl bg-[#0f6b5c] px-6 py-3.5 text-xs sm:text-sm font-bold text-white hover:bg-[#0b5347] transition-colors cursor-pointer shadow-xs disabled:opacity-70 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto rounded-2xl bg-[#0f6b5c] px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-white hover:bg-[#0b5347] transition-colors cursor-pointer shadow-xs disabled:opacity-70 flex items-center justify-center gap-2 shrink-0"
               >
                 {isSubscribing && <Loader2 className="h-4 w-4 animate-spin" />}
                 <span>{tNewsletter("subscribeCta")}</span>
