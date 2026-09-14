@@ -33,7 +33,7 @@ export function LanguageToggle() {
             router.replace(pathname, { locale: loc });
           }}
           aria-current={locale === loc ? "true" : undefined}
-          className={`rounded-full px-2.5 py-1 text-sm font-medium transition-colors
+          className={`rounded-full px-2 py-0.5 xs:px-2.5 xs:py-1 text-xs xs:text-sm font-medium transition-colors
             focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-focus
             ${locale === loc ? "bg-surface text-primary shadow-sm" : "text-text-muted hover:text-text"}`}
