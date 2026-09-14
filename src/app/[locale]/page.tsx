@@ -256,6 +256,17 @@ export default function Home() {
               {tHero("description")}
             </p>
 
+            {/* Mobile-only: Register CTA right below description */}
+            {!isAuthenticated && (
+              <Link
+                href="/signup"
+                className="md:hidden inline-flex w-full items-center justify-center gap-2.5 min-h-[50px] rounded-2xl bg-[#0f6b5c] px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:bg-[#0b5347] hover:shadow-lg"
+              >
+                <span>Register Now</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href="/hackathons"
@@ -293,9 +304,10 @@ export default function Home() {
                   )}
                 </>
               ) : (
+                /* "Join Platform" secondary CTA — only on desktop (mobile uses Register above) */
                 <Link
                   href="/signup"
-                  className="inline-flex min-h-[50px] items-center justify-center gap-2.5 rounded-2xl border border-[#d6e7e1] bg-white px-6 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#e8f3f0]"
+                  className="hidden md:inline-flex min-h-[50px] items-center justify-center gap-2.5 rounded-2xl border border-[#d6e7e1] bg-white px-6 text-sm font-bold text-[#0f6b5c] shadow-2xs transition-all hover:bg-[#e8f3f0]"
                 >
                   <span>Join Platform</span>
                   <ArrowRight className="h-4 w-4" />
