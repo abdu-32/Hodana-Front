@@ -105,11 +105,11 @@ export function HeaderNavLinks() {
       {mobileMenuOpen && (
         <>
           <div
-            className="md:hidden fixed inset-0 top-16 sm:top-20 z-40 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in"
+            className="md:hidden fixed inset-0 top-14 sm:top-16 md:top-20 z-40 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="md:hidden fixed inset-x-0 top-16 sm:top-20 z-50 border-b border-[#d6e7e1] bg-white/95 backdrop-blur-md p-4 sm:p-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 max-h-[calc(100dvh-4.5rem)] overflow-y-auto">
+          <div className="md:hidden fixed inset-x-0 top-14 sm:top-16 md:top-20 z-50 border-b border-[#d6e7e1] bg-white/95 backdrop-blur-md p-4 sm:p-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 max-h-[calc(100dvh-3.5rem)] sm:max-h-[calc(100dvh-4rem)] overflow-y-auto">
             <div className="flex flex-col gap-2 text-sm font-bold text-[#122622]">
               <Link
                 href="/"

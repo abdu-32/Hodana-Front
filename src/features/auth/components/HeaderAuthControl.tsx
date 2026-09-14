@@ -24,10 +24,10 @@ export function HeaderAuthControl() {
     const isSignupActive = pathname === "/signup";
 
     return (
-      <div className="flex items-center gap-1.5 sm:gap-2.5">
+      <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2.5">
         <Link
           href="/login"
-          className={`inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold transition-colors ${
+          className={`inline-flex min-h-[32px] sm:min-h-[38px] items-center justify-center rounded-xl px-2 xs:px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold transition-colors ${
             isLoginActive
               ? "text-[#0f6b5c] bg-[#e8f3f0]"
               : "text-[#122622] hover:text-[#0f6b5c] hover:bg-gray-100"
@@ -37,7 +37,7 @@ export function HeaderAuthControl() {
         </Link>
         <Link
           href="/signup"
-          className="hidden xs:inline-flex sm:inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl bg-[#0f6b5c] px-3 sm:px-4.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-all hover:bg-[#0b5347] hover:shadow-md"
+          className="hidden xs:inline-flex min-h-[32px] sm:min-h-[38px] items-center justify-center rounded-xl bg-[#0f6b5c] px-2.5 xs:px-3 sm:px-4.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-all hover:bg-[#0b5347] hover:shadow-md"
         >
           Register
         </Link>
