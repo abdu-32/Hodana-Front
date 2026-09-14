@@ -13,13 +13,7 @@ import { KBAssistantBanner } from "@/features/knowledge-base/components/KBAssist
 import { KBCategoryFilter } from "@/features/knowledge-base/components/KBCategoryFilter";
 import { FAQAccordion } from "@/features/knowledge-base/components/FAQAccordion";
 import { KBSkeleton } from "@/features/knowledge-base/components/KBSkeleton";
-import {
-  AISupportChatModal,
-  AIHumanSupportEscalationContext,
-} from "@/features/knowledge-base/components/AISupportChatModal";
-import { HumanSupportModal } from "@/features/knowledge-base/components/HumanSupportModal";
-import { MyTicketsModal } from "@/features/knowledge-base/components/MyTicketsModal";
-import { SupportTicket } from "@/features/knowledge-base/api/human-support-api";
+import { AIHumanSupportEscalationContext } from "@/features/knowledge-base/components/AISupportChatModal";
 
 export default function HelpCenterPage() {
   const t = useTranslations("KnowledgeBase");
@@ -32,10 +26,6 @@ export default function HelpCenterPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
 
-  // Modal states
-  const [isHumanSupportOpen, setIsHumanSupportOpen] = useState(false);
-  const [isMyTicketsOpen, setIsMyTicketsOpen] = useState(false);
-  const [escalationContext, setEscalationContext] = useState<AIHumanSupportEscalationContext | null>(null);
 
   // Load categories and initial FAQs
   useEffect(() => {
@@ -83,17 +73,13 @@ export default function HelpCenterPage() {
   };
 
   const handleOpenHumanSupport = (context?: AIHumanSupportEscalationContext) => {
-    if (context) {
-      setEscalationContext(context);
-    } else {
-      setEscalationContext(null);
-    }
-    setIsHumanSupportOpen(true);
+    window.dispatchEvent(
+      new CustomEvent("open-human-support", { detail: context })
+    );
   };
 
-  const handleTicketCreated = (_ticket: SupportTicket) => {
-    setIsHumanSupportOpen(false);
-    setIsMyTicketsOpen(true);
+  const handleOpenMyTickets = () => {
+    window.dispatchEvent(new CustomEvent("open-my-tickets"));
   };
 
   return (
@@ -111,7 +97,7 @@ export default function HelpCenterPage() {
         <KBAssistantBanner
           onOpenAiAssistant={handleOpenAiAssistant}
           onOpenHumanSupport={() => handleOpenHumanSupport()}
-          onOpenMyTickets={() => setIsMyTicketsOpen(true)}
+          onOpenMyTickets={handleOpenMyTickets}
         />
 
         {/* Category Horizontal Filter Bar */}
@@ -149,29 +135,6 @@ export default function HelpCenterPage() {
           />
         )}
       </div>
-
-      {/* Modals */}
-      <AISupportChatModal
-        onOpenHumanSupport={(ctx) => handleOpenHumanSupport(ctx)}
-      />
-
-      <HumanSupportModal
-        isOpen={isHumanSupportOpen}
-        onClose={() => setIsHumanSupportOpen(false)}
-        onTicketCreated={handleTicketCreated}
-        initialSubject={escalationContext?.subject || ""}
-        initialDescription={escalationContext?.description || ""}
-        initialOtherDetails={escalationContext?.otherDetails || ""}
-      />
-
-      <MyTicketsModal
-        isOpen={isMyTicketsOpen}
-        onClose={() => setIsMyTicketsOpen(false)}
-        onOpenNewTicketModal={() => {
-          setIsMyTicketsOpen(false);
-          handleOpenHumanSupport();
-        }}
-      />
     </main>
   );
 }
