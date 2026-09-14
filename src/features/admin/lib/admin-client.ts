@@ -716,20 +716,44 @@ export const adminClient = {
     });
   },
 
+  async changeUserRole(id: string, role: UserRole, reason?: string): Promise<AdminUser> {
+    return this.updateUser(id, { role });
+  },
+
   async updateUser(id: string, updates: Partial<AdminUser>): Promise<AdminUser> {
+    let backendUser: any = null;
+
+    // If role change is requested, invoke backend role change endpoint
+    if (updates.role) {
+      try {
+        backendUser = await authFetch<any>(`/admin/users/${id}/change-role`, {
+          method: "POST",
+          body: JSON.stringify({
+            role: updates.role,
+            reason: `Role updated to ${updates.role} by platform administrator`,
+          }),
+        });
+      } catch (err) {
+        console.warn(`Backend role change failed:`, err);
+        throw err;
+      }
+    }
+
     // If status change is requested, invoke the backend suspend / reactivate endpoint
     if (updates.status) {
       const shouldSuspend = updates.status === "SUSPENDED" || updates.status === "BANNED";
       const action = shouldSuspend ? "suspend" : "reactivate";
       try {
-        await authFetch(`/admin/users/${id}/${action}`, {
+        const res = await authFetch<any>(`/admin/users/${id}/${action}`, {
           method: "POST",
           body: JSON.stringify({
             reason: shouldSuspend ? "Account suspended by platform administrator" : "Account reactivated by platform administrator",
           }),
         });
+        if (res && !backendUser) backendUser = res;
       } catch (err) {
         console.warn(`User status update failed:`, err);
+        throw err;
       }
     }
 
@@ -737,7 +761,15 @@ export const adminClient = {
     const index = state.users.findIndex((u) => u.id === id);
     if (index !== -1) {
       const user = state.users[index];
-      state.users[index] = { ...user, ...updates };
+      const updatedUser: AdminUser = {
+        ...user,
+        ...updates,
+        ...(backendUser ? {
+          role: (backendUser.role || updates.role || user.role) as UserRole,
+          status: (backendUser.isSuspended ? "SUSPENDED" : "ACTIVE") as UserStatus,
+        } : {}),
+      };
+      state.users[index] = updatedUser;
 
       state.auditLogs.unshift({
         id: `log-${Date.now()}`,
@@ -745,7 +777,7 @@ export const adminClient = {
         actorEmail: "admin@hodana.et",
         action: "USER_MODIFIED",
         targetType: "USER",
-        targetName: user.fullName,
+        targetName: updatedUser.fullName,
         details: `Updated attributes: ${Object.keys(updates).join(", ")}`,
         timestamp: new Date().toISOString(),
       });
@@ -756,10 +788,10 @@ export const adminClient = {
 
     return {
       id,
-      fullName: "Updated User",
-      email: "user@hodana.et",
-      role: updates.role || "PARTICIPANT",
-      status: updates.status || "ACTIVE",
+      fullName: backendUser?.fullName || "Updated User",
+      email: backendUser?.email || "user@hodana.et",
+      role: (backendUser?.role || updates.role || "PARTICIPANT") as UserRole,
+      status: (backendUser?.isSuspended ? "SUSPENDED" : updates.status || "ACTIVE") as UserStatus,
       hackathonsCount: 0,
       teamsCount: 0,
       lastLoginAt: new Date().toISOString(),

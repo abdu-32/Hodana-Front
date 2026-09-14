@@ -11,6 +11,10 @@ import {
   AlertCircle,
   Users,
   Trash2,
+  Shield,
+  Award,
+  Code2,
+  ArrowLeftRight,
 } from "lucide-react";
 import { AdminUser, UserRole, UserStatus } from "../lib/admin-client";
 import { authFetch } from "@/lib/api-client";
@@ -22,17 +26,31 @@ interface UserEditModalProps {
   onDelete?: (id: string, name: string) => Promise<void>;
 }
 
+const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
+  PARTICIPANT: "Hackathon competitor: Can join squads, submit projects, and enter public challenges.",
+  ORGANIZER: "Event host: Can organize hackathons, manage squads, and review participant registrations.",
+  JUDGE: "Evaluation committee: Can access judging dashboards, score submissions, and submit rubrics.",
+  ADMIN: "Platform Administrator (Superuser): Unrestricted global access, user governance, and platform telemetry.",
+};
+
 export function UserEditModal({ user, onClose, onUpdate, onDelete }: UserEditModalProps) {
   const [role, setRole] = useState<UserRole>(user.role);
   const [status, setStatus] = useState<UserStatus>(user.status);
   const [isProcessing, setIsProcessing] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [errorFeedback, setErrorFeedback] = useState<string | null>(null);
+
+  const isPrimaryAdmin =
+    (user.email || "").trim().toLowerCase() === "abdulhalimaliyi54@gmail.com";
 
   const handleSave = async () => {
     setIsProcessing(true);
+    setErrorFeedback(null);
     try {
       await onUpdate(user.id, { role, status });
       onClose();
+    } catch (err: any) {
+      setErrorFeedback(err?.message || "Failed to update user. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -102,19 +120,66 @@ export function UserEditModal({ user, onClose, onUpdate, onDelete }: UserEditMod
             </div>
           )}
 
+          {errorFeedback && (
+            <div className="flex items-center gap-2 rounded-2xl bg-red-50 border border-red-200 p-3 text-xs font-bold text-red-800">
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+              <span>{errorFeedback}</span>
+            </div>
+          )}
+
           {/* Role Elevation / Selection */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-extrabold text-[#122622]">User Role</label>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <label className="font-extrabold text-[#122622]">User Role</label>
+              {isPrimaryAdmin && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold text-amber-900 border border-amber-200">
+                  Primary Root Admin (Protected)
+                </span>
+              )}
+            </div>
+
             <select
               value={role}
+              disabled={isPrimaryAdmin}
               onChange={(e) => setRole(e.target.value as UserRole)}
-              className="h-11 w-full rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-4 font-bold text-[#122622] outline-none focus:border-[#0f6b5c]"
+              className="h-11 w-full rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-4 font-bold text-[#122622] outline-none focus:border-[#0f6b5c] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <option value="PARTICIPANT">Participant (Hackathon Hacker)</option>
               <option value="ORGANIZER">Organizer (Event Host)</option>
               <option value="JUDGE">Judge (Evaluation Committee)</option>
               <option value="ADMIN">Platform Administrator (Superuser)</option>
             </select>
+
+            {/* Quick Role Transition Shortcuts */}
+            {!isPrimaryAdmin && (
+              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                {(role === "JUDGE" || role === "PARTICIPANT") && (
+                  <button
+                    type="button"
+                    onClick={() => setRole(role === "JUDGE" ? "PARTICIPANT" : "JUDGE")}
+                    className="inline-flex items-center gap-1 rounded-xl border border-[#0f6b5c]/30 bg-[#e8f3f0] px-2.5 py-1 text-[10px] font-extrabold text-[#0f6b5c] hover:bg-[#d6e7e1] transition-colors cursor-pointer"
+                  >
+                    <ArrowLeftRight className="h-3 w-3" />
+                    <span>Switch to {role === "JUDGE" ? "Participant" : "Judge"}</span>
+                  </button>
+                )}
+                {(role === "ORGANIZER" || role === "ADMIN") && (
+                  <button
+                    type="button"
+                    onClick={() => setRole(role === "ORGANIZER" ? "ADMIN" : "ORGANIZER")}
+                    className="inline-flex items-center gap-1 rounded-xl border border-purple-200 bg-purple-50 px-2.5 py-1 text-[10px] font-extrabold text-purple-800 hover:bg-purple-100 transition-colors cursor-pointer"
+                  >
+                    <ArrowLeftRight className="h-3 w-3" />
+                    <span>Switch to {role === "ORGANIZER" ? "Superuser" : "Organizer"}</span>
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Role Context Hint */}
+            <p className="rounded-xl bg-[#f8faf9] p-2.5 border border-[#e2ece8] text-[11px] text-[#57685f] leading-relaxed">
+              {ROLE_DESCRIPTIONS[role]}
+            </p>
           </div>
 
           {/* Account Status Selection */}
@@ -122,8 +187,9 @@ export function UserEditModal({ user, onClose, onUpdate, onDelete }: UserEditMod
             <label className="font-extrabold text-[#122622]">Account Status</label>
             <select
               value={status}
+              disabled={isPrimaryAdmin}
               onChange={(e) => setStatus(e.target.value as UserStatus)}
-              className="h-11 w-full rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-4 font-bold text-[#122622] outline-none focus:border-[#0f6b5c]"
+              className="h-11 w-full rounded-2xl border border-[#d6e7e1] bg-[#f3f6f4] px-4 font-bold text-[#122622] outline-none focus:border-[#0f6b5c] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <option value="ACTIVE">Active (Normal Access)</option>
               <option value="SUSPENDED">Suspended (Temporarily Frozen)</option>

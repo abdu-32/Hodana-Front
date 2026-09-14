@@ -17,6 +17,7 @@ import {
   KeyRound,
   Trash2,
   AlertTriangle,
+  ArrowLeftRight,
 } from "lucide-react";
 import { AdminShell } from "@/features/admin/components/AdminShell";
 import { UserEditModal } from "@/features/admin/components/UserEditModal";
@@ -53,10 +54,15 @@ function AdminUsersContent() {
     try {
       const updated = await adminClient.updateUser(id, updates);
       await loadUsers();
-      setToastMessage(`User profile for "${updated.fullName}" updated.`);
+      setToastMessage(
+        updates.role
+          ? `Role for "${updated.fullName}" successfully changed to ${updated.role}.`
+          : `User profile for "${updated.fullName}" updated.`
+      );
       setTimeout(() => setToastMessage(null), 4000);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Failed to update user:", err);
+      alert(err?.message || "Failed to change user role. Please try again.");
     }
   };
 
@@ -186,28 +192,58 @@ function AdminUsersContent() {
                       </div>
                     </td>
 
-                    {/* Role Badge */}
+                    {/* Role Badge & Quick Actions */}
                     <td className="py-4 px-6">
-                      {u.role === "ADMIN" && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#e8f3f0] px-3 py-0.5 text-[10px] font-black text-[#0f6b5c]">
-                          <ShieldCheck className="h-3 w-3" /> SUPERUSER
-                        </span>
-                      )}
-                      {u.role === "ORGANIZER" && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-0.5 text-[10px] font-extrabold text-emerald-800">
-                          <Shield className="h-3 w-3" /> ORGANIZER
-                        </span>
-                      )}
-                      {u.role === "JUDGE" && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-0.5 text-[10px] font-extrabold text-amber-900">
-                          <Award className="h-3 w-3" /> JUDGE
-                        </span>
-                      )}
-                      {u.role === "PARTICIPANT" && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-3 py-0.5 text-[10px] font-extrabold text-[#0f6b5c]">
-                          <Code2 className="h-3 w-3" /> PARTICIPANT
-                        </span>
-                      )}
+                      <div className="flex flex-col items-start gap-1">
+                        <div>
+                          {u.role === "ADMIN" && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#e8f3f0] px-3 py-0.5 text-[10px] font-black text-[#0f6b5c]">
+                              <ShieldCheck className="h-3 w-3" /> SUPERUSER
+                            </span>
+                          )}
+                          {u.role === "ORGANIZER" && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-0.5 text-[10px] font-extrabold text-emerald-800">
+                              <Shield className="h-3 w-3" /> ORGANIZER
+                            </span>
+                          )}
+                          {u.role === "JUDGE" && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-0.5 text-[10px] font-extrabold text-amber-900">
+                              <Award className="h-3 w-3" /> JUDGE
+                            </span>
+                          )}
+                          {u.role === "PARTICIPANT" && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-3 py-0.5 text-[10px] font-extrabold text-[#0f6b5c]">
+                              <Code2 className="h-3 w-3" /> PARTICIPANT
+                            </span>
+                          )}
+                        </div>
+                        {u.email !== "abdulhalimaliyi54@gmail.com" && (
+                          <div className="flex items-center gap-1">
+                            {(u.role === "JUDGE" || u.role === "PARTICIPANT") && (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateUser(u.id, { role: u.role === "JUDGE" ? "PARTICIPANT" : "JUDGE" })}
+                                title={`Switch ${u.fullName} to ${u.role === "JUDGE" ? "Participant" : "Judge"}`}
+                                className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0f6b5c] hover:underline cursor-pointer"
+                              >
+                                <ArrowLeftRight className="h-2.5 w-2.5" />
+                                <span>{u.role === "JUDGE" ? "To Participant" : "To Judge"}</span>
+                              </button>
+                            )}
+                            {(u.role === "ORGANIZER" || u.role === "ADMIN") && (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateUser(u.id, { role: u.role === "ORGANIZER" ? "ADMIN" : "ORGANIZER" })}
+                                title={`Switch ${u.fullName} to ${u.role === "ORGANIZER" ? "Superuser" : "Organizer"}`}
+                                className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-700 hover:underline cursor-pointer"
+                              >
+                                <ArrowLeftRight className="h-2.5 w-2.5" />
+                                <span>{u.role === "ORGANIZER" ? "To Superuser" : "To Organizer"}</span>
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </td>
 
                     {/* Affiliation */}
