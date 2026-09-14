@@ -15,7 +15,6 @@ import {
   Atom,
   Globe,
   ShieldCheck,
-  Search,
   Sparkles,
   UserCheck,
   Layers,
@@ -686,15 +685,6 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Floating Action / Search Button */}
-      <button
-        type="button"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#0f6b5c] text-white shadow-xl hover:bg-[#0b5347] transition-all hover:scale-105 cursor-pointer"
-        aria-label="Search or back to top"
-      >
-        <Search className="h-5 w-5" />
-      </button>
 
       {/* Legal Popup Modal */}
       <LegalModal type={activeModal} onClose={() => setActiveModal(null)} />

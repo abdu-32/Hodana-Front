@@ -15,6 +15,7 @@ import { routing } from "@/i18n/routing";
 import { ToastProvider } from "@/components/ui";
 import { Providers } from "../providers";
 import { AppShell } from "@/components/AppShell";
+import { GlobalSupportAssistant } from "@/components/GlobalSupportAssistant";
 import "../globals.css";
 
 // Doc 06 Sec 3.1: font-latin / font-ethiopic are CSS-variable fallback
@@ -108,6 +109,7 @@ export default async function LocaleLayout({
           <Providers>
             <ToastProvider>
               <AppShell>{children}</AppShell>
+              <GlobalSupportAssistant />
             </ToastProvider>
           </Providers>
         </NextIntlClientProvider>
