@@ -270,7 +270,7 @@ export default function HackathonsDiscoveryPage() {
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:px-8">
         {/* ================= HERO HEADER ================= */}
         <section className="flex flex-col items-start gap-4 pt-4">
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-[#122622] sm:text-5xl lg:text-6xl leading-[1.12]">
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#122622] leading-[1.15] sm:leading-[1.12] break-words w-full">
             {t("titlePart1")}{" "}
             <span className="text-[#0f6b5c] font-extrabold block sm:inline">
               {t("titlePart2")}

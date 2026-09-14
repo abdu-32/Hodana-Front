@@ -19,16 +19,15 @@ export function HeaderAuthControl() {
     return <div className="h-9 w-20 animate-pulse rounded-xl bg-gray-200" aria-hidden="true" />;
   }
 
-  // ── Not logged in ───────────────────────────────────────────────────
   if (!user) {
     const isLoginActive = pathname === "/login";
+    const isSignupActive = pathname === "/signup";
 
     return (
-      <div className="flex items-center gap-2">
-        {/* Login: hidden on mobile, visible from md up */}
+      <div className="flex items-center gap-1.5 sm:gap-2.5">
         <Link
           href="/login"
-          className={`hidden md:inline-flex min-h-[38px] items-center justify-center rounded-xl px-3.5 text-sm font-semibold transition-colors ${
+          className={`inline-flex min-h-[32px] sm:min-h-[36px] items-center justify-center rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm font-semibold transition-colors ${
             isLoginActive
               ? "text-[#0f6b5c] bg-[#e8f3f0]"
               : "text-[#122622] hover:text-[#0f6b5c] hover:bg-gray-100"
@@ -36,11 +35,9 @@ export function HeaderAuthControl() {
         >
           {t("login")}
         </Link>
-
-        {/* Register: hidden on mobile (shown in hero below description), visible from md up */}
         <Link
           href="/signup"
-          className="hidden md:inline-flex min-h-[38px] items-center justify-center rounded-xl bg-[#0f6b5c] px-4 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#0b5347] hover:shadow-md"
+          className="hidden md:inline-flex min-h-[36px] items-center justify-center rounded-xl bg-[#0f6b5c] px-4 text-sm font-bold text-white shadow-xs transition-all hover:bg-[#0b5347] hover:shadow-md"
         >
           Register
         </Link>
@@ -48,7 +45,6 @@ export function HeaderAuthControl() {
     );
   }
 
-  // ── Logged in ───────────────────────────────────────────────────────
   const initial = user.fullName.trim().charAt(0).toUpperCase() || "?";
 
   return (
@@ -79,7 +75,7 @@ export function HeaderAuthControl() {
           await logout();
           router.push("/");
         }}
-        className="hidden sm:inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl border border-[#d6e7e1] bg-white px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold text-[#57685f] shadow-2xs hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
+        className="hidden xs:inline-flex sm:inline-flex min-h-[34px] sm:min-h-[38px] items-center justify-center rounded-xl border border-[#d6e7e1] bg-white px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold text-[#57685f] shadow-2xs hover:bg-gray-50 hover:text-[#122622] transition-colors cursor-pointer"
       >
         {t("logout")}
       </button>
