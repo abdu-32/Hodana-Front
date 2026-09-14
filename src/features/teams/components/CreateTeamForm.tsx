@@ -68,7 +68,7 @@ export function CreateTeamForm({
         />
       )}
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-black/[0.07] bg-surface p-6 shadow-sm">
+      <div className="flex flex-col gap-4 rounded-2xl border border-black/[0.07] bg-surface p-4 sm:p-6 shadow-sm">
         <p className="rounded-lg bg-surface-alt px-4 py-3 text-sm text-text">
           {t("createIntro")}
         </p>
@@ -87,6 +87,7 @@ export function CreateTeamForm({
         <Button
           type="submit"
           disabled={mutation.isPending || !teamName.trim()}
+          className="w-full sm:w-auto justify-center"
         >
           {mutation.isPending ? t("creatingTeam") : t("createTeamCta")}
         </Button>

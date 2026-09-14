@@ -130,7 +130,7 @@ export function ProfileForm() {
 
       <div className="overflow-hidden rounded-2xl border border-black/[0.07] bg-surface shadow-sm">
         {/* Identity -- avatar preview + verification status, read-mostly. */}
-        <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 p-4 sm:p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             {showAvatarImage ? (
               // eslint-disable-next-line @next/next/no-img-element -- avatar
@@ -193,7 +193,7 @@ export function ProfileForm() {
           </div>
         </div>
 
-        <div className="border-t border-black/6 p-6">
+        <div className="border-t border-black/6 p-4 sm:p-6">
           <div className="flex flex-col gap-4">
             <SectionHeading>{t("sectionAbout")}</SectionHeading>
 
@@ -239,7 +239,7 @@ export function ProfileForm() {
           </div>
         </div>
 
-        <div className="border-t border-black/6 p-6">
+        <div className="border-t border-black/6 p-4 sm:p-6">
           <div className="flex flex-col gap-4">
             <SectionHeading>{t("sectionLinks")}</SectionHeading>
 
@@ -275,7 +275,7 @@ export function ProfileForm() {
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit" disabled={mutation.isPending}>
+        <Button type="submit" disabled={mutation.isPending} className="w-full sm:w-auto justify-center">
           {mutation.isPending ? t("saving") : t("saveCta")}
         </Button>
       </div>

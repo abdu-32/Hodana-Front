@@ -288,17 +288,17 @@ export function EditProfileModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto">
-      <div className="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl border border-[#d6e7e1] overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto">
+      <div className="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl border border-[#d6e7e1] overflow-hidden my-auto max-h-[92dvh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e2ece7] px-6 py-4 bg-[#f8faf9]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0f6b5c] text-white shadow-xs">
+        <div className="flex items-center justify-between border-b border-[#e2ece7] px-4 sm:px-6 py-3.5 sm:py-4 bg-[#f8faf9] shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0f6b5c] text-white shadow-xs">
               <User className="h-5 w-5" />
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-[#122622]">Edit Participant Profile</h2>
-              <p className="text-xs text-[#57685f]">
+            <div className="min-w-0">
+              <h2 className="text-base sm:text-lg font-bold text-[#122622] truncate">Edit Participant Profile</h2>
+              <p className="text-xs text-[#57685f] hidden xs:block truncate">
                 Manage your public information, credentials, and hackathon preferences
               </p>
             </div>
@@ -306,14 +306,14 @@ export function EditProfileModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors"
+            className="rounded-lg p-2 text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors shrink-0 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-[#e2ece7] bg-white px-6 overflow-x-auto gap-2">
+        <div className="flex border-b border-[#e2ece7] bg-white px-4 sm:px-6 overflow-x-auto no-scrollbar gap-2 shrink-0">
           {[
             { id: "personal", label: "Personal & Contact", icon: User },
             { id: "education", label: "Education & Org", icon: GraduationCap },
@@ -329,7 +329,7 @@ export function EditProfileModal({
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 border-b-2 py-3 px-3 text-xs font-semibold whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-2 border-b-2 py-3 px-3 text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
                     ? "border-[#0f6b5c] text-[#0f6b5c]"
                     : "border-transparent text-[#57685f] hover:text-[#122622]"
@@ -343,7 +343,7 @@ export function EditProfileModal({
         </div>
 
         {/* Form Body */}
-        <div className="p-6 max-h-[68vh] overflow-y-auto space-y-6">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1 min-h-0">
           {/* TAB 1: PERSONAL & CONTACT */}
           {activeTab === "personal" && (
             <div className="space-y-4">
@@ -949,11 +949,11 @@ export function EditProfileModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between border-t border-[#e2ece7] px-6 py-4 bg-[#f8faf9]">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-[#e2ece7] px-4 sm:px-6 py-3.5 sm:py-4 bg-[#f8faf9] shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-4 py-2 text-xs font-semibold text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors"
+            className="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-xs font-semibold text-[#57685f] hover:bg-[#e8f3f0] hover:text-[#122622] transition-colors w-full sm:w-auto cursor-pointer"
           >
             Cancel
           </button>
@@ -961,7 +961,7 @@ export function EditProfileModal({
             type="button"
             disabled={mutation.isPending}
             onClick={() => mutation.mutate()}
-            className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0d594c] transition-all disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0d594c] transition-all disabled:opacity-50 cursor-pointer w-full sm:w-auto"
           >
             {mutation.isPending ? (
               <>

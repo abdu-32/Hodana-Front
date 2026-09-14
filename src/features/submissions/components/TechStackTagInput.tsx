@@ -88,7 +88,7 @@ export function TechStackTagInput({
           onKeyDown={handleKeyDown}
           onBlur={() => addTag(inputValue)}
           placeholder={tags.length === 0 ? placeholder : "Add more tags..."}
-          className="flex-1 min-w-[160px] bg-transparent px-2 py-1 text-xs font-medium text-[#122622] outline-none placeholder:text-gray-400"
+          className="flex-1 min-w-[120px] xs:min-w-[160px] bg-transparent px-2 py-1 text-xs font-medium text-[#122622] outline-none placeholder:text-gray-400"
         />
       </div>
 

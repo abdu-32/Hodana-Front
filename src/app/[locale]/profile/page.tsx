@@ -178,7 +178,7 @@ export default function ProfilePage() {
         </aside>
 
         {/* ================= MAIN CONTENT AREA ================= */}
-        <main className="flex-1 min-w-0 p-5 lg:p-8 overflow-y-auto">
+        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto">
           <ParticipantProfileView />
         </main>
       </div>

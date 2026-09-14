@@ -18,8 +18,8 @@ export function PublicProfileView({ profile }: { profile: PublicProfile }) {
       <div className="h-32 w-full bg-gradient-to-r from-ink via-ink-alt to-primary sm:h-40" />
 
       <div className="mx-auto -mt-12 flex w-full max-w-2xl flex-col gap-6 px-4 pb-16 sm:px-6">
-        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-end gap-4">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between w-full">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
             {profile.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- avatar
               // comes from arbitrary user-supplied URLs, not next/image's
@@ -37,8 +37,8 @@ export function PublicProfileView({ profile }: { profile: PublicProfile }) {
                 {profile.fullName.trim().charAt(0).toUpperCase() || "?"}
               </div>
             )}
-            <div className="pb-1">
-              <h1 className="font-display text-2xl font-semibold tracking-tight text-text">
+            <div className="pb-1 min-w-0">
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-text break-words">
                 {profile.fullName}
               </h1>
               {profile.university && (
@@ -52,7 +52,7 @@ export function PublicProfileView({ profile }: { profile: PublicProfile }) {
               href={profile.portfolioUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-lg border border-black/10 bg-surface px-4 text-sm font-medium text-text shadow-sm transition-colors hover:bg-surface-alt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              className="inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-lg border border-black/10 bg-surface px-4 text-sm font-medium text-text shadow-sm transition-colors hover:bg-surface-alt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus w-full sm:w-auto"
             >
               {t("portfolioLink")}
             </a>

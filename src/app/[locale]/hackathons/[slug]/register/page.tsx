@@ -97,15 +97,15 @@ export default function HackathonRegisterPage({
           <span className="font-bold text-[#122622]">Registered</span>
         </nav>
 
-        <section className="flex flex-col gap-6 rounded-3xl border border-emerald-200 bg-emerald-50/40 p-8 shadow-sm">
+        <section className="flex flex-col gap-6 rounded-3xl border border-emerald-200 bg-emerald-50/40 p-4 sm:p-8 shadow-sm">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#0f6b5c] text-white">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <div className="flex flex-col gap-1">
-              <h2 className="font-display text-xl font-bold text-[#122622]">
+            <div className="flex flex-col gap-1 min-w-0">
+              <h2 className="font-display text-lg sm:text-xl font-bold text-[#122622]">
                 You are registered for {hackathon.title}!
               </h2>
               <p className="text-xs text-[#57685f]">
@@ -116,16 +116,16 @@ export default function HackathonRegisterPage({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 border-t border-emerald-200/60 pt-5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-t border-emerald-200/60 pt-5 w-full">
             <Link
               href={`/hackathons/${slug}/team`}
-              className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[#0f6b5c] px-6 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#0b5347]"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[#0f6b5c] px-6 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#0b5347] w-full sm:w-auto"
             >
               Open Team Hub &rarr;
             </Link>
             <Link
               href="/dashboard/registrations"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-xs font-bold text-[#122622] shadow-xs transition-colors hover:bg-gray-50"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-xs font-bold text-[#122622] shadow-xs transition-colors hover:bg-gray-50 w-full sm:w-auto"
             >
               My Registrations
             </Link>

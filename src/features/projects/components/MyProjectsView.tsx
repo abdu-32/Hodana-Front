@@ -787,7 +787,7 @@ export function MyProjectsView({ onBackToDashboard }: MyProjectsViewProps) {
                   </div>
 
                     {/* Center: Status Badge */}
-                  <div className="flex flex-col sm:items-center justify-center shrink-0 min-w-[130px]">
+                  <div className="flex flex-col sm:items-center justify-center shrink-0 min-w-0 md:min-w-[130px]">
                     {isDraft ? (
                       <div className="flex flex-col items-start sm:items-center gap-0.5">
                         <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-300 px-2.5 py-0.5 text-[10px] font-bold text-amber-900 shadow-2xs">
@@ -1071,8 +1071,8 @@ function WinnerPayoutModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-[#d6e7e1] flex flex-col gap-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+      <div className="w-full max-w-lg my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-[#d6e7e1] flex flex-col gap-5">
         <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-4">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-800 shadow-2xs font-extrabold text-base">
@@ -1191,18 +1191,18 @@ function WinnerPayoutModal({
             />
           </div>
 
-          <div className="mt-2 flex items-center justify-end gap-3 border-t border-[#d6e7e1] pt-4">
+          <div className="mt-2 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-[#d6e7e1] pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-gray-200 px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all disabled:opacity-50 cursor-pointer w-full sm:w-auto"
             >
               {isSubmitting ? (
                 <>
@@ -1337,8 +1337,8 @@ function DraftEditModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in-50">
+      <div className="w-full max-w-2xl my-auto max-h-[92dvh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-5 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-6">
         <div className="flex items-start justify-between border-b border-[#d6e7e1] pb-4">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 shadow-2xs font-bold">
@@ -1542,21 +1542,21 @@ function DraftEditModal({
             />
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#d6e7e1] pt-4">
+          <div className="mt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-[#d6e7e1] pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-2xl border border-gray-200 px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center rounded-2xl border border-gray-200 px-5 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 transition-colors cursor-pointer w-full sm:w-auto"
             >
               Cancel
             </button>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               <button
                 type="button"
                 disabled={isSaving || isSubmitting}
                 onClick={handleSaveDraft}
-                className="flex items-center gap-2 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition-all disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition-all disabled:opacity-50 cursor-pointer w-full sm:w-auto"
               >
                 {isSaving ? (
                   <>
@@ -1575,7 +1575,7 @@ function DraftEditModal({
                 type="button"
                 disabled={isSaving || isSubmitting}
                 onClick={handleSubmitForReview}
-                className="flex items-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0f6b5c] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0b5347] transition-all disabled:opacity-50 cursor-pointer w-full sm:w-auto"
               >
                 {isSubmitting ? (
                   <>
@@ -1653,8 +1653,8 @@ function EvaluationReviewModal({
   const isCompleted = Boolean(evaluation?.overallScore != null);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-      <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in-50">
+      <div className="w-full max-w-4xl my-auto max-h-[92dvh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-5 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-6">
         <div className="flex items-start justify-between border-b border-[#d6e7e1] pb-4">
           <div className="flex items-center gap-3">
             <span
@@ -1994,7 +1994,7 @@ function EvaluationReviewModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all cursor-pointer"
+            className="inline-flex items-center justify-center rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all cursor-pointer w-full sm:w-auto"
           >
             Close Review
           </button>
@@ -2028,8 +2028,8 @@ function DeleteConfirmationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-      <div className="w-full max-w-md rounded-3xl border border-red-200 bg-white p-6 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in-50">
+      <div className="w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto rounded-3xl border border-red-200 bg-white p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
         <div className="flex items-center gap-3.5">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600">
             <AlertTriangle className="h-6 w-6" />
@@ -2049,12 +2049,12 @@ function DeleteConfirmationModal({
           <strong className="text-[#122622]">"{project.title}"</strong>? All saved form data and deliverables will be permanently removed.
         </p>
 
-        <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-gray-100 pt-4">
           <button
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="rounded-xl border border-gray-200 px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer w-full sm:w-auto"
           >
             Cancel
           </button>
@@ -2062,7 +2062,7 @@ function DeleteConfirmationModal({
             type="button"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-red-700 transition-all disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-red-700 transition-all disabled:opacity-50 cursor-pointer w-full sm:w-auto"
           >
             {isDeleting ? (
               <>
@@ -2199,8 +2199,8 @@ function CreateProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-50">
-      <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in-50">
+      <div className="w-full max-w-xl my-auto max-h-[92dvh] overflow-y-auto rounded-3xl border border-[#d6e7e1] bg-white p-5 sm:p-8 shadow-2xl animate-in zoom-in-95 flex flex-col gap-5">
         <div className="flex items-center justify-between border-b border-[#d6e7e1] pb-3">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e8f3f0] text-[#0f6b5c] font-bold">
@@ -2393,18 +2393,18 @@ function CreateProjectModal({
             />
           </div>
 
-          <div className="mt-3 flex items-center justify-end gap-3 border-t border-[#d6e7e1] pt-4">
+          <div className="mt-3 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-[#d6e7e1] pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-gray-200 px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-1.5 rounded-xl bg-[#0f6b5c] px-5 py-2 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0b5347] transition-all disabled:opacity-50 cursor-pointer w-full sm:w-auto"
             >
               {isSubmitting ? (
                 <>
