@@ -332,6 +332,17 @@ export const SEED_FAQS: KBFAQ[] = [
     createdAt: "2026-08-20T12:00:00Z",
     updatedAt: "2026-08-20T12:00:00Z",
   },
+  {
+    id: "faq-hackathon-rules",
+    categoryId: "cat-3",
+    question: "What are the hackathon rules?",
+    answer: "All hackathons hosted on the Ethiopia Innovation Hub follow standard platform rules and guidelines:\n- **Eligibility & Registration**: Participants must create a verified account and satisfy any institutional (.edu.et or enterprise) or regional requirements specified by the event organizer before the registration deadline.\n- **Team Composition**: Most challenges require teams of 2 to 5 members (unless solo entries are explicitly permitted by the challenge organizer). If you do not have a team, register as an Individual Looking for Teammates and use the **Teammate Finder** to recruit or join members.\n- **Originality & Code Integrity**: Projects must be original work created for or further developed during the hackathon. Utilizing open-source libraries, frameworks, or APIs is allowed, provided they are properly documented and attributed in the repository. Pre-built projects, plagiarism, or code theft are strictly disqualified.\n- **Submission Deliverables**: Teams must provide a complete submission before the deadline countdown timer reaches zero (enforced in East Africa Time, UTC+3). Deliverables include project title, solution description, public code repository link (GitHub/GitLab/Bitbucket), a 2-3 minute video demonstration, and an optional pitch deck.\n- **Roster Lock**: Team rosters cannot be modified after the submission deadline has passed to ensure fair evaluation.\n- **Fair Play & Conduct**: All participants must comply with platform safety policies, anti-harassment standards, and blind judging integrity.",
+    status: "published",
+    sortOrder: 5,
+    publishedAt: "2026-08-20T12:00:00Z",
+    createdAt: "2026-08-20T12:00:00Z",
+    updatedAt: "2026-08-20T12:00:00Z",
+  },
 
   // 4. Usernames & Institutional Identity
   {
