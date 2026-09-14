@@ -105,7 +105,7 @@ export const submissionsClient = {
       list = getStoredSubmissions();
     }
 
-    if (validHackathonIds !== undefined && validHackathonIds.length > 0) {
+    if (validHackathonIds !== undefined) {
       const allowedSet = new Set(validHackathonIds);
       list = list.filter((s) => allowedSet.has(s.hackathonId));
     }

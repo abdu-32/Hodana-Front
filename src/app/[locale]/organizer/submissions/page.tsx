@@ -163,28 +163,26 @@ export default function OrganizerSubmissionsPage() {
     setIsLoading(true);
     try {
       const realHackathonIds = managedHackathons.filter((h) => h.id !== "all").map((h) => h.id);
+      if (realHackathonIds.length === 0) {
+        setSubmissions([]);
+        return;
+      }
+
+      const targetHackathonId =
+        selectedHackathonId !== "all" && !realHackathonIds.includes(selectedHackathonId)
+          ? "all"
+          : selectedHackathonId;
+
+      if (targetHackathonId !== selectedHackathonId) {
+        setSelectedHackathonId(targetHackathonId);
+      }
+
       const data = await submissionsClient.getSubmissions(
-        selectedHackathonId,
+        targetHackathonId,
         minScoreFilter,
         selectedCategory,
-        realHackathonIds.length > 0 ? realHackathonIds : undefined
+        realHackathonIds
       );
-
-      // If managed hackathons list only has "All Hackathons", dynamically populate from retrieved submissions
-      if (realHackathonIds.length === 0 && data.length > 0) {
-        const uniqueHackathons = new Map<string, string>();
-        data.forEach((sub) => {
-          if (sub.hackathonId && sub.hackathonName) {
-            uniqueHackathons.set(sub.hackathonId, sub.hackathonName);
-          }
-        });
-        if (uniqueHackathons.size > 0) {
-          setManagedHackathons([
-            { id: "all", title: "All Hackathons" },
-            ...Array.from(uniqueHackathons.entries()).map(([id, title]) => ({ id, title })),
-          ]);
-        }
-      }
 
       setSubmissions(data);
     } catch (err) {

@@ -1,4 +1,5 @@
 import { apiFetch, authFetch } from "@/lib/api-client";
+import { getSessionSnapshot } from "@/features/auth/lib/session-store";
 import type { Hackathon, PaginatedHackathons } from "@/lib/api-types-helpers";
 export type { Hackathon, PaginatedHackathons };
 
@@ -235,7 +236,12 @@ export async function listHackathons(
   // Fallback only when API is unavailable (offline mode)
   if (isManaged) {
     const mockIds = new Set(MOCK_HACKATHONS.map((m) => m.id));
-    const customLocalOnly = localItems.filter((h) => !mockIds.has(h.id) && !h.slug.startsWith("error-"));
+    const currentUserId = typeof window !== "undefined" ? getSessionSnapshot()?.user?.id : null;
+    const customLocalOnly = localItems.filter((h) => {
+      if (mockIds.has(h.id) || h.slug.startsWith("error-")) return false;
+      if (currentUserId && h.createdByUserId && h.createdByUserId !== currentUserId) return false;
+      return true;
+    });
     return {
       data: customLocalOnly,
       meta: {

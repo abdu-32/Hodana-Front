@@ -119,40 +119,44 @@ function OrganizerDashboardContent() {
           setHackathonsList(hackathons);
 
           const hackathonIds = new Set(hackathons.map((h) => h.id));
-          const [subRes, judgeRes] = await Promise.all([
-            submissionsClient.getSubmissions("all").catch(() => []),
-            judgesClient.listJudges().catch(() => ({ data: [] })),
-          ]);
-          if (isMounted) {
-            const allSubs = subRes || [];
-            const allJudges = judgeRes?.data || [];
-            if (hackathons.length > 0) {
+          if (hackathons.length > 0) {
+            const [subRes, judgeRes] = await Promise.all([
+              submissionsClient.getSubmissions("all", 0, "all", Array.from(hackathonIds)).catch(() => []),
+              judgesClient.listJudges().catch(() => ({ data: [] })),
+            ]);
+            if (isMounted) {
+              const allSubs = subRes || [];
+              const allJudges = judgeRes?.data || [];
               setSubmissionsList(allSubs.filter((s) => hackathonIds.has(s.hackathonId)));
               setJudgesList(allJudges.filter((j) => hackathonIds.has(j.hackathonId)));
-            } else {
-              setSubmissionsList(allSubs);
-              setJudgesList(allJudges);
             }
-          }
 
-          if (regRes && regRes.meta?.stats) {
-            setRegisteredParticipantsCount(regRes.meta.stats.totalRegistrations);
+            if (regRes && regRes.meta?.stats) {
+              setRegisteredParticipantsCount(regRes.meta.stats.totalRegistrations);
+            } else {
+              setRegisteredParticipantsCount(0);
+            }
+
+            if (regRes && Array.isArray(regRes.data) && regRes.data.length > 0) {
+              const matchingRegs = regRes.data.filter((r) => hackathonIds.has(r.hackathonId));
+              const mapped = matchingRegs.slice(0, 5).map((r, idx) => ({
+                id: idx + 1,
+                initials: r.participantName
+                  ? r.participantName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
+                  : "PA",
+                name: r.participantName || "Participant",
+                details: `${r.university || r.organization || "Independent"} • ${r.role || "Developer"}`,
+                color: "bg-[#e8f3f0] text-[#0f6b5c]",
+              }));
+              setVerifications(mapped);
+            } else {
+              setVerifications([]);
+            }
           } else {
+            // Organizer has 0 hackathons - all metrics must be strictly 0 with no external data!
+            setSubmissionsList([]);
+            setJudgesList([]);
             setRegisteredParticipantsCount(0);
-          }
-
-          if (regRes && Array.isArray(regRes.data) && regRes.data.length > 0) {
-            const mapped = regRes.data.slice(0, 5).map((r, idx) => ({
-              id: idx + 1,
-              initials: r.participantName
-                ? r.participantName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
-                : "PA",
-              name: r.participantName || "Participant",
-              details: `${r.university || r.organization || "Independent"} • ${r.role || "Developer"}`,
-              color: "bg-[#e8f3f0] text-[#0f6b5c]",
-            }));
-            setVerifications(mapped);
-          } else {
             setVerifications([]);
           }
         }
@@ -182,12 +186,15 @@ function OrganizerDashboardContent() {
 
   // Computed metrics from real database data
   const totalHackathons = hackathonsList.length;
-  const totalSubmissionsCount = submissionsList.length;
-  const activeJudgesCount = judgesList.filter((j) => j.status === "ACCEPTED" || j.status === "INVITED").length;
+  const totalSubmissionsCount = hackathonsList.length > 0 ? submissionsList.length : 0;
+  const activeJudgesCount = hackathonsList.length > 0
+    ? judgesList.filter((j) => j.status === "ACCEPTED" || j.status === "INVITED").length
+    : 0;
   const calculatedTotalParticipants = useMemo(() => {
+    if (hackathonsList.length === 0) return 0;
     if (registeredParticipantsCount > 0) return registeredParticipantsCount;
     return submissionsList.reduce((acc, s) => acc + (s.teamMembersCount || 1), 0);
-  }, [registeredParticipantsCount, submissionsList]);
+  }, [hackathonsList.length, registeredParticipantsCount, submissionsList]);
 
   // Delete Hackathon Handler
   const handleDeleteHackathon = async (id: string) => {
