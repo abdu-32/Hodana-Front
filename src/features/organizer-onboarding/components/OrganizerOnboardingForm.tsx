@@ -278,8 +278,8 @@ export function OrganizerOnboardingForm() {
   // WAITING FOR APPROVAL SCREEN
   if (isPendingApproval) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f3f6f4] px-4 py-12 text-[#122622]">
-        <div className="w-full max-w-xl rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-8 shadow-lg animate-fade-in">
+      <div className="flex min-h-screen items-center justify-center bg-[#f3f6f4] px-3 sm:px-4 py-8 sm:py-12 text-[#122622]">
+        <div className="w-full max-w-xl rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-8 shadow-lg animate-fade-in">
           {/* Header Badge */}
           <div className="flex items-center justify-between pb-6 border-b border-[#e8f3f0]">
             <div className="flex items-center gap-3">
@@ -339,17 +339,17 @@ export function OrganizerOnboardingForm() {
           </div>
 
           {/* Action Footer */}
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[#e8f3f0]">
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-6 border-t border-[#e8f3f0]">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <Link
                 href="/"
-                className="w-full sm:w-auto text-center rounded-xl border border-[#d6e7e1] px-4 py-2 text-xs font-bold text-[#57685f] hover:bg-[#f3f6f4] transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-[#d6e7e1] px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-[#f3f6f4] transition-colors"
               >
                 Back to Home
               </Link>
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto text-center rounded-xl border border-[#d6e7e1] px-4 py-2 text-xs font-bold text-[#57685f] hover:bg-[#f3f6f4] transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-[#d6e7e1] px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-[#f3f6f4] transition-colors"
               >
                 Participant Dashboard
               </Link>
@@ -357,7 +357,7 @@ export function OrganizerOnboardingForm() {
             <button
               onClick={handleCheckStatus}
               disabled={isCheckingStatus}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2 text-xs font-extrabold text-white shadow-sm hover:bg-[#0c574a] transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-extrabold text-white shadow-sm hover:bg-[#0c574a] transition-all"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isCheckingStatus ? "animate-spin" : ""}`} />
               Check Verification Status
@@ -407,7 +407,7 @@ export function OrganizerOnboardingForm() {
         {/* Main Onboarding Form */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-8 rounded-3xl border border-[#d6e7e1] bg-white p-6 sm:p-10 shadow-sm"
+          className="flex flex-col gap-8 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-10 shadow-sm"
         >
           {/* ================= SECTION 1: CONTACT DETAILS ================= */}
           <div className="flex flex-col gap-5 border-b border-[#d6e7e1] pb-8">

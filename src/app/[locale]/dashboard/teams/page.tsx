@@ -1047,8 +1047,8 @@ function MyTeamsContent() {
 
       {/* ================= MODAL: CREATE TEAM ================= */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-8 shadow-xl flex flex-col">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <h3 className="font-display text-lg font-bold text-[#122622]">
                 Create a New Team
@@ -1100,18 +1100,18 @@ function MyTeamsContent() {
                 />
               </div>
 
-              <div className="mt-4 flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="mt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createTeamMutation.isPending}
-                  className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer w-full sm:w-auto"
                 >
                   {createTeamMutation.isPending && (
                     <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -1126,8 +1126,8 @@ function MyTeamsContent() {
 
       {/* ================= MODAL: EDIT TEAM ================= */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-8 shadow-xl flex flex-col">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <h3 className="font-display text-lg font-bold text-[#122622]">
                 Edit Team Settings
@@ -1190,18 +1190,18 @@ function MyTeamsContent() {
                 />
               </div>
 
-              <div className="mt-4 flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="mt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={updateTeamMutation.isPending}
-                  className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer w-full sm:w-auto"
                 >
                   {updateTeamMutation.isPending && (
                     <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -1216,8 +1216,8 @@ function MyTeamsContent() {
 
       {/* ================= MODAL: INVITE MEMBER ================= */}
       {isInviteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-8 shadow-xl flex flex-col">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <h3 className="font-display text-lg font-bold text-[#122622]">
                 Invite Teammate
@@ -1259,18 +1259,18 @@ function MyTeamsContent() {
                 </p>
               </div>
 
-              <div className="mt-4 flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="mt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}
-                  className="rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={inviteMemberMutation.isPending}
-                  className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer w-full sm:w-auto"
                 >
                   {inviteMemberMutation.isPending && (
                     <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -1285,19 +1285,19 @@ function MyTeamsContent() {
 
       {/* ================= MODAL: JOIN REQUEST ================= */}
       {isJoinRequestModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-md my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-8 shadow-xl flex flex-col">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <div>
+              <div className="min-w-0 pr-2">
                 <h3 className="font-display text-lg font-bold text-[#122622]">
                   Join Request
                 </h3>
-                <p className="text-xs text-[#57685f]">{targetTeamName}</p>
+                <p className="text-xs text-[#57685f] truncate">{targetTeamName}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsJoinRequestModalOpen(false)}
-                className="rounded-full p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="rounded-full p-1 text-gray-400 hover:text-gray-600 cursor-pointer shrink-0"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1323,18 +1323,18 @@ function MyTeamsContent() {
                 />
               </div>
 
-              <div className="mt-4 flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="mt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsJoinRequestModalOpen(false)}
-                  className="rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#57685f] hover:bg-gray-50 cursor-pointer w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={sendJoinRequestMutation.isPending}
-                  className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#0c564a] cursor-pointer w-full sm:w-auto"
                 >
                   {sendJoinRequestMutation.isPending && (
                     <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -1349,11 +1349,11 @@ function MyTeamsContent() {
 
       {/* ================= MODAL: TEAM ROSTER & MANAGEMENT ================= */}
       {isRosterModalOpen && teamState?.team && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-xl flex flex-col gap-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-2xl my-auto max-h-[92dvh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-8 shadow-xl flex flex-col gap-6">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <div>
-                <h3 className="font-display text-xl font-bold text-[#122622]">
+              <div className="min-w-0 pr-2">
+                <h3 className="font-display text-xl font-bold text-[#122622] truncate">
                   {teamState.team.teamName} - Roster
                 </h3>
                 <p className="text-xs text-[#57685f]">
@@ -1363,7 +1363,7 @@ function MyTeamsContent() {
               <button
                 type="button"
                 onClick={() => setIsRosterModalOpen(false)}
-                className="rounded-full p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="rounded-full p-1 text-gray-400 hover:text-gray-600 cursor-pointer shrink-0"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1382,24 +1382,24 @@ function MyTeamsContent() {
                   return (
                     <div
                       key={member.id}
-                      className="flex items-center justify-between p-3.5 bg-white"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-white"
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e8f3f0] text-xs font-bold text-[#0f6b5c]">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e8f3f0] text-xs font-bold text-[#0f6b5c]">
                           {getInitials(member.userName || member.inviteeEmail)}
                         </span>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-[#122622]">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold text-[#122622] truncate">
                               {member.userName} {isSelf && "(You)"}
                             </span>
                             {isMemberLeader && (
-                              <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[9px] font-extrabold text-amber-800 uppercase">
+                              <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[9px] font-extrabold text-amber-800 uppercase shrink-0">
                                 Leader
                               </span>
                             )}
                           </div>
-                          <span className="text-[11px] text-[#57685f]">{member.inviteeEmail}</span>
+                          <span className="text-[11px] text-[#57685f] block truncate">{member.inviteeEmail}</span>
                         </div>
                       </div>
 
@@ -1412,7 +1412,7 @@ function MyTeamsContent() {
                             }
                           }}
                           disabled={removeMemberMutation.isPending}
-                          className="rounded-lg border border-red-200 bg-red-50/60 px-3 py-1.5 text-[11px] font-bold text-red-600 hover:bg-red-100 transition-all cursor-pointer"
+                          className="rounded-lg border border-red-200 bg-red-50/60 px-3 py-1.5 text-[11px] font-bold text-red-600 hover:bg-red-100 transition-all cursor-pointer self-end sm:self-auto shrink-0"
                         >
                           Remove
                         </button>
@@ -1431,12 +1431,12 @@ function MyTeamsContent() {
                 </h4>
                 <div className="divide-y divide-gray-100 border border-gray-100 rounded-2xl overflow-hidden bg-[#f8fafc]">
                   {teamState.pendingInvitations.map((inv) => (
-                    <div key={inv.id} className="flex items-center justify-between p-3.5 bg-white">
-                      <span className="text-xs font-medium text-[#122622]">{inv.inviteeEmail}</span>
+                    <div key={inv.id} className="flex items-center justify-between gap-3 p-3.5 bg-white">
+                      <span className="text-xs font-medium text-[#122622] truncate">{inv.inviteeEmail}</span>
                       <button
                         type="button"
                         onClick={() => cancelInviteMutation.mutate(inv.id)}
-                        className="text-xs font-bold text-red-600 hover:underline cursor-pointer"
+                        className="text-xs font-bold text-red-600 hover:underline cursor-pointer shrink-0"
                       >
                         Cancel
                       </button>
@@ -1455,11 +1455,11 @@ function MyTeamsContent() {
                 <div className="divide-y divide-gray-100 border border-gray-100 rounded-2xl overflow-hidden bg-[#f8fafc]">
                   {teamState.pendingJoinRequests.map((req) => (
                     <div key={req.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-white">
-                      <div>
-                        <p className="text-xs font-bold text-[#122622]">{req.userName} ({req.userEmail})</p>
-                        {req.message && <p className="text-[11px] text-[#57685f] mt-0.5">"{req.message}"</p>}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-[#122622] truncate">{req.userName} ({req.userEmail})</p>
+                        {req.message && <p className="text-[11px] text-[#57685f] mt-0.5 break-words">"{req.message}"</p>}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         <button
                           type="button"
                           onClick={() => reviewJoinRequestMutation.mutate({ requestId: req.id, decision: "accepted" })}
@@ -1485,7 +1485,7 @@ function MyTeamsContent() {
               <button
                 type="button"
                 onClick={() => setIsRosterModalOpen(false)}
-                className="rounded-xl bg-gray-100 px-5 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-200 cursor-pointer"
+                className="inline-flex items-center justify-center rounded-xl bg-gray-100 px-5 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-200 cursor-pointer w-full sm:w-auto"
               >
                 Close
               </button>

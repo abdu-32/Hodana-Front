@@ -137,7 +137,7 @@ export function TeamRoster({
   return (
     <div className="flex w-full max-w-2xl flex-col gap-6">
       {/* Team Overview Card */}
-      <div className="flex flex-col gap-5 rounded-2xl border border-black/[0.07] bg-surface p-6 shadow-sm">
+      <div className="flex flex-col gap-5 rounded-2xl border border-black/[0.07] bg-surface p-4 sm:p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export function TeamRoster({
 
       {/* Invite Teammates (Leader only) */}
       {isLeader && (
-        <section className="flex flex-col gap-4 rounded-2xl border border-black/[0.07] bg-surface p-6 shadow-sm">
+        <section className="flex flex-col gap-4 rounded-2xl border border-black/[0.07] bg-surface p-4 sm:p-6 shadow-sm">
           <div>
             <h3 className="font-display text-base font-semibold tracking-tight text-text">
               {t("inviteHeading")}
@@ -311,7 +311,7 @@ export function TeamRoster({
       {/* Leave Team Button (Non-leader members) */}
       {!isLeader && (
         <div className="pt-2">
-          <Button variant="secondary" onClick={() => setLeaveOpen(true)}>
+          <Button variant="secondary" onClick={() => setLeaveOpen(true)} className="w-full sm:w-auto justify-center">
             {t("leaveTeamCta")}
           </Button>
         </div>
@@ -328,8 +328,8 @@ export function TeamRoster({
             email: pendingRemove?.inviteeEmail ?? "",
           })}
         </p>
-        <div className="mt-6 flex justify-end gap-3">
-          <Button variant="secondary" onClick={() => setPendingRemove(null)}>
+        <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
+          <Button variant="secondary" onClick={() => setPendingRemove(null)} className="w-full sm:w-auto justify-center">
             {t("cancelCta")}
           </Button>
           <Button
@@ -339,6 +339,7 @@ export function TeamRoster({
               pendingRemove?.userId &&
               removeMutation.mutate(pendingRemove.userId)
             }
+            className="w-full sm:w-auto justify-center"
           >
             {removeMutation.isPending
               ? t("removing")
@@ -353,14 +354,15 @@ export function TeamRoster({
         title={t("leaveTeamModalTitle")}
       >
         <p className="text-sm text-text-muted">{t("leaveTeamModalBody")}</p>
-        <div className="mt-6 flex justify-end gap-3">
-          <Button variant="secondary" onClick={() => setLeaveOpen(false)}>
+        <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
+          <Button variant="secondary" onClick={() => setLeaveOpen(false)} className="w-full sm:w-auto justify-center">
             {t("cancelCta")}
           </Button>
           <Button
             variant="danger"
             disabled={leaveMutation.isPending}
             onClick={() => leaveMutation.mutate()}
+            className="w-full sm:w-auto justify-center"
           >
             {leaveMutation.isPending ? t("leaving") : t("confirmLeaveCta")}
           </Button>

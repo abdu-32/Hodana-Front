@@ -150,7 +150,7 @@ export function InvitationInbox() {
         return (
           <li
             key={invite.id}
-            className="group flex flex-col gap-5 rounded-2xl border border-black/[0.08] bg-surface p-6 shadow-sm transition-all hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+            className="group flex flex-col gap-5 rounded-2xl border border-black/[0.08] bg-surface p-4 sm:p-6 shadow-sm transition-all hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-hover text-lg font-bold text-white shadow-sm">
@@ -170,8 +170,8 @@ export function InvitationInbox() {
                 </div>
 
                 <div className="flex flex-col gap-0.5 text-xs text-text-muted">
-                  <p>
-                    Invited: <span className="font-semibold text-text">{invite.inviteeEmail}</span>
+                  <p className="truncate">
+                    Invited: <span className="font-semibold text-text break-all">{invite.inviteeEmail}</span>
                   </p>
                   <p>
                     Expires:{" "}
@@ -188,11 +188,12 @@ export function InvitationInbox() {
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-3 border-t border-black/[0.06] pt-4 sm:border-t-0 sm:pt-0">
+            <div className="flex shrink-0 flex-col-reverse xs:flex-row items-stretch xs:items-center gap-2.5 sm:gap-3 border-t border-black/[0.06] pt-4 sm:border-t-0 sm:pt-0 w-full sm:w-auto">
               <Button
                 variant="secondary"
                 disabled={rowBusy}
                 onClick={() => declineMutation.mutate(invite.id)}
+                className="w-full sm:w-auto justify-center"
               >
                 {declineMutation.isPending &&
                 declineMutation.variables === invite.id
@@ -203,6 +204,7 @@ export function InvitationInbox() {
               <Button
                 disabled={rowBusy}
                 onClick={() => acceptMutation.mutate(invite.id)}
+                className="w-full sm:w-auto justify-center"
               >
                 {acceptMutation.isPending &&
                 acceptMutation.variables === invite.id

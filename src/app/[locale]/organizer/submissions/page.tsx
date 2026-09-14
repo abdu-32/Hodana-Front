@@ -594,9 +594,9 @@ export default function OrganizerSubmissionsPage() {
           </div>
 
           {/* 1. Top Filters Bar */}
-          <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-5 shadow-2xs lg:flex-row lg:items-center lg:justify-between">
+          <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-[#d6e7e1] bg-white p-4 sm:p-5 shadow-2xs lg:flex-row lg:items-center lg:justify-between">
             {/* Search Input */}
-            <div className="relative flex-1 min-w-[240px]">
+            <div className="relative flex-1 w-full min-w-0 sm:min-w-[240px]">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -608,18 +608,20 @@ export default function OrganizerSubmissionsPage() {
             </div>
 
             {/* Filter Dropdowns Controls */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
               {/* 1. Hackathon Selector */}
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={() => setIsEventDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer"
+                  className="flex items-center justify-between gap-2 rounded-2xl border border-[#d6e7e1] bg-[#e8f3f0]/50 px-3.5 py-2.5 text-xs font-bold text-[#122622] shadow-2xs hover:bg-white transition-all cursor-pointer w-full sm:w-auto"
                 >
-                  <Layers className="h-3.5 w-3.5 text-[#0f6b5c]" />
-                  <span className="text-[#57685f]">Event:</span>
-                  <span>{selectedHackathonTitle}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+                  <div className="flex items-center gap-2 truncate">
+                    <Layers className="h-3.5 w-3.5 text-[#0f6b5c] shrink-0" />
+                    <span className="text-[#57685f]">Event:</span>
+                    <span className="truncate">{selectedHackathonTitle}</span>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                 </button>
 
                 {isEventDropdownOpen && (

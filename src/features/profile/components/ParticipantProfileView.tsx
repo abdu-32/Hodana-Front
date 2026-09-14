@@ -205,27 +205,27 @@ export function ParticipantProfileView({
 
               <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs font-medium text-[#57685f]">
                 <span className="flex items-center gap-1">
-                  <Building className="h-3.5 w-3.5 text-[#798e85]" />
-                  {organization || university}
+                  <Building className="h-3.5 w-3.5 text-[#798e85] shrink-0" />
+                  <span>{organization || university}</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5 text-[#798e85]" />
-                  {city}, {country}
+                  <MapPin className="h-3.5 w-3.5 text-[#798e85] shrink-0" />
+                  <span>{city}, {country}</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <Mail className="h-3.5 w-3.5 text-[#798e85]" />
-                  {email}
+                <span className="flex items-center gap-1 min-w-0">
+                  <Mail className="h-3.5 w-3.5 text-[#798e85] shrink-0" />
+                  <span className="truncate">{email}</span>
                 </span>
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             <button
               type="button"
               onClick={handleShare}
-              className="flex items-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#122622] hover:bg-[#f8faf9] transition-all shadow-2xs cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#d6e7e1] bg-white px-4 py-2.5 text-xs font-bold text-[#122622] hover:bg-[#f8faf9] transition-all shadow-2xs cursor-pointer flex-1 sm:flex-none"
             >
               <Share2 className="h-4 w-4 text-[#57685f]" />
               Share
@@ -234,7 +234,7 @@ export function ParticipantProfileView({
             <button
               type="button"
               onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0d594c] transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f6b5c] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#0d594c] transition-all cursor-pointer flex-1 sm:flex-none"
             >
               <Edit3 className="h-4 w-4" />
               Edit Profile

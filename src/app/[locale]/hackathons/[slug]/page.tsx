@@ -121,11 +121,11 @@ export default function HackathonDetailPage({
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="inline-flex min-h-[42px] sm:min-h-[44px] items-center justify-center rounded-xl bg-white/10 px-4 text-xs sm:text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/20 cursor-pointer"
+                  className="inline-flex min-h-[42px] sm:min-h-[44px] items-center justify-center rounded-xl bg-white/10 px-4 text-xs sm:text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/20 cursor-pointer flex-1 sm:flex-none"
                 >
                   <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.368 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684" />
@@ -135,7 +135,7 @@ export default function HackathonDetailPage({
 
                 <Link
                   href={`/hackathons/${slug}/register`}
-                  className="inline-flex min-h-[42px] sm:min-h-[44px] items-center justify-center rounded-xl bg-primary px-6 text-xs sm:text-sm font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className="inline-flex min-h-[42px] sm:min-h-[44px] items-center justify-center rounded-xl bg-primary px-6 text-xs sm:text-sm font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 flex-1 sm:flex-none"
                 >
                   Register Now &rarr;
                 </Link>
